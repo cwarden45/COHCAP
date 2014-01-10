@@ -1,0 +1,12 @@
+Package: COHCAP
+Type: Package
+Title: City of Hope CpG Island Analysis Pipeline
+Version: 0.99.3
+Date: 2013-10-23
+Author: Charles Warden
+Maintainer: Charles Warden <cwarden@coh.org>
+Depends: WriteXLS, COHCAPanno
+Description: This package provides a pipeline to analyze single-nucleotide resolution methylation data (Illumina 450k methylation array, targeted BS-Seq, etc.). It provides QC metrics, differential methylation for CpG Sites, differential methylation for CpG Islands, integration with gene expression data, and visualization of methylation values.
+License: GPL-3
+LazyLoad: yes
+biocViews: DNAMethylation, Microarray, Methylseq, Epigenetics

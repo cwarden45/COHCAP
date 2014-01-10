@@ -1,0 +1,156 @@
+%\VignetteIndexEntry{COHCAP Vignette}
+%\VignetteKeywords{DNA-Methylation Pipeline}
+%\VignettePackage{COHCAP}
+\documentclass{article}
+
+\usepackage{Sweave}
+\usepackage[utf8]{inputenc}
+\usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{float}
+\usepackage{cite}
+
+\begin{document}
+\title{COHCAP: City of Hope CpG Island Analysis Pipeline}
+\author{Charles Warden}
+\maketitle
+
+\section{Introduction}
+COHCAP (City of Hope CpG Island Analysis Pipeline) is an algorithm to analyze
+single-nucleotide resolution methylation data (Illumina 450k methylation array,
+targeted BS-Seq, etc.). It provides QC metrics, differential methylation for CpG
+Sites, differential methylation for CpG Islands, integration with gene expression
+data, and visualization of methylation values.
+
+COHCAP is currently available as a standalone program (click \href{http://sourceforge.net/projects/cohcap/}{here}).  Here are potential advantages and 
+disadvantages to using the standalone versus Biocondcutor COHCAP packages
+
+\begin{description}
+\item[Potential Advantages:] \hfill \\
+\begin{itemize}
+\item The Bioconductor package no longer uses separate functions for Illumina array vs. Targeted BS-Seq data.  This simplifies the number of parameters you need
+to understand in order to run COHCAP and simplifies software maintenance.
+\item Common annotations are pre-installed with the Bioconductor package.  For HM450k array, 27k array, and selected targeted BS-Seq data, you do not need
+to provide an annotation file to COHCAP.
+\item COHCAP output files are now better organized into subfolders for easier interpretation (compared to the standalone v1.2.4).
+\item A filter for delta-beta values has been added in the Bioconductor package (compared to the standalone v1.2.4).
+\item The Bioconductor package doesn't require users to install Java
+\item The Bioconductor package doesn't require users to point Perl to their Rscript executable file
+\item The Bioconductor package provides a feature to automatically create a targeted BS-Seq annotation file (and creates necessary Bioconductor input file with Illumina array formatting)
+\end{itemize}
+\item[Potential Disadvantages:] \hfill \\
+\begin{itemize}
+\item Because COHCAP functions are now universal in the Bioconductor package, the COHCAP Bioconductor package doesn't filter Illumina array data based upon
+detection p-values.  In most cases, lack of a detection p-value filter will probably not be a problem.  However, very poor quality data will show a high
+proprotion of high detection p-values, so you may want to run additional QC analysis on your samples to ensure you are working with good quality data.
+\item The Bioconductor pacakge doesn't contain a GUI.
+\item There are minor formatting differences between the two COHCAP packages, so standalone documentation may not completely apply to the Bioconductor package.
+\end{itemize}
+\end{description}
+
+So, if you are comfortable with writing code in R, then you may prefer using the COHCAP Biocondcutor package.
+If you are not confortable with any programming (and you have a relatively small sample), you may prefer using the standalone version of COHCAP.
+Large patient cohorts will most likely need to be run on a powerful computer (such as a Linux cluster).
+
+Most of the information on the COHCAP \href{http://sourceforge.net/p/cohcap/wiki/Home/}{FAQ page} will apply to both versions.  Questions
+for both versions should be directed to the \href{http://sourceforge.net/p/cohcap/wiki/Home/}{COHCAP Discussion Group}, with bioconductor users posting questions under "Bioconductor: [Problem Description]".
+
+\begin{description}
+\item[In both cases, users should cite the following article when using COHCAP:] \hfill \\
+Charles D. Warden, Heehyoung Lee, Joshua D. Tompkins, Xiaojin Li, Charles Wang, Arthur D. Riggs, Hua Yu, Richard Jove, Yate-Ching Yuan. (2013) COHCAP: An Integrative Genomic Pipeline for Single-Nucleotide Resolution DNA Methylation Analysis. Nucleic Acids Research. 41 (11): e117
+\end{description}
+
+\section{Data}
+
+Beta values from the Human Methylation 450k array and expression values from the Affymetrix Human Gene 1.0 ST Array.
+The DNA methylation data corresponds to GSE42308, the gene expression data corresponds to GSE42307.
+This example dataset contains two groups, each with 3 replicates.  Fold-change, p-values, and FDR values for gene
+expression data were calculated as described in the Warden et al. 2013 NAR publication listed above.
+The dataset is significantly truncated for testing purposes.
+
+<<inputVariables>>=
+library("COHCAP")
+
+dir <- system.file("extdata", package="COHCAP")
+beta.file <- file.path(dir,"GSE42308_truncated.txt")
+sample.file <- file.path(dir,"sample_GSE42308.txt")
+expression.file <- file.path(dir,"expression-Average_by_Island_truncated.txt")
+project.folder <- getwd()
+project.name <- "450k_avg_by_island_test"
+@ 
+The code for this example assumes all files should be created in the current working directory.
+However, you can specify the input and output files in any location (using
+the complete file path).
+
+\section{Data Annotation}
+To normalize DNA Methylation beta or percentage methylation values, run the following function 
+<<annotation>>=
+beta.table <- COHCAP.annotate(beta.file, project.name, project.folder,
+				platform="450k-UCSC")
+@
+The output is standard data frame with samples in rows and genes in columns, which is also saved as an Excel file in the "Raw\textunderscore Data" folder.
+
+\section{Quality Control}
+To display QC metrics for DNA methylation data, run the following function 
+<<qc>>=
+COHCAP.qc(sample.file, beta.table, project.name, project.folder)
+@
+The QC plots are created in the "QC" folder.
+
+\section{CpG Site Statistics}
+To display calculate CpG site statistics, filter for differentially methylated sites, and/or create .wig files, run the following function 
+<<site>>=
+filtered.sites <- COHCAP.site(sample.file, beta.table, project.name,
+				project.folder, ref="parental")
+@
+The filtered list of CpG sites are created in the "CpG\textunderscore Site" folder, which is also the data frame returned by the function.
+Statistics for all CpG sites are located in the "Raw\textunderscore Data" folder.
+If .wig files are created (default setting), they can be found within the "CpG\textunderscore Site/wig" folder (in the subfolder with the corresponding project name).
+
+\section{CpG Island Analysis}
+To display calculate CpG island statistics, filter for differentially methylated islands, and/or create box-plots for differentially methylated islands, run the following function 
+<<island>>=
+filtered.islands <- COHCAP.avg.by.island(sample.file, filtered.sites, beta.table,
+				project.name, project.folder, ref="parental")
+@
+The filtered list of CpG islands (with box-plots, if applicable) are created in the "CpG\textunderscore Island" folder.  Box-plots can only be created using the "Average by Island" workflow (shown above)
+Statistics for all CpG islands (meeting the cutoff for minimum number of CpG sites) are located in the "Raw\textunderscore Data" folder.
+
+The function returns a data frame that can be used for integration with gene expression data.  The format of data frame depends upon the workflow used for analysis.  CpG island statistics will be provided by the 
+"Average by Site" workflow (COHCAP.avg.by.site) whereas a table of beta values for differentially methylated islands will be provided by the "Average by Island" workflow
+(COHCAP.avg.by.island, shown above)
+
+\section{Integration with Gene Expression}
+To identify genes inverse expression changes (with scatterplots for visualization), please run the following function:
+<<integrate>>=
+COHCAP.integrate.avg.by.island(filtered.islands, project.name, project.folder,
+				expression.file, sample.file)
+@
+The function doesn't return any value and represents the last possible step in the COHCAP pipeline.
+
+Integration can only be performed in the "Average by Site" workflow with a 2-group comparison.  This results in two tables (Methylation Up, Expression Down and Methylation Down, Expression Up) in the "Integrate" folder.
+The gene expression file for the "Average by Site" workflow includes population-level fold-change, p-values, and FDR values (which must be calculated outside of COHCAP).
+
+Integration can be performed using the "Average by Island" workflow with any number of groups.  This results in a single list of genes with negative expression correlations in the "Integrate" as well as a folder for all correlation statistics in the "Raw\textunderscore Data" folder.
+If desired, scatter plots will also be produced for genes with significant negative correlations between methylation and gene expression data.
+The gene expression file for the "Average by Island" workflow is a table of normalized intensity / expression values (can be from either microarray or RNA-Seq data).
+
+\section{Targeted BS-Seq Analysis}
+
+The method of reading BS-Seq data is notably different than the standalone version of COHCAP.
+
+In the standalone version, users directly read .bed files created from the \href{http://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide.pdf}{extended Bismark pipeline}.  Because the input file is standardized
+in the Bioconductor version of COHCAP, users must first produce a file meeting this new standard requirement.
+
+Accordingly, a function unique to targeted BS-Seq analysis (COHCAP.BSSeq.preprocess) has been added to the Bioconductor package to faciliate this step.
+
+Additionally, this function also creates a custom annotation file that is uniquely optimized for the user's own targeted sequencing data.
+
+The old UCSC CpG Island file is still available on sourceforge (click \href{http://sourceforge.net/projects/cohcap/files/COHCAP_BSSEQ_anno.zip/download}{here} to download).  This should technically work with any BS-Seq dataset.  However,
+we strongly encourage users to use the file created from COHCAP.BSSeq.preprocess, especially since this step will likely be required to create the COHCAP input file.
+
+Users should be warned that this step will likely take several hours to run.  However, it luckily only has to be run once.
+
+Detailed usage instructions can be found in the help description, called via help(COHCAP.BSSeq.preprocess).
+
+\end{document}

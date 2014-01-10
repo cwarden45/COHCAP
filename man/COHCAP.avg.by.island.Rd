@@ -1,0 +1,112 @@
+\name{COHCAP.avg.by.island}
+\alias{COHCAP.avg.by.island}
+
+\title{
+CpG Island Differential Methylation Analysis (Average by Island Workflow).
+}
+\description{
+Provides statistics for CpG islands as well as a list of differentially methylated sites.  CpG Island statistics are calculated by averaging beta values among samples per site
+and comparing the average beta values across groups (considering the pairing between sites).
+
+List of differentially methylated islands will be created in the "CpG_Island" folder.  Table of statistics for all CpG islands will be created in the "Raw_Data" folder.
+}
+\usage{
+COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
+				project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3,
+				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
+				num.groups=2, num.sites=4, plot.box=TRUE, paired=FALSE, ref="none",
+				output.format = "xls")
+}
+\arguments{
+  \item{sample.file}{
+	Tab-delimited text file providing group attributions for all samples considered for analysis.
+} 
+ \item{beta.table}{
+	Data frame with CpG sites in columns (with DNA methylation represented as beta values or percentage methylation),
+	samples in columns, and CpG site annotations are included (in columns 2-5).
+	
+	The COHCAP.annotate function automatically creates this file.
+}
+ \item{site.table}{
+	Data frame with CpG site statistics (one row per CpG site) and CpG site annotations (in columns 2-5).
+	
+	The COHCAP.site function automatically creates this file.
+}
+  \item{project.name}{
+	Name for COHCAP project.  This determines the names for output files.
+}
+  \item{project.folder}{
+	Folder for COHCAP output files
+}
+  \item{methyl.cutoff}{
+	Minimum beta or percentage methylation value to be used to define a methylated CpG site.
+	Default is 0.7 (used for beta values), which would correspond to 70% methylation.
+	Used for either 1-group or 2-group comparison.
+}
+  \item{unmethyl.cutoff}{
+	Minimum beta or percentage methylation value to be used to define an unmethylated CpG site.
+	Default is 0.3 (used for beta values), which would correspond to 30% methylation.
+	Used for either 1-group or 2-group comparison.
+}
+  \item{delta.beta.cutoff}{
+	The minimum absolute value for delta-beta values (mean treatment beta - mean reference beta) to define a differentially methylated CpG site.
+	Only used for 2-group comparison.
+}
+  \item{pvalue.cutoff}{
+	Maximum p-value allowed to define a site as differentially methylated.
+	Used only for comparisons with at least 2 groups (with 3 replicates per group)
+}
+  \item{fdr.cutoff}{
+	Maximum False Discovery Rate (FDR) allowed to define a site as differentially methylated.
+	Used only for comparisons with at least 2 groups (with 3 replicates per group)
+}
+ \item{num.groups}{
+	Number of groups described in sample description file.  COHCAP algorithm differs when analysing 1-group, 2-group, or >2-group comparisons.
+	COHCAP cannot currently analyze continuous phenotypes.
+}
+ \item{num.sites}{
+	Minimum number of differentially methylated sites to define a differentially methylated CpG island.
+}
+  \item{ref}{
+	Reference group used to define baseline methylation levels.
+	Only used for 2-group comparison
+}
+ \item{plot.box}{
+	A logical value: Should box-plots be created to visualize CpG island differential methylation?
+}
+ \item{paired}{
+	A logical value: Is there any special pairing between samples in different groups?
+	
+	If so, the pairing variable must be specified in the 3rd column of the sample description file.
+	Used for p-value calculation, so this only applies to comparisons with at least 2 groups.
+}
+  \item{output.format}{
+	Format for output tables: 'xls' for Excel file, 'txt' for tab-delimited text file
+}
+}
+
+\value{
+	Data frame of average beta (or percentage methylation) values across differentially methylated sites within a differentially methylated CpG island..	
+	This data frame can be used for integration analysis.
+}
+
+\examples{
+library("COHCAP")
+
+dir <- system.file("extdata", package="COHCAP")
+beta.file <- file.path(dir,"GSE42308_truncated.txt")
+sample.file <- file.path(dir,"sample_GSE42308.txt")
+project.folder <- getwd()
+project.name <- "450k_avg_by_island_test"
+
+beta.table <- COHCAP.annotate(beta.file, project.name, project.folder,
+				platform="450k-UCSC")
+filtered.sites <- COHCAP.site(sample.file, beta.table, project.name,
+				project.folder, ref="parental")
+filtered.islands <- COHCAP.avg.by.island(sample.file, filtered.sites,
+				beta.table, project.name, project.folder, ref="parental")
+}
+
+\seealso{
+COHCAP Discussion Group: http://sourceforge.net/p/cohcap/discussion/general/
+}
