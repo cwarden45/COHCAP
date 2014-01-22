@@ -13,7 +13,9 @@ ttest2 <- function(arr, grp1, grp2)
 	#require at least 2 replicates
 	if((length(group1[!is.na(group1)]) >=3) & (length(group2[!is.na(group2)]) >=3))
 	{
-		return(t.test(group1, group2)$p.value)
+		result <- 1
+		tryCatch(result <- t.test(group1, group2)$p.value, error = function(e) {})
+		return(result)
 	}
 	else
 	{
