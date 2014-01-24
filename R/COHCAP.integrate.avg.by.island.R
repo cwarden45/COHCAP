@@ -35,7 +35,7 @@ cor.test.pvalue <- function(x)
 	system(cmd, intern=TRUE, wait=TRUE)
 
 	input.table <- read.table(temp.paired, header=T, sep = "\t")
-	#warning(head(input.table))
+	#print(head(input.table))
 	islands <- input.table[[1]]
 	genes <- input.table[[2]]
 	intensity.table <- input.table[,3:ncol(input.table)]
@@ -55,7 +55,7 @@ cor.test.pvalue <- function(x)
 	}
 	
 	sig.islands <- cor.table$island[(cor.table$cor < cor.cutoff) & (cor.table$p.value < cor.pvalue.cutoff) & (cor.table$fdr < cor.fdr.cutoff)]
-	warning(paste(length(sig.islands)," significant correlations",sep=""))
+	print(paste(length(sig.islands)," significant correlations",sep=""))
 	
 	if(length(sig.islands) > 0)
 		{	
@@ -76,24 +76,24 @@ cor.test.pvalue <- function(x)
 					}
 					rm(input.table)
 				
-					warning("Plotting Correlated Genes....")
-					warning(dim(sig.table))
+					print("Plotting Correlated Genes....")
+					print(dim(sig.table))
 				
 					sample.names <- names(sig.table)[3:ncol(sig.table)]
 					index <- 1:length(sample.names)
 					sample.names <- sample.names[index %% 2 == 1]
 					sample.names <- gsub(".Methyl","",sample.names)
-					#warning(sample.names)
+					#print(sample.names)
 				
 					sample.table <- read.table(sample.file, header=F, sep = "\t")
 					samples <- as.character(sample.table[[1]])
 					samples[grep("^\\d",samples, perl = TRUE)] <- paste("X",samples[grep("^\\d",samples, perl = TRUE)],sep="")
 					samples <- gsub("-",".",samples)
-					#warning(samples)
+					#print(samples)
 					sample.group <- sample.table[[2]]
-					#warning(sample.group)
+					#print(sample.group)
 					sample.group <- sample.group[match(sample.names,samples,nomatch=0)]
-					#warning(sample.group)
+					#print(sample.group)
 					labelColors <- as.character(sample.group)
 					groups <- levels(sample.group)
 				
@@ -133,5 +133,5 @@ cor.test.pvalue <- function(x)
 	unlink(temp.paired)
 	unlink(temp.methyl)
 	
-	warning(warnings())
+	print(warnings())
 }#end def RNA.deg

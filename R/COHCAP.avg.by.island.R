@@ -7,8 +7,8 @@ ttest2 <- function(arr, grp1, grp2)
 {
 	group1 <- as.numeric(arr[grp1])
 	group2 <- as.numeric(arr[grp2])
-	#warning(grp1)
-	#warning(grp2)
+	#print(grp1)
+	#print(grp2)
 	#stop()
 	#require at least 2 replicates
 	if((length(group1[!is.na(group1)]) >=3) & (length(group2[!is.na(group2)]) >=3))
@@ -25,8 +25,8 @@ ttest2 <- function(arr, grp1, grp2)
 
 annova.pvalue <- function(arr, grp.levels)
 {
-	#warning(arr)
-	#warning(grp.levels)
+	#print(arr)
+	#print(grp.levels)
 	
 	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
 	if(length(levels(grp.no.na)) >= 2)
@@ -51,9 +51,9 @@ annova.pvalue <- function(arr, grp.levels)
 
 annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 {
-	#warning(arr)
-	#warning(grp.levels)
-	#warning(pairing.levels)
+	#print(arr)
+	#print(grp.levels)
+	#print(pairing.levels)
 	
 	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
 	
@@ -85,7 +85,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	data.folder<-file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
-	warning("Reading Sample Description File....")
+	print("Reading Sample Description File....")
 	sample.table <- read.table(sample.file, header=F, sep = "\t")
 	samples <- as.character(sample.table[[1]])
 	for (i in 1:length(samples))
@@ -109,7 +109,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	beta.values <- beta.table[,6:ncol(beta.table)]
 	annotation.names <- names(beta.table)[1:5]
 	annotations <- beta.table[,1:5]
-	warning(dim(beta.values))
+	print(dim(beta.values))
 
 	if(length(samples) != length(sample.names[match(samples, sample.names, nomatch=0)]))
 		{
@@ -127,15 +127,15 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			colnames(beta.values)=samples
 		}
 		
-	warning(dim(beta.values))
-	#warning(samples)
-	#warning(sample.names)
-	#warning(colnames(beta.values))
-	#warning(beta.values[1,])
+	print(dim(beta.values))
+	#print(samples)
+	#print(sample.names)
+	#print(colnames(beta.values))
+	#print(beta.values[1,])
 	rm(beta.table)
 	
 	groups <- levels(sample.group)
-	warning(paste("Group:",groups, sep=" "))
+	print(paste("Group:",groups, sep=" "))
 
 	if(length(groups) != num.groups)
 		{
@@ -144,28 +144,28 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			stop()
 		}
 	
-	warning("Checking CpG Site Stats Table")
-	warning(dim(site.table))
+	print("Checking CpG Site Stats Table")
+	print(dim(site.table))
 	site.table <- site.table[!is.na(site.table[[5]]), ]
-	warning(dim(site.table))
+	print(dim(site.table))
 	
 	cpg.islands <- levels(as.factor(as.character(site.table[[5]])))
-	warning(paste("Analyzing",length(cpg.islands),"CpG Islands...",sep=" "))
+	print(paste("Analyzing",length(cpg.islands),"CpG Islands...",sep=" "))
 
 	genes <- array(dim=length(cpg.islands))
 	island.values<- matrix(nrow=length(cpg.islands), ncol=ncol(beta.values))
 	colnames(island.values) <- samples
 
 	#average CpG sites per CpG Island
-	warning("Average CpG Sites per CpG Island")
+	print("Average CpG Sites per CpG Island")
 	for (i in 1:length(cpg.islands))
 		{
 			island <- cpg.islands[i]
-			#warning(island)
+			#print(island)
 			cpg.sites <- site.table[site.table[[5]] == island,1]
-			#warning(cpg.sites)
+			#print(cpg.sites)
 			data.mat <- beta.values[match(cpg.sites, annotations[[1]],nomatch=0),]
-			#warning(data.mat)
+			#print(data.mat)
 			if(nrow(data.mat) >= num.sites)
 				{
 					info.mat <- site.table[site.table[5] == island,]
@@ -178,7 +178,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	annotations <- island.avg.table[,1:2]
 	annotation.names <- c("island","gene")
 	beta.values <- island.avg.table[,3:ncol(island.avg.table)]
-	#warning(beta.values)
+	#print(beta.values)
 	
 	rm(site.table)
 	rm(cpg.islands)
@@ -191,7 +191,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	
 	if(length(groups) == 1) {
 	col.names <- c(annotation.names)
-	warning("Averaging Beta Values for All Samples")
+	print("Averaging Beta Values for All Samples")
 
 	if(length(sample.names) > 1)
 		{
@@ -203,22 +203,22 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 	island.table <- data.frame(island.table, avg.beta=avg.beta)
 	} else if(length(groups) == 2) {
-	warning("Differential Methylation Stats for 2 Groups with Reference")
+	print("Differential Methylation Stats for 2 Groups with Reference")
 	trt <- groups[groups != ref]
-	#warning(ref)
-	#warning(trt)
-	#warning(samples)
-	#warning(sample.group)
+	#print(ref)
+	#print(trt)
+	#print(samples)
+	#print(sample.group)
 	trt.samples <- samples[which(sample.group == trt)]
-	#warning(trt.samples)
+	#print(trt.samples)
 	ref.samples <- samples[which(sample.group == ref)]
-	#warning(ref.samples)
+	#print(ref.samples)
 
 	all.indices <- 1:length(sample.names)
 	trt.indices <- all.indices[which(sample.group == trt)]
-	#warning(trt.indices)
+	#print(trt.indices)
 	ref.indices <- all.indices[which(sample.group == ref)]
-	#warning(ref.indices)
+	#print(ref.indices)
 
 	trt.beta.values <- beta.values[, trt.indices]
 	ref.beta.values <- beta.values[, ref.indices]
@@ -246,7 +246,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 
 	if(paired)
 		{
-			warning("Factor in Paired Samples")
+			print("Factor in Paired Samples")
 			beta.pvalue <- apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group)
 		}#end if(pair.flag == 1)
 	else
@@ -255,12 +255,12 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}#end else
 	beta.fdr <- p.adjust(beta.pvalue, method="fdr")
 
-	#warning(dim(island.table))
-	#warning(length(trt.avg.beta))
-	#warning(length(ref.avg.beta))
-	#warning(length(delta.beta))
-	#warning(length(beta.pvalue))
-	#warning(length(beta.fdr))
+	#print(dim(island.table))
+	#print(length(trt.avg.beta))
+	#print(length(ref.avg.beta))
+	#print(length(delta.beta))
+	#print(length(beta.pvalue))
+	#print(length(beta.fdr))
 
 	island.table <- data.frame(island.table, trt.beta = trt.avg.beta, ref.beta = ref.avg.beta, delta.beta = delta.beta, pvalue = beta.pvalue, fdr = beta.fdr)
 	colnames(island.table) <- c(annotation.names,
@@ -270,7 +270,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 								"island.pvalue",
 								"island.fdr")
 	} else if(length(groups) > 2) {
-	warning("Calculating Average Beta and ANOVA p-values")
+	print("Calculating Average Beta and ANOVA p-values")
 	col.names <- c(annotation.names)
 
 	for (i in 1:length(groups))
@@ -294,7 +294,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 
 	if(paired)
 		{
-			warning("Factor in Paired Samples")
+			print("Factor in Paired Samples")
 			pvalue <- apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group)
 		}#end if(pair.flag == 1)
 	else
@@ -321,7 +321,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	}
 	
 	#filter sites
-	warning(dim(island.table))
+	print(dim(island.table))
 	filter.table <- island.table
 	if(length(groups) == 1) {
 		temp.avg.beta <- island.table$avg.beta
@@ -343,10 +343,10 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	} else {
 	warning("Invalid groups specified in sample description file!")
 	}
-	warning(dim(filter.table))
+	print(dim(filter.table))
 	
 	sig.islands <- filter.table[[1]]
-	warning(paste("There are ",length(sig.islands)," differentially methylated islands",sep=""))
+	print(paste("There are ",length(sig.islands)," differentially methylated islands",sep=""))
 	
 	if(output.format == 'xls'){
 		xlsfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.xlsx",sep=""))
@@ -360,9 +360,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	rm(filter.table)
 
 	
-	warning(dim(island.avg.table))
+	print(dim(island.avg.table))
 	island.avg.table <- island.avg.table[match(sig.islands,island.avg.table[[1]],nomatch=0),]
-	warning(dim(island.avg.table))
+	print(dim(island.avg.table))
 
 
 	if(output.format == 'xls'){
@@ -377,7 +377,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	
 if(plot.box)
 	{
-		warning("Plotting Significant Islands....")
+		print("Plotting Significant Islands....")
 		plot.folder<-file.path(island.folder,paste(project.name,"_Box_Plots",sep=""))
 		dir.create(plot.folder, showWarnings=FALSE)
 		
@@ -386,8 +386,8 @@ if(plot.box)
 		colors <- c("red","blue","green","orange","purple","cyan","pink","maroon","yellow","grey","black",colors())
 		colors <- colors[1:length(groups)]
 		
-		#warning(samples)
-		#warning(sample.names)
+		#print(samples)
+		#print(sample.names)
 		
 		for (i in 1:length(sig.islands))
 			{
@@ -406,6 +406,6 @@ if(plot.box)
 			}#end for (1 in 1:length(sig.islands))
 	}
 	
-	warning(warnings())
+	print(warnings())
 	return(island.avg.table)
 }#end def RNA.deg

@@ -1,11 +1,11 @@
 colLab <- function(n, labelColors, clusMember) { 
    if(is.leaf(n)) { 
        a <- attributes(n) 
-	   #warning(a)
+	   #print(a)
        # clusMember - vector of sample names (ordered to match label color.palette)
        # labelColors - a vector of color.palette for the above grouping 
        labCol <- labelColors[clusMember == a$label]
-	   #warning(labCol)
+	   #print(labCol)
        attr(n, "nodePar") <- c(a$nodePar, lab.col = labCol) 
    } 
    n 
@@ -29,12 +29,12 @@ sample.group <- sample.table[[2]]
 
 sample.names <- names(beta.table)[6:ncol(beta.table)]
 beta.values <- beta.table[,6:ncol(beta.table)]
-warning(dim(beta.values))
+print(dim(beta.values))
 methyl.max <- ceiling(max(beta.values))
 methyl.min <- ceiling(min(beta.values))
 
-#warning(samples)
-#warning(sample.names)
+#print(samples)
+#print(sample.names)
 
 if(length(samples) != length(sample.names[match(samples, sample.names, nomatch=0)]))
 	{
@@ -52,35 +52,35 @@ if(length(samples)>1)
 		colnames(beta.values)=samples
 	}
 	
-warning(dim(beta.values))
-#warning(samples)
-#warning(sample.names)
-#warning(colnames(beta.values))
-#warning(beta.values[1,])
+print(dim(beta.values))
+#print(samples)
+#print(sample.names)
+#print(colnames(beta.values))
+#print(beta.values[1,])
 rm(beta.table)
 
 groups <- levels(sample.group)
-warning(paste("Group: ",groups,sep=""))
+print(paste("Group: ",groups,sep=""))
 color.palette <- color.palette[1:length(groups)]
-warning(paste("Color: ",color.palette[1:length(groups)], sep=""))
+print(paste("Color: ",color.palette[1:length(groups)], sep=""))
 
 #sample histogram
-warning("Calculating Sample Statistics...")
+print("Calculating Sample Statistics...")
 q0 <- array(dim=length(samples))
 q25 <- array(dim=length(samples))
 q50 <- array(dim=length(samples))
 q75 <- array(dim=length(samples))
 q100 <- array(dim=length(samples))
 
-warning("Creating Sample Histogram...")
+print("Creating Sample Histogram...")
 hist.file <- file.path(qc.folder, paste(project.name,"_hist.pdf",sep=""))
 pdf(file = hist.file)
-#warning(samples)
-#warning(length(samples))
+#print(samples)
+#print(length(samples))
 for (i in 1:length(samples))
 	{
-		#warning(i)
-		#warning(paste("Working on Density Distribution for ",samples[i],sep=""))
+		#print(i)
+		#print(paste("Working on Density Distribution for ",samples[i],sep=""))
 		data <- -1
 		if(length(samples)>1)
 			{
@@ -90,7 +90,7 @@ for (i in 1:length(samples))
 			{
 				data <- as.numeric(beta.values)
 			}
-		#warning(dim(data))
+		#print(dim(data))
 		quant <- quantile(data, na.rm=T)
 		q0[i] <- quant[1]
 		q25[i] <- quant[2]
@@ -102,7 +102,7 @@ for (i in 1:length(samples))
 		if(typeof(sample.group) != "double")
 			{
 				expression.group <- sample.group[i]
-				#warning(expression.group)
+				#print(expression.group)
 				for (j in 1:length(groups))
 					{
 						if(expression.group == groups[j])
@@ -132,8 +132,8 @@ for (i in 1:length(samples))
 			}#end else
 	}#end for (i in 1:length(bed.indices))
 dev.off()
-#warning(samples)
-#warning(q50)
+#print(samples)
+#print(q50)
 hist.table <- data.frame(sample = samples, min=q0, bottom25=q25, median=q50, top25=q75, max=q100)
 hist.text.file <- file.path(qc.folder,paste(project.name,"_descriptive_statistics.txt",sep=""))
 write.table(hist.table, hist.text.file, quote=F, row.names=F, sep="\t")
@@ -153,10 +153,10 @@ if(length(samples) > 1)
 		dend1 <- as.dendrogram(hc)
 		rm(hc)
 		cluster.file <- file.path(qc.folder,paste(project.name,"_cluster.pdf",sep=""))
-		warning("Creating Dendrogram...")
+		print("Creating Dendrogram...")
 		pdf(file = cluster.file)
-		#warning(labelColors)
-		#warning(clusMember)
+		#print(labelColors)
+		#print(clusMember)
 		dend1 <- dendrapply(dend1, colLab, labelColors=labelColors, clusMember=samples) 
 		a <- attributes(dend1) 
 		attr(dend1, "nodePar") <- c(a$nodePar, lab.col = labelColors) 
@@ -167,14 +167,14 @@ if(length(samples) > 1)
 		rm(dend1)
 		
 		#PCA
-		warning("Creating PCA Plot...")
-		#warning(dim(beta.values))
-		#warning(dim(na.omit(data.matrix(beta.values))))
-		#warning(data.matrix(beta.values)[1,])
-		#warning(na.omit(data.matrix(beta.values)[1,]))
+		print("Creating PCA Plot...")
+		#print(dim(beta.values))
+		#print(dim(na.omit(data.matrix(beta.values))))
+		#print(data.matrix(beta.values)[1,])
+		#print(na.omit(data.matrix(beta.values)[1,]))
 		pca.values <- prcomp(na.omit(data.matrix(beta.values)))
-		#warning(attributes(pca.values))
-		#warning(pca.values$rotation)
+		#print(attributes(pca.values))
+		#print(pca.values$rotation)
 		pc.values <- data.frame(pca.values$rotation)
 		variance.explained <- (pca.values $sdev)^2 / sum(pca.values $sdev^2)
 		pca.table <- data.frame(PC = 1:length(variance.explained), percent.variation = variance.explained, t(pc.values))
@@ -189,4 +189,6 @@ if(length(samples) > 1)
 			}
 		dev.off()
 	}#end 
+
+print(warnings())
 }#end def RNA.qc

@@ -7,8 +7,8 @@ ttest2 <- function(arr, grp1, grp2)
 {
 	group1 <- as.numeric(arr[grp1])
 	group2 <- as.numeric(arr[grp2])
-	#warning(grp1)
-	#warning(grp2)
+	#print(grp1)
+	#print(grp2)
 	#stop()
 	#require at least 2 replicates
 	if((length(group1[!is.na(group1)]) >=3) & (length(group2[!is.na(group2)]) >=3))
@@ -25,8 +25,8 @@ ttest2 <- function(arr, grp1, grp2)
 
 annova.pvalue <- function(arr, grp.levels)
 {
-	#warning(arr)
-	#warning(grp.levels)
+	#print(arr)
+	#print(grp.levels)
 	
 	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
 	if(length(levels(grp.no.na)) >= 2)
@@ -51,9 +51,9 @@ annova.pvalue <- function(arr, grp.levels)
 
 annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 {
-	#warning(arr)
-	#warning(grp.levels)
-	#warning(pairing.levels)
+	#print(arr)
+	#print(grp.levels)
+	#print(pairing.levels)
 	
 	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
 	
@@ -85,14 +85,14 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	data.folder<-file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
-	warning(dim(site.table))
+	print(dim(site.table))
 	site.table <- site.table[!is.na(site.table[[5]]), ]
-	warning(dim(site.table))
+	print(dim(site.table))
 	
-	#warning(site.table[[5]])
+	#print(site.table[[5]])
 	
 	cpg.islands <- levels(as.factor(as.character(site.table[[5]])))
-	warning(paste("Analyzing",length(cpg.islands),"CpG Islands...",sep=" "))
+	print(paste("Analyzing",length(cpg.islands),"CpG Islands...",sep=" "))
 	genes <- array(dim=length(cpg.islands))
 	num.methyl <- array(dim=length(cpg.islands))
 	num.unmethyl <- array(dim=length(cpg.islands))
@@ -103,21 +103,21 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	avg.beta <- site.table[[ncol(site.table)]]
 	bg.up <- length(avg.beta[avg.beta > methyl.cutoff])
 	bg.down <- length(avg.beta[avg.beta < unmethyl.cutoff])
-	#warning(bg.up)
-	#warning(bg.down)
+	#print(bg.up)
+	#print(bg.down)
 	for (i in 1:length(cpg.islands))
 		{
 			island <- cpg.islands[i]
 			data.mat <- site.table[site.table[5] == island,]
 			genes[i] <- as.character(data.mat[1,4])
-			#warning(data.mat)
-			#warning(genes[i])
+			#print(data.mat)
+			#print(genes[i])
 			
 			island.beta <- data.mat[[ncol(data.mat)]]
 			num.methyl[i] <- length(island.beta[island.beta > methyl.cutoff])
 			num.unmethyl[i] <- length(island.beta[island.beta < unmethyl.cutoff])
-			#warning(num.methyl[i])
-			#warning(num.unmethyl[i])
+			#print(num.methyl[i])
+			#print(num.unmethyl[i])
 			if(num.methyl[i] > num.unmethyl[i])
 				{
 					cpg.status[i] <- "Methylated"
@@ -126,9 +126,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				{
 					cpg.status[i] <- "Unmethylated"
 				}#end if(mean(trt.beta) > mean(ref.beta))
-			#warning(cpg.status[i])
+			#print(cpg.status[i])
 			#stop()
-			#warning(summary(test))
+			#print(summary(test))
 			if((num.methyl[i] + num.unmethyl[i]) > 2)
 				{
 					methyl.mat <- matrix(c(num.methyl[i] , num.unmethyl[i], bg.up, bg.down), nrow=2, ncol=2,
@@ -139,9 +139,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				{
 					cpg.island.pvalue[i] <-1
 				}
-			#warning(length(summary(test)[[1]][['Pr(>F)']][1]))
+			#print(length(summary(test)[[1]][['Pr(>F)']][1]))
 
-			#warning(cpg.island.pvalue)
+			#print(cpg.island.pvalue)
 			#stop()
 		}#end for (i in 1:length(cpg.islands))
 	cpg.island.fdr <- p.adjust(cpg.island.pvalue, method="fdr")
@@ -156,11 +156,11 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	for (i in 1:length(cpg.islands))
 		{
 			island <- cpg.islands[i]
-			#warning(island)
+			#print(island)
 			data.mat <- site.table[site.table[5] == island,]
 			genes[i] <- as.character(data.mat[1,4])
-			#warning(data.mat)
-			#warning(genes[i])
+			#print(data.mat)
+			#print(genes[i])
 			
 			trt.beta <- data.mat[[6]]
 			ref.beta <- data.mat[[7]]
@@ -177,15 +177,15 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				{
 					cpg.status[i] <- "Decreased Methylation"
 				}#end if(mean(trt.beta) > mean(ref.beta))
-			#warning(num.methyl[i])
-			#warning(num.unmethyl[i])
+			#print(num.methyl[i])
+			#print(num.unmethyl[i])
 			comb.beta <- c(trt.beta, ref.beta)
 			comb.group <- c(rep(1, length=nrow(data.mat)), rep(2, length=nrow(data.mat)))
 			comb.site <- c(1:nrow(data.mat),1:nrow(data.mat))
-			#warning(comb.group)
-			#warning(comb.site)
+			#print(comb.group)
+			#print(comb.site)
 			test <- aov(comb.beta ~ comb.group + comb.site ) 
-			#warning(summary(test))
+			#print(summary(test))
 			#stop()
 			if(length(comb.site) > 2)
 				{
@@ -203,9 +203,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				{
 					cpg.island.pvalue[i] <-1
 				}
-			#warning(length(summary(test)[[1]][['Pr(>F)']][1]))
+			#print(length(summary(test)[[1]][['Pr(>F)']][1]))
 
-			#warning(cpg.island.pvalue)
+			#print(cpg.island.pvalue)
 			#stop()
 		}#end for (i in 1:length(cpg.islands))
 	cpg.island.fdr <- p.adjust(cpg.island.pvalue, method="fdr")
@@ -223,27 +223,27 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			island <- cpg.islands[i]
 			data.mat <- site.table[site.table[5] == island,]
 			genes[i] <- as.character(data.mat[1,4])
-			#warning(data.mat)
-			#warning(genes[i])
+			#print(data.mat)
+			#print(genes[i])
 
-			#warning(ncol(data.mat))
+			#print(ncol(data.mat))
 			data.beta <- data.mat[,6:(ncol(data.mat)-2)]
-			#warning(dim(data.beta))
+			#print(dim(data.beta))
 			comb.beta <- as.vector(as.matrix(data.beta))
-			#warning(length(comb.beta))
+			#print(length(comb.beta))
 			comb.group <- array()
 			for (j in 1:ncol(data.beta))
 				{
 					comb.group <- c(comb.group,rep(j, length=nrow(data.mat)))
 				}
 			comb.group <- comb.group[-1]
-			#warning(length(comb.group))
-			#warning(comb.group)
+			#print(length(comb.group))
+			#print(comb.group)
 			comb.site <- rep(1:nrow(data.mat),ncol(data.beta))
-			#warning(length(comb.site))
+			#print(length(comb.site))
 			num.methyl[i] <- nrow(data.mat)
 			test <- aov(comb.beta ~ comb.group + comb.site ) 
-			#warning(summary(test))
+			#print(summary(test))
 			if(length(comb.site) > 2)
 				{
 					result <- summary(test)[[1]][['Pr(>F)']][1]
@@ -260,9 +260,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				{
 					cpg.island.pvalue[i] <-1
 				}
-			#warning(length(summary(test)[[1]][['Pr(>F)']][1]))
+			#print(length(summary(test)[[1]][['Pr(>F)']][1]))
 
-			#warning(cpg.island.pvalue)
+			#print(cpg.island.pvalue)
 			#stop()
 		}#end for (i in 1:length(cpg.islands))
 	cpg.island.fdr <- p.adjust(cpg.island.pvalue, method="fdr")
@@ -304,6 +304,6 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	warning(warnings())
+	print(warnings())
 	return(island.table)
 }#end def RNA.deg

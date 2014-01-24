@@ -7,8 +7,8 @@ ttest2 <- function(arr, grp1, grp2)
 {
 	group1 <- as.numeric(arr[grp1])
 	group2 <- as.numeric(arr[grp2])
-	#warning(grp1)
-	#warning(grp2)
+	#print(grp1)
+	#print(grp2)
 	#stop()
 	#require at least 2 replicates
 	if((length(group1[!is.na(group1)]) >=3) & (length(group2[!is.na(group2)]) >=3))
@@ -25,8 +25,8 @@ ttest2 <- function(arr, grp1, grp2)
 
 annova.pvalue <- function(arr, grp.levels)
 {
-	#warning(arr)
-	#warning(grp.levels)
+	#print(arr)
+	#print(grp.levels)
 	
 	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
 	if(length(levels(grp.no.na)) >= 2)
@@ -51,9 +51,9 @@ annova.pvalue <- function(arr, grp.levels)
 
 annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 {
-	#warning(arr)
-	#warning(grp.levels)
-	#warning(pairing.levels)
+	#print(arr)
+	#print(grp.levels)
+	#print(pairing.levels)
 	
 	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
 	
@@ -91,7 +91,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	data.folder<-file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
-	warning("Reading Sample Description File....")
+	print("Reading Sample Description File....")
 	sample.table <- read.table(sample.file, header=F, sep = "\t")
 	samples <- as.character(sample.table[[1]])
 	for (i in 1:length(samples))
@@ -115,10 +115,10 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	beta.values <- beta.table[,6:ncol(beta.table)]
 	annotation.names <- names(beta.table)[1:5]
 	annotations <- beta.table[,1:5]
-	warning(dim(beta.values))
+	print(dim(beta.values))
 
-	#warning(samples)
-	#warning(sample.names)
+	#print(samples)
+	#print(sample.names)
 
 	if(length(samples) != length(sample.names[match(samples, sample.names, nomatch=0)]))
 		{
@@ -136,15 +136,15 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			colnames(beta.values)=samples
 		}
 		
-	warning(dim(beta.values))
-	#warning(samples)
-	#warning(sample.names)
-	#warning(colnames(beta.values))
-	#warning(beta.values[1,])
+	print(dim(beta.values))
+	#print(samples)
+	#print(sample.names)
+	#print(colnames(beta.values))
+	#print(beta.values[1,])
 	rm(beta.table)
 	
 	groups <- levels(sample.group)
-	warning(paste("Group:",groups, sep=" "))
+	print(paste("Group:",groups, sep=" "))
 
 	if(length(groups) != num.groups)
 		{
@@ -157,9 +157,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 
 	if(length(groups) == 1) {
 	col.names <- c(annotation.names)
-	warning("Averaging Beta Values for All Samples")
+	print("Averaging Beta Values for All Samples")
 
-	#warning(beta.values[1:3,])
+	#print(beta.values[1:3,])
 	if(length(samples) > 1)
 		{
 			avg.beta <- apply(beta.values, 1, custom.mean)
@@ -168,18 +168,18 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		{
 			avg.beta<- beta.values
 		}
-	#warning(avg.beta)
+	#print(avg.beta)
 
 	stat.table <- data.frame(stat.table, avg.beta=avg.beta)
 	} else if(length(groups) == 2) {
-	warning("Differential Methylation Stats for 2 Groups with Reference")
+	print("Differential Methylation Stats for 2 Groups with Reference")
 	trt <- groups[groups != ref]
-	#warning(trt)
-	#warning(ref)
+	#print(trt)
+	#print(ref)
 	trt.samples <- samples[which(sample.group == trt)]
-	#warning(trt.samples)
+	#print(trt.samples)
 	ref.samples <- samples[which(sample.group == ref)]
-	#warning(ref.samples)
+	#print(ref.samples)
 
 	all.indices <- 1:length(samples)
 	trt.indices <- all.indices[which(sample.group == trt)]
@@ -195,7 +195,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 
 	if(paired)
 		{
-			warning("Factor in Paired Samples")
+			print("Factor in Paired Samples")
 			beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
 		}#end if(paired)
 	else
@@ -203,39 +203,39 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			beta.pvalue <- apply(beta.values, 1, ttest2, grp1=trt.indices, grp2=ref.indices)
 		}#end else
 
-	#warning(beta.pvalue)
+	#print(beta.pvalue)
 		
 	beta.fdr <- p.adjust(beta.pvalue, method="fdr")
 
-	#warning(names(beta.values))
-	warning(dim(stat.table))
-	#warning(length(annotation.names))
-	#warning(length(trt.avg.beta))
-	#warning(length(ref.avg.beta))
-	#warning(length(delta.beta))
-	#warning(length(beta.pvalue))
-	#warning(length(beta.fdr))
+	#print(names(beta.values))
+	print(dim(stat.table))
+	#print(length(annotation.names))
+	#print(length(trt.avg.beta))
+	#print(length(ref.avg.beta))
+	#print(length(delta.beta))
+	#print(length(beta.pvalue))
+	#print(length(beta.fdr))
 
 	stat.table <- data.frame(stat.table, trt.beta = trt.avg.beta, ref.beta = ref.avg.beta, delta.beta = delta.beta, pvalue = beta.pvalue, fdr = beta.fdr)
-	warning(dim(stat.table))
-	#warning(names(stat.table))
+	print(dim(stat.table))
+	#print(names(stat.table))
 	#test <- c(annotation.names,
 	#							paste(trt,"avg.beta",sep="."),
 	#							paste(ref,"avg.beta",sep="."),
 	#							paste(trt,"vs",ref,"delta.beta",sep="."),
 	#							paste(trt,"vs",ref,"pvalue",sep="."),
 	#							paste(trt,"vs",ref,"fdr",sep="."))
-	#warning(test)
-	#warning(names(stat.table))
+	#print(test)
+	#print(names(stat.table))
 	colnames(stat.table) <- c(annotation.names,
 								paste(trt,"avg.beta",sep="."),
 								paste(ref,"avg.beta",sep="."),
 								paste(trt,"vs",ref,"delta.beta",sep="."),
 								paste(trt,"vs",ref,"pvalue",sep="."),
 								paste(trt,"vs",ref,"fdr",sep="."))
-	#warning(names(stat.table))
+	#print(names(stat.table))
 	} else if(length(groups) > 2) {
-	warning("Calculating Average Beta and ANOVA p-values")
+	print("Calculating Average Beta and ANOVA p-values")
 	col.names <- c(annotation.names)
 
 	for (i in 1:length(groups))
@@ -250,7 +250,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 
 	if(paired)
 		{
-			warning("Factor in Paired Samples")
+			print("Factor in Paired Samples")
 			pvalue <- apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group)
 		}#end if(paired)
 	else
@@ -263,7 +263,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	stat.table <- data.frame(stat.table, anova.pvalue = pvalue, anova.fdr = anova.fdr)
 	colnames(stat.table) <- col.names
 	} else {
-	warning("Invalid groups specified in sample description file!")
+	print("Invalid groups specified in sample description file!")
 	}
 
 	stat.table <- stat.table[order(stat.table$Chr, stat.table$Loc), ]
@@ -274,7 +274,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		txtfile <- file.path(data.folder, paste(project.name,"_CpG_site_stats.txt",sep=""))
 		write.table(stat.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
-		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
+		print(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
 	#create .wig file
@@ -286,7 +286,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	system(cmd, intern=TRUE, wait=TRUE)
 	
 	#filter sites
-	warning(dim(stat.table))
+	print(dim(stat.table))
 	filter.table <- stat.table
 	if(length(groups) == 1) {
 		temp.avg.beta <- stat.table$avg.beta
@@ -306,9 +306,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		temp.fdr <- stat.table[[ncol(stat.table)]]
 		filter.table <- filter.table[(temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff),]
 	} else {
-	warning("Invalid groups specified in sample description file!")
+	print("Invalid groups specified in sample description file!")
 	}
-	warning(dim(filter.table))
+	print(dim(filter.table))
 
 	if(output.format == 'xls'){
 		xlsfile <- file.path(site.folder, paste(project.name,"_CpG_site_filter.xlsx",sep=""))
@@ -320,6 +320,6 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	warning(warnings())
+	print(warnings())
 	return(filter.table)
 }#end def RNA.deg

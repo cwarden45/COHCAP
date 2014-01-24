@@ -4,7 +4,7 @@
 	dir.create(data.folder, showWarnings=FALSE)
 	
 	beta.table <- read.table(beta.file, header=T, sep="\t")
-	warning(dim(beta.table))
+	print(dim(beta.table))
 	data.mat <- beta.table[,2:ncol(beta.table)]
 	
 	if(platform == "450k-UCSC"){
@@ -30,8 +30,8 @@
 		}
 	ann.mat <- cbind(matched.annotations,data.mat)
 	
-	warning(dim(ann.mat))
-	#warning(head(ann.mat))
+	print(dim(ann.mat))
+	#print(head(ann.mat))
 	if(output.format == 'xls'){
 		xlsfile <- file.path(data.folder, paste(project.name,"_annotated_CpG_sites.xlsx",sep=""))
 		WriteXLS("ann.mat", ExcelFileName = xlsfile)
@@ -42,6 +42,6 @@
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	warning(warnings())
+	print(warnings())
 	return(ann.mat)
 }#end def RNA.norm

@@ -43,5 +43,5 @@
 	unlink(temp.mD.eU)
 	unlink(temp.methyl)
 	
-	warning(warnings())
+	print(warnings())
 }#end def RNA.deg
