@@ -32,7 +32,8 @@ cor.test.pvalue <- function(x)
 	Perl.Path <- file.path(path.package("COHCAP"), "Perl")
 	perl.script <- file.path(Perl.Path , "integrate_island.pl")
 	cmd <- paste("perl",perl.script, expr.file, temp.methyl, temp.paired, sep=" ")
-	system(cmd, intern=TRUE, wait=TRUE)
+	res <- system(cmd, intern=TRUE, wait=TRUE)
+	warning(res)
 
 	input.table <- read.table(temp.paired, header=T, sep = "\t")
 	#print(head(input.table))
@@ -132,6 +133,4 @@ cor.test.pvalue <- function(x)
 
 	unlink(temp.paired)
 	unlink(temp.methyl)
-	
-	print(warnings())
 }#end def RNA.deg

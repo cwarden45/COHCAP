@@ -304,6 +304,5 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	print(warnings())
 	return(island.table)
 }#end def RNA.deg

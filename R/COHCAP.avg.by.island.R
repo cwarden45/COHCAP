@@ -406,6 +406,5 @@ if(plot.box)
 			}#end for (1 in 1:length(sig.islands))
 	}
 	
-	print(warnings())
 	return(island.avg.table)
 }#end def RNA.deg

@@ -2,3 +2,5 @@ v0.99.4
 Update contact information; fix potential bug in ttest2 function
 v0.99.5
 Switch standard output in warnings() back to print()
+v0.99.6
+Provide warning() for system() feedback

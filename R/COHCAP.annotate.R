@@ -42,6 +42,5 @@
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	print(warnings())
 	return(ann.mat)
 }#end def RNA.norm

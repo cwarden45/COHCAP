@@ -190,5 +190,4 @@ if(length(samples) > 1)
 		dev.off()
 	}#end 
 
-print(warnings())
 }#end def RNA.qc

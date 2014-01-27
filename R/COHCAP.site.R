@@ -283,7 +283,8 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	perl.script <- file.path(Perl.Path , "create_wig_files.pl")
 	write.table(stat.table, temp.stat.file, quote=F, row.names=F, sep="\t")
 	cmd <- paste("perl",perl.script, temp.stat.file, wig.folder, sep=" ")
-	system(cmd, intern=TRUE, wait=TRUE)
+	res <- system(cmd, intern=TRUE, wait=TRUE)
+	warning(res)
 	
 	#filter sites
 	print(dim(stat.table))
@@ -320,6 +321,5 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	print(warnings())
 	return(filter.table)
 }#end def RNA.deg
