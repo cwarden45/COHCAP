@@ -14,9 +14,9 @@
 	
 	Perl.Path <- file.path(path.package("COHCAP"), "Perl")
 	perl.script <- file.path(Perl.Path , "integrate_site.pl")
-	cmd <- paste("perl",perl.script, expr.file, temp.methyl, temp.mD.eU, temp.mU.eD, expr.pvalue, expr.fdr, expr.fc, sep=" ")
+	cmd <- paste("perl \"",perl.script,"\" \"", expr.file,"\" \"",temp.methyl,"\" \"",temp.mD.eU,"\" \"",temp.mU.eD,"\" ",expr.pvalue," ", expr.fdr," ",expr.fc, sep="")
 	res <- system(cmd, intern=TRUE, wait=TRUE)
-	warning(res)
+	message(res)
 	
 	mU.eD <- read.table(temp.mU.eD, header=T, sep="\t")
 	if(output.format == 'xls'){

@@ -282,9 +282,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	Perl.Path <- file.path(path.package("COHCAP"), "Perl")
 	perl.script <- file.path(Perl.Path , "create_wig_files.pl")
 	write.table(stat.table, temp.stat.file, quote=F, row.names=F, sep="\t")
-	cmd <- paste("perl",perl.script, temp.stat.file, wig.folder, sep=" ")
+	cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
 	res <- system(cmd, intern=TRUE, wait=TRUE)
-	warning(res)
+	message(res)
 	
 	#filter sites
 	print(dim(stat.table))

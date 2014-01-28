@@ -2,7 +2,7 @@
 {
 	Perl.Path <- file.path(path.package("COHCAP"), "Perl")
 	perl.script <- file.path(Perl.Path , "find_bismark_CpG_sites.pl")
-	cmd <- paste("perl",perl.script, methyl.folder, cohcap.inputfile, gene.table, targeted.regions, annotation.file, shore.length, sep=" ")
+	cmd <- paste("perl \"",perl.script,"\" \"", methyl.folder,"\" \"", cohcap.inputfile,"\" \"", gene.table,"\" \"", targeted.regions,"\" \"", annotation.file,"\" ", shore.length, sep="")
 	res <- system(cmd, intern=TRUE, wait=TRUE)
-	warning(res)
+	message(res)
 }#end def BSSeq.anno

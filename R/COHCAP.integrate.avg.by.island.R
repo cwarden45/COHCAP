@@ -31,9 +31,9 @@ cor.test.pvalue <- function(x)
 	
 	Perl.Path <- file.path(path.package("COHCAP"), "Perl")
 	perl.script <- file.path(Perl.Path , "integrate_island.pl")
-	cmd <- paste("perl",perl.script, expr.file, temp.methyl, temp.paired, sep=" ")
+	cmd <- paste("perl \"",perl.script,"\" \"", expr.file,"\" \"", temp.methyl,"\" \"", temp.paired,"\"", sep="")
 	res <- system(cmd, intern=TRUE, wait=TRUE)
-	warning(res)
+	message(res)
 
 	input.table <- read.table(temp.paired, header=T, sep = "\t")
 	#print(head(input.table))
