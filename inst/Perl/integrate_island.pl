@@ -2,7 +2,6 @@
 
 use warnings;
 use strict;
-use diagnostics;
 use Cwd 'abs_path'; 
 
 $| =1;

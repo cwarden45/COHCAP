@@ -6,3 +6,5 @@ v0.99.6
 Provide warning() for system() feedback
 v0.99.7
 Put Perl file paths in quotes; change warning() to message() for system() result
+v0.99.8
+Remove diagnostics module dependency in Perl scripts.
