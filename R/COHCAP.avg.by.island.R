@@ -150,7 +150,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	print(dim(site.table))
 	
 	cpg.islands <- levels(as.factor(as.character(site.table[[5]])))
-	print(paste("Analyzing",length(cpg.islands),"CpG Islands...",sep=" "))
+	print(paste("Annotations for ",length(cpg.islands),"CpG Islands...",sep=" "))
 
 	genes <- array(dim=length(cpg.islands))
 	island.values<- matrix(nrow=length(cpg.islands), ncol=ncol(beta.values))
