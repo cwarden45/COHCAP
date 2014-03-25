@@ -12,3 +12,5 @@ v0.99.9
 Presumably fixed bug (didn't record update in CHANGES file)
 v0.99.10
 Changed average-by-island message.
+v0.99.11
+Fixed bug caused when unmethyl.cutoff > methyl.cutoff; changed average-by-island message

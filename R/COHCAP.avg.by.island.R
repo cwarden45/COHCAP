@@ -150,7 +150,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	print(dim(site.table))
 	
 	cpg.islands <- levels(as.factor(as.character(site.table[[5]])))
-	print(paste("Annotations for ",length(cpg.islands),"CpG Islands...",sep=" "))
+	print(length(cpg.islands))
 
 	genes <- array(dim=length(cpg.islands))
 	island.values<- matrix(nrow=length(cpg.islands), ncol=ncol(beta.values))
@@ -333,9 +333,17 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		temp.pvalue <- island.table[[6]]
 		temp.fdr <- island.table[[7]]
 		
-		temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-		temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-		filter.table <- rbind(temp.methyl.up, temp.methyl.down)
+		if(unmethyl.cutoff > methyl.cutoff)
+			{
+				print("Ignoring methylated and unmethylated cutoffs because unmethyl.cutoff > methyl.cutoff!")
+				filter.table <- filter.table[(temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+			}
+		else
+			{
+				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				filter.table <- rbind(temp.methyl.up, temp.methyl.down)
+			}
 	} else if(length(groups) > 2) {
 		temp.pvalue <- island.table[[ncol(island.table) -1]]
 		temp.fdr <- island.table[[ncol(island.table)]]

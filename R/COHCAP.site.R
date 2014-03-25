@@ -299,9 +299,17 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		temp.pvalue <- stat.table[[9]]
 		temp.fdr <- stat.table[[10]]
 		
-		temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-		temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-		filter.table <- rbind(temp.methyl.up, temp.methyl.down)
+		if(unmethyl.cutoff > methyl.cutoff)
+			{
+				print("Ignoring methylated and unmethylated cutoffs because unmethyl.cutoff > methyl.cutoff!")
+				filter.table <- filter.table[(temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+			}
+		else
+			{
+				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				filter.table <- rbind(temp.methyl.up, temp.methyl.down)
+			}
 	} else if(length(groups) > 2) {
 		temp.pvalue <- stat.table[[ncol(stat.table) -1]]
 		temp.fdr <- stat.table[[ncol(stat.table)]]
