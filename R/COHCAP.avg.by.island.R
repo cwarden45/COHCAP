@@ -77,7 +77,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 }#end def annova.pvalue
 
-`COHCAP.avg.by.island` <-function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, paired=FALSE, ref="none", output.format = "xls")
+`COHCAP.avg.by.island` <-function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, paired=FALSE, ref="none", output.format = "xls", gene.centric=TRUE)
 {
 	island.folder<-file.path(project.folder,"CpG_Island")
 	dir.create(island.folder, showWarnings=FALSE)
@@ -169,12 +169,19 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			if(nrow(data.mat) >= num.sites)
 				{
 					info.mat <- site.table[site.table[5] == island,]
-					genes[i] <- as.character(info.mat[1,4])
+					genes[i] <- NA
+					if(length(levels(as.factor(as.character(info.mat[[4]])))) == 1)
+						{
+							genes[i] <- as.character(info.mat[1,4])
+						}
 					island.values[i,]=apply(data.mat,2,mean, na.rm=T)
 				}#end if(nrow(data.mat) >= num.sites)
 		}#end for (i in 1:length(cpg.islands))
 	island.avg.table <- data.frame(island=cpg.islands, gene=genes, island.values)
-	island.avg.table <- island.avg.table[!is.na(island.avg.table[[2]]), ]
+	if(gene.centric)
+		{
+			island.avg.table <- island.avg.table[!is.na(island.avg.table[[2]]), ]
+		}
 	annotations <- island.avg.table[,1:2]
 	annotation.names <- c("island","gene")
 	beta.values <- island.avg.table[,3:ncol(island.avg.table)]
@@ -383,7 +390,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-if(plot.box)
+if((plot.box) & (nrow(island.avg.table) > 0))
 	{
 		print("Plotting Significant Islands....")
 		plot.folder<-file.path(island.folder,paste(project.name,"_Box_Plots",sep=""))

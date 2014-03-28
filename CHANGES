@@ -14,3 +14,5 @@ v0.99.10
 Changed average-by-island message.
 v0.99.11
 Fixed bug caused when unmethyl.cutoff > methyl.cutoff; changed average-by-island message
+v0.99.12
+Ignore ambiguous gene annotations; add parameter to focus on only CpG islands mapped to genes

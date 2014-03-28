@@ -15,7 +15,7 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
 				project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3,
 				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
 				num.groups=2, num.sites=4, plot.box=TRUE, paired=FALSE, ref="none",
-				output.format = "xls")
+				output.format = "xls", gene.centric=TRUE)
 }
 \arguments{
   \item{sample.file}{
@@ -82,6 +82,10 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
 }
   \item{output.format}{
 	Format for output tables: 'xls' for Excel file, 'txt' for tab-delimited text file
+}
+  \item{gene.centric}{
+	Should CpG islands not mapped to genes be ignored?
+	Default: TRUE (Recommended setting for integration with gene expession data)
 }
 }
 
