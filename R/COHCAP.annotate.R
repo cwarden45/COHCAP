@@ -16,8 +16,10 @@
 	} else if(platform == "27k"){
 		data(COHCAP.27k)
 		annotation.table <- COHCAP.27k
-	} else if((platform == "custom") && (platform != NULL)) {
+	} else if((platform == "custom") & (length(annotation.file) == 1)) {
+		print(paste("Using custom island/gene annotations from : ",annotation.file, sep=""))
 		annotation.table <- read.table(annotation.file, sep="\t", header=T)
+		print(dim(annotation.table))
 	} else{
 		stop("You need to provide a valid annotation platform and/or custom annotation file!")
 	}
