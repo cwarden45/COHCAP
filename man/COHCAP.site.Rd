@@ -34,12 +34,12 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
 }
   \item{methyl.cutoff}{
 	Minimum beta or percentage methylation value to be used to define a methylated CpG site.
-	Default is 0.7 (used for beta values), which would correspond to 70% methylation.
+	Default is 0.7 (used for beta values), which would correspond to 70 percent methylation.
 	Used for either 1-group or 2-group comparison.
 }
   \item{unmethyl.cutoff}{
 	Minimum beta or percentage methylation value to be used to define an unmethylated CpG site.
-	Default is 0.3 (used for beta values), which would correspond to 30% methylation.
+	Default is 0.3 (used for beta values), which would correspond to 30 percent methylation.
 	Used for either 1-group or 2-group comparison.
 }
   \item{delta.beta.cutoff}{

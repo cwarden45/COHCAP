@@ -326,6 +326,8 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	print("Invalid groups specified in sample description file!")
 	}
 	print(dim(filter.table))
+	filter.table = filter.table[!is.na(filter.table$SiteID),]
+	print(dim(filter.table))
 
 	if(output.format == 'xls'){
 		xlsfile <- file.path(site.folder, paste(project.name,"_CpG_site_filter.xlsx",sep=""))
