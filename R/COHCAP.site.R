@@ -185,11 +185,19 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	trt.indices <- all.indices[which(sample.group == trt)]
 	ref.indices <- all.indices[which(sample.group == ref)]
 
-	trt.beta.values <- beta.values[, trt.indices]
-	ref.beta.values <- beta.values[, ref.indices]
-
-	trt.avg.beta <- apply(trt.beta.values, 1, custom.mean)
-	ref.avg.beta <- apply(ref.beta.values, 1, custom.mean)
+	if (length(trt.indices) == 1){
+		trt.avg.beta = beta.values[, trt.indices]
+	} else {
+		trt.beta.values <- beta.values[, trt.indices]	
+		trt.avg.beta <- apply(trt.beta.values, 1, custom.mean)
+	}
+	
+	if (length(ref.indices) == 1){
+		ref.avg.beta = beta.values[, ref.indices]
+	} else {
+		ref.beta.values <- beta.values[, ref.indices]
+		ref.avg.beta <- apply(ref.beta.values, 1, custom.mean)
+	}
 
 	delta.beta <- trt.avg.beta - ref.avg.beta
 
