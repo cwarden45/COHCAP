@@ -277,7 +277,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		xlsfile <- file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Site.xlsx",sep=""))
 		WriteXLS("island.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'txt'){
-		txtfile <- file.path(integrate.folder, paste(project.name,"_CpG_island_stats-Avg_by_Site.txt",sep=""))
+		txtfile <- file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Site.txt",sep=""))
 		write.table(island.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
@@ -298,7 +298,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		xlsfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Site.xlsx",sep=""))
 		WriteXLS("island.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'txt'){
-		txtfile <- file.path(integrate.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Site.txt",sep=""))
+		txtfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Site.txt",sep=""))
 		write.table(island.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))

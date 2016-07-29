@@ -7,4 +7,5 @@ export(COHCAP.annotate,
 		COHCAP.avg.by.island,
 		COHCAP.integrate.avg.by.site,
 		COHCAP.integrate.avg.by.island,
+		COHCAP.denovo,
 		COHCAP.BSSeq.preprocess)
