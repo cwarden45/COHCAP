@@ -11,7 +11,7 @@ Only works with 2-group comparison result.  Does not map regions to genes or int
 }
 \usage{
 COHCAP.denovo(site.table, project.name, project.folder,
-				min.sites = 4, max.dist = 100, output.format = "xls")
+				min.sites = 4, max.dist = 500, output.format = "xls")
 }
 \arguments{
  \item{site.table}{
@@ -25,7 +25,7 @@ COHCAP.denovo(site.table, project.name, project.folder,
   \item{project.folder}{
 	Folder for COHCAP output files.
 }
- \item{num.sites}{
+ \item{min.sites}{
 	Minimum number of differentially methylated sites to define a differentially methylated CpG island.
 }
  \item{max.dist}{

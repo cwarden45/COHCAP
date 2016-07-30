@@ -10,6 +10,7 @@
 	cluster.start = c()
 	cluster.stop = c()
 	cluster.num.sites = c()
+	cluster.status = c()
 
 	site.chrs = as.character(levels(as.factor(as.character(site.table$Chr))))
 	
@@ -55,6 +56,11 @@
 								cluster.stop = c(cluster.stop, temp.region.stop)
 								
 								cluster.num.sites = c(cluster.num.sites, temp.site.count)
+								if (temp.delta.beta > 0){
+									cluster.status = c(cluster.status,"Increased Methylation")
+								}else{
+									cluster.status = c(cluster.status,"Decreased Methylation")
+								}
 							}#end if(temp.site.count >= min.sites)
 
 							temp.region.chr = as.character(chr.table$Chr[i])
@@ -77,6 +83,11 @@
 						cluster.stop = c(cluster.stop, temp.region.stop)
 										
 						cluster.num.sites = c(cluster.num.sites, temp.site.count)
+						if (temp.delta.beta > 0){
+							cluster.status = c(cluster.status,"Increased Methylation")
+						}else{
+							cluster.status = c(cluster.status,"Decreased Methylation")
+						}
 					}#end if (temp.hits > 1)
 
 					temp.region.chr = as.character(chr.table$Chr[i])
@@ -94,10 +105,16 @@
 				cluster.stop = c(cluster.stop, temp.region.stop)
 								
 				cluster.num.sites = c(cluster.num.sites, temp.site.count)
+				if (temp.delta.beta > 0){
+					cluster.status = c(cluster.status,"Increased Methylation")
+				}else{
+					cluster.status = c(cluster.status,"Decreased Methylation")
+				}
 			}#end if (temp.hits > 1)
 		}#end if (nrow(chr.table) > min.sites)
 	}#end for (site.chr in site.chrs)
-	cluster.table = data.frame(hg19.chr=cluster.chr, hg19.start=cluster.start, hg19.stop=cluster.stop, cluster.num.sites=cluster.num.sites)
+	cluster.table = data.frame(hg19.chr=cluster.chr, hg19.start=cluster.start, hg19.stop=cluster.stop,
+								cluster.num.sites=cluster.num.sites,cluster.status=cluster.status)
 	
 	if(nrow(cluster.table) > 0){
 		print(dim(cluster.table))
