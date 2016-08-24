@@ -327,9 +327,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	#filter sites
+	#filter CpG islands
 	print(dim(island.table))
-	filter.table <- island.table
+	filter.table = island.table
 	if(length(groups) == 1) {
 		temp.avg.beta <- island.table$avg.beta
 		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
@@ -372,8 +372,6 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
-	rm(filter.table)
-
 	
 	print(dim(island.avg.table))
 	island.avg.table <- island.avg.table[match(sig.islands,island.avg.table[[1]],nomatch=0),]
@@ -421,5 +419,6 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 			}#end for (1 in 1:length(sig.islands))
 	}
 	
-	return(island.avg.table)
+	integrate.tables = list(beta.table=island.avg.table, filtered.island.stats=filter.table)
+	return(integrate.tables)
 }#end def RNA.deg

@@ -71,12 +71,12 @@ The dataset is significantly truncated for testing purposes.
 <<inputVariables>>=
 library("COHCAP")
 
-dir <- system.file("extdata", package="COHCAP")
-beta.file <- file.path(dir,"GSE42308_truncated.txt")
-sample.file <- file.path(dir,"sample_GSE42308.txt")
-expression.file <- file.path(dir,"expression-Average_by_Island_truncated.txt")
-project.folder <- getwd()
-project.name <- "450k_avg_by_island_test"
+dir = system.file("extdata", package="COHCAP")
+beta.file = file.path(dir,"GSE42308_truncated.txt")
+sample.file = file.path(dir,"sample_GSE42308.txt")
+expression.file = file.path(dir,"expression-Average_by_Island_truncated.txt")
+project.folder = getwd()
+project.name = "450k_avg_by_island_test"
 @ 
 The code for this example assumes all files should be created in the current working directory.
 However, you can specify the input and output files in any location (using
@@ -85,7 +85,7 @@ the complete file path).
 \section{Data Annotation}
 To normalize DNA Methylation beta or percentage methylation values, run the following function 
 <<annotation>>=
-beta.table <- COHCAP.annotate(beta.file, project.name, project.folder,
+beta.table = COHCAP.annotate(beta.file, project.name, project.folder,
 				platform="450k-UCSC")
 @
 The output is standard data frame with samples in rows and genes in columns, which is also saved as an Excel file in the "Raw\textunderscore Data" folder.
@@ -100,7 +100,7 @@ The QC plots are created in the "QC" folder.
 \section{CpG Site Statistics}
 To display calculate CpG site statistics, filter for differentially methylated sites, and/or create .wig files, run the following function 
 <<site>>=
-filtered.sites <- COHCAP.site(sample.file, beta.table, project.name,
+filtered.sites = COHCAP.site(sample.file, beta.table, project.name,
 				project.folder, ref="parental")
 @
 The filtered list of CpG sites are created in the "CpG\textunderscore Site" folder, which is also the data frame returned by the function.
@@ -110,7 +110,7 @@ If .wig files are created (default setting), they can be found within the "CpG\t
 \section{CpG Island Analysis}
 To display calculate CpG island statistics, filter for differentially methylated islands, and/or create box-plots for differentially methylated islands, run the following function 
 <<island>>=
-filtered.islands <- COHCAP.avg.by.island(sample.file, filtered.sites, beta.table,
+island.list = COHCAP.avg.by.island(sample.file, filtered.sites, beta.table,
 				project.name, project.folder, ref="parental")
 @
 The filtered list of CpG islands (with box-plots, if applicable) are created in the "CpG\textunderscore Island" folder.  Box-plots can only be created using the "Average by Island" workflow (shown above)
@@ -123,7 +123,7 @@ The function returns a data frame that can be used for integration with gene exp
 \section{Integration with Gene Expression}
 To identify genes inverse expression changes (with scatterplots for visualization), please run the following function:
 <<integrate>>=
-COHCAP.integrate.avg.by.island(filtered.islands, project.name, project.folder,
+COHCAP.integrate.avg.by.island(island.list, project.name, project.folder,
 				expression.file, sample.file)
 @
 The function doesn't return any value and represents the last possible step in the COHCAP pipeline.

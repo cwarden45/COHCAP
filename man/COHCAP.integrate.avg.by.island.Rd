@@ -13,14 +13,18 @@ Lists of genes with negative expression trends will be created in the "Integrate
 All correlation stats are provided in the "Raw_Data" folder.
 }
 \usage{
-COHCAP.integrate.avg.by.island(beta.table, project.name, project.folder,
+COHCAP.integrate.avg.by.island(island.list, project.name, project.folder,
 				expr.file, sample.file, cor.pvalue.cutoff=0.05,
 				cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE,
 				output.format = "xls")
 }
 \arguments{
- \item{beta.table}{
-	Data frame with beta values averaged across differentially methylated sites (islands in rows, samples in columns).  This table is already filtered for differentially methylated CpG islands.
+ \item{island.list}{
+	list with two data frames:
+ 
+	island.list$filtered.island.stats = differential methylation results for CpG Islands
+ 
+	island.list$beta.table = Data frame with beta values averaged across differentially methylated sites (islands in rows, samples in columns).  This table is already filtered for differentially methylated CpG islands.
 	
 	The COHCAP.avg.by.island function automatically creates this file.
 }
@@ -71,9 +75,9 @@ beta.table <- COHCAP.annotate(beta.file, project.name, project.folder,
 				platform="450k-UCSC")
 filtered.sites <- COHCAP.site(sample.file, beta.table, project.name,
 				project.folder, ref="parental")
-filtered.islands <- COHCAP.avg.by.island(sample.file, filtered.sites,
+island.list <- COHCAP.avg.by.island(sample.file, filtered.sites,
 				beta.table, project.name, project.folder, ref="parental")
-COHCAP.integrate.avg.by.island(filtered.islands, project.name,
+COHCAP.integrate.avg.by.island(island.list, project.name,
 				project.folder, expression.file, sample.file)
 }
 

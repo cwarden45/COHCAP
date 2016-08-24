@@ -25,6 +25,7 @@
 	}
 	
 	matched.annotations <- annotation.table[match(beta.table$SiteID, annotation.table$SiteID, nomatch=0),]
+	print(dim(matched.annotations))
 	data.mat <- data.mat[match(matched.annotations$SiteID, beta.table$SiteID, nomatch=0),]
 	if(nrow(data.mat) != nrow(matched.annotations))
 		{

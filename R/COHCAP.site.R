@@ -82,12 +82,6 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	site.folder<-file.path(project.folder,"CpG_Site")
 	dir.create(site.folder, showWarnings=FALSE)
 	
-	if(create.wig)
-		{
-			wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
-			dir.create(wig.folder, showWarnings=FALSE)
-		}#end if(create.wig)
-	
 	data.folder<-file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
@@ -284,15 +278,21 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	} else {
 		print(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
-	
-	#create .wig file
-	temp.stat.file <- file.path(wig.folder, "temp.txt")
-	Perl.Path <- file.path(path.package("COHCAP"), "Perl")
-	perl.script <- file.path(Perl.Path , "create_wig_files.pl")
-	write.table(stat.table, temp.stat.file, quote=F, row.names=F, sep="\t")
-	cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
-	res <- system(cmd, intern=TRUE, wait=TRUE)
-	message(res)
+
+	if(create.wig)
+		{
+			#create .wig file
+			wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
+			dir.create(wig.folder, showWarnings=FALSE)
+
+			temp.stat.file <- file.path(wig.folder, "temp.txt")
+			Perl.Path <- file.path(path.package("COHCAP"), "Perl")
+			perl.script <- file.path(Perl.Path , "create_wig_files.pl")
+			write.table(stat.table, temp.stat.file, quote=F, row.names=F, sep="\t")
+			cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
+			res <- system(cmd, intern=TRUE, wait=TRUE)
+			message(res)
+		}#end if(create.wig)
 	
 	#filter sites
 	print(dim(stat.table))

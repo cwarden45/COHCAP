@@ -1,3 +1,6 @@
+v1.13.4
+Fix bug when create.wig is set to FALSE in COHCAP.site().  Add extra troubleshooting statistic to COHCAP.annotate()
+Update documentation.  Change COHCAP.integrate.avg.by.island() and COHCAP.avg.by.island()output files.
 v1.13.3
 Added status column to COHCAP.denovo output
 v1.13.2

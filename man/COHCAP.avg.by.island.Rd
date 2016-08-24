@@ -28,7 +28,7 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
 	The COHCAP.annotate function automatically creates this file.
 }
  \item{site.table}{
-	Data frame with CpG site statistics (one row per CpG site) and CpG site annotations (in columns 2-5).
+	Data frame with differentially methylated CpG site statistics (one row per CpG site) and CpG site annotations (in columns 2-5).
 	
 	The COHCAP.site function automatically creates this file.
 }
@@ -39,25 +39,25 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
 	Folder for COHCAP output files
 }
   \item{methyl.cutoff}{
-	Minimum beta or percentage methylation value to be used to define a methylated CpG site.
+	Minimum beta or percentage methylation value to be used to define a methylated CpG island.
 	Default is 0.7 (used for beta values), which would correspond to 70% methylation.
 	Used for either 1-group or 2-group comparison.
 }
   \item{unmethyl.cutoff}{
-	Minimum beta or percentage methylation value to be used to define an unmethylated CpG site.
+	Minimum beta or percentage methylation value to be used to define an unmethylated CpG island.
 	Default is 0.3 (used for beta values), which would correspond to 30% methylation.
 	Used for either 1-group or 2-group comparison.
 }
   \item{delta.beta.cutoff}{
-	The minimum absolute value for delta-beta values (mean treatment beta - mean reference beta) to define a differentially methylated CpG site.
+	The minimum absolute value for delta-beta values (mean treatment beta - mean reference beta) to define a differentially methylated CpG island.
 	Only used for 2-group comparison.
 }
   \item{pvalue.cutoff}{
-	Maximum p-value allowed to define a site as differentially methylated.
+	Maximum p-value allowed to define an island as differentially methylated.
 	Used only for comparisons with at least 2 groups (with 3 replicates per group)
 }
   \item{fdr.cutoff}{
-	Maximum False Discovery Rate (FDR) allowed to define a site as differentially methylated.
+	Maximum False Discovery Rate (FDR) allowed to define an island as differentially methylated.
 	Used only for comparisons with at least 2 groups (with 3 replicates per group)
 }
  \item{num.groups}{
@@ -90,8 +90,10 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
 }
 
 \value{
-	Data frame of average beta (or percentage methylation) values across differentially methylated sites within a differentially methylated CpG island..	
-	This data frame can be used for integration analysis.
+	List (island.list) with 2 data frames to be used for integration analysis:
+	
+	beta.table = data frame of average beta (or percentage methylation) values across differentially methylated sites within a differentially methylated CpG island
+	filtered.island.stats = differential methylation results for CpG Islands
 }
 
 \examples{
@@ -107,7 +109,7 @@ beta.table <- COHCAP.annotate(beta.file, project.name, project.folder,
 				platform="450k-UCSC")
 filtered.sites <- COHCAP.site(sample.file, beta.table, project.name,
 				project.folder, ref="parental")
-filtered.islands <- COHCAP.avg.by.island(sample.file, filtered.sites,
+island.list <- COHCAP.avg.by.island(sample.file, filtered.sites,
 				beta.table, project.name, project.folder, ref="parental")
 }
 
