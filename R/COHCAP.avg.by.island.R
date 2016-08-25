@@ -404,13 +404,15 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 		
 		for (i in 1:length(sig.islands))
 			{
-				island <- as.character(island.avg.table[i,1])
-				gene <- as.character(island.avg.table[i,2])
+				island = as.character(island.avg.table[i,1])
+				gene = as.character(island.avg.table[i,2])
 				
-				island <- gsub(":","_",island)
-				island <- gsub("-","_",island)
-				plot.file <- file.path(plot.folder, paste(gene,"_",island,".pdf", sep=""))
-				data <- t(island.avg.table[i,3:ncol(island.avg.table)])
+				gene = gsub(";","_",gene)
+				
+				island = gsub(":","_",island)
+				island = gsub("-","_",island)
+				plot.file = file.path(plot.folder, paste(gene,"_",island,".pdf", sep=""))
+				data = t(island.avg.table[i,3:ncol(island.avg.table)])
 				
 				pdf(file=plot.file)
 				plot(sample.group, data, pch=20, col=colors,
