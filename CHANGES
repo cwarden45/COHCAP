@@ -1,3 +1,5 @@
+v1.13.6
+Fix COHCAP.avg.by.site() delta beta bug
 v1.13.5
 Fix possible COHCAP.avg.by.island() bug when outputing boxplots with semi-colons in name
 v1.13.4

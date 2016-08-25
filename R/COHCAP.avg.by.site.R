@@ -96,6 +96,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	genes <- array(dim=length(cpg.islands))
 	num.methyl <- array(dim=length(cpg.islands))
 	num.unmethyl <- array(dim=length(cpg.islands))
+	delta.beta <- array(dim=length(cpg.islands))
 	cpg.island.pvalue <- array(dim=length(cpg.islands))
 	cpg.status <- array(dim=length(cpg.islands))
 
@@ -164,11 +165,11 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			
 			trt.beta <- data.mat[[6]]
 			ref.beta <- data.mat[[7]]
-			mean.trt.beta <- mean(trt.beta)
-			mean.ref.beta <- mean(ref.beta)
-			num.methyl[i] <- length(trt.beta[mean.trt.beta > mean.ref.beta])
-			num.unmethyl[i] <- length(trt.beta[mean.trt.beta < mean.ref.beta])
-			delta.beta <- mean.trt.beta - mean.ref.beta
+			mean.trt.beta = mean(trt.beta)
+			mean.ref.beta = mean(ref.beta)
+			num.methyl[i] = length(trt.beta[mean.trt.beta > mean.ref.beta])
+			num.unmethyl[i] = length(trt.beta[mean.trt.beta < mean.ref.beta])
+			delta.beta[i] = mean.trt.beta - mean.ref.beta
 			if(mean.trt.beta > mean.ref.beta)
 				{
 					cpg.status[i] <- "Increased Methylation"
