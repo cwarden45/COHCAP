@@ -35,8 +35,8 @@ my $expr_fc_cutoff = $ARGV[6];
 
 my %gene_hash = define_gene_hash($expr_file);	
 		
-open(UP, ">$mDeU_file") || die("Could not open $mDeU_file!");
-open(DOWN, ">$mUeD_file") || die("Could not open $mUeD_file!");
+open(UP, ">$mUeD_file") || die("Could not open $mUeD_file!");
+open(DOWN, ">$mDeU_file") || die("Could not open $mDeU_file!");
 
 my $line_count=0;
 open(INPUTFILE, $inputfile) || die("Could not open $inputfile!");

@@ -309,8 +309,12 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		
 		if(unmethyl.cutoff > methyl.cutoff)
 			{
-				print("Ignoring methylated and unmethylated cutoffs because unmethyl.cutoff > methyl.cutoff!")
-				filter.table <- filter.table[(temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				print("unmethyl.cutoff > methyl.cutoff ...")
+				print("so, delta-beta decides which group should be subject to which cutoff")
+				temp.delta.beta <- stat.table[[8]]
+				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= delta.beta.cutoff),]
+				filter.table <- rbind(temp.methyl.up, temp.methyl.down)
 			}
 		else
 			{

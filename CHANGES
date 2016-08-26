@@ -1,3 +1,7 @@
+v1.13.8
+Allow unmethyl > methyl for COHCAP.avg.by.island() and COHCAP.site()
+v1.13.7
+Fix COHCAP.integrate.avg.by.site() bug
 v1.13.6
 Fix COHCAP.avg.by.site() delta beta bug
 v1.13.5
