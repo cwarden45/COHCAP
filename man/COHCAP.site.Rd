@@ -14,7 +14,7 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
 				methyl.cutoff=0.7, unmethyl.cutoff = 0.3,
 				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05,
 				fdr.cutoff=0.05, ref="none", num.groups=2,
-				create.wig = TRUE, paired=FALSE, output.format = "xls")
+				create.wig = "avg", paired=FALSE, output.format = "xls")
 }
 \arguments{
   \item{sample.file}{
@@ -63,7 +63,10 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
 	COHCAP cannot currently analyze continuous phenotypes.
 }
  \item{create.wig}{
-	A logical value: Create .wig files (using average beta and delta-beta values)?
+	Set to "avg" to create average beta (per group) and delta-beta values.
+	Set to "sample" to create .wig files for each sample.
+	Set to "avg.and.sample" to create average, delta-beta, and per-sample .wig files.
+	Seto to "none" to avoid creating .wig files
 	In the standalone version of COHCAP, this was only an option when using the "Average by Site" workflow (because
 	that was the only situation where the analysis method matched the visualization).
 	.wig files are defined with respect to hg19 (for pre-defined annotation files) and can be visualized using IGV, UCSC Genome Browser, etc.

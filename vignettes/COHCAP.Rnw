@@ -40,9 +40,9 @@ to provide an annotation file to COHCAP.
 \end{itemize}
 \item[Potential Disadvantages:] \hfill \\
 \begin{itemize}
-\item Because COHCAP functions are now universal in the Bioconductor package, the COHCAP Bioconductor package doesn't filter Illumina array data based upon
-detection p-values.  In most cases, lack of a detection p-value filter will probably not be a problem.  However, very poor quality data will show a high
-proprotion of high detection p-values, so you may want to run additional QC analysis on your samples to ensure you are working with good quality data.
+\item The Bioconductor version uses a greater percentage of R code for functions, so it is slower than the standalone version.
+\item The COHCAP Bioconductor package doesn't filter Illumina array data based upon detection p-values.  In most cases, lack of a detection p-value filter will probably not be a problem.  However, very poor quality data will show a high
+proportion of high detection p-values.  However, the version of Illumina normalization in the minfi package will filter probes automatically, so that can be used as input to COHCAP.
 \item The Bioconductor pacakge doesn't contain a GUI.
 \item There are minor formatting differences between the two COHCAP packages, so standalone documentation may not completely apply to the Bioconductor package.
 \end{itemize}

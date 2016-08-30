@@ -77,7 +77,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 }#end def annova.pvalue
 
-`COHCAP.site` <-function (sample.file, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, ref="none", num.groups=2, create.wig = TRUE, paired=FALSE, output.format='xls')
+`COHCAP.site` <-function (sample.file, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, ref="none", num.groups=2, create.wig = "avg", paired=FALSE, output.format='xls')
 {
 	site.folder<-file.path(project.folder,"CpG_Site")
 	dir.create(site.folder, showWarnings=FALSE)
@@ -140,7 +140,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	groups <- levels(sample.group)
 	print(paste("Group:",groups, sep=" "))
 
-	if(length(groups) != num.groups)
+	if((length(groups) != num.groups) & (ref != "continuous"))
 		{
 			warning(paste("There are ",length(groups)," but user specified algorithm for ",num.groups," groups.",sep=""))
 			warning("Please restart algorithm and specify the correct number of groups")
@@ -149,7 +149,37 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 
 	stat.table <- annotations
 
-	if(length(groups) == 1) {
+	if((create.wig == "sample")|(create.wig == "avg.and.sample")){
+			#create .wig files for each sample
+			wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
+			dir.create(wig.folder, showWarnings=FALSE)
+
+			temp.stat.file <- file.path(wig.folder, "temp.txt")
+			Perl.Path <- file.path(path.package("COHCAP"), "Perl")
+			perl.script <- file.path(Perl.Path , "create_wig_files.pl")
+			
+			sample.beta = beta.table
+			sample.beta = sample.beta[order(sample.beta$Chr, sample.beta$Loc), ]
+			colnames(sample.beta) = paste(colnames(beta.table),"beta",sep=".")
+			write.table(sample.beta, temp.stat.file, quote=F, row.names=F, sep="\t")
+			cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
+			res <- system(cmd, intern=TRUE, wait=TRUE)
+			message(res)
+			
+			shortcut.beta.file = file.path(wig.folder, "Chr.beta.wig")
+			unlist(shortcut.beta.file)
+
+			shortcut.beta.file = file.path(wig.folder, "Gene.beta.wig")
+			unlist(shortcut.beta.file)
+			
+			shortcut.beta.file = file.path(wig.folder, "Loc.beta.wig")
+			unlist(shortcut.beta.file)
+	}#end if(create.wig)
+	
+	if(ref == "continuous"){
+		print("Need to write code for a continuous variable...")
+		stop("However, I created per-sample .wig files for you, if you asked.")
+	} else if(length(groups) == 1) {
 	col.names <- c(annotation.names)
 	print("Averaging Beta Values for All Samples")
 
@@ -279,9 +309,8 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		print(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 
-	if(create.wig)
-		{
-			#create .wig file
+	if((create.wig == "avg")|(create.wig == "avg.and.sample")){
+			#create .wig file based upon average methylation values
 			wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
 			dir.create(wig.folder, showWarnings=FALSE)
 
@@ -292,7 +321,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
 			res <- system(cmd, intern=TRUE, wait=TRUE)
 			message(res)
-		}#end if(create.wig)
+	}#end if(create.wig)
 	
 	#filter sites
 	print(dim(stat.table))
@@ -313,7 +342,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				print("so, delta-beta decides which group should be subject to which cutoff")
 				temp.delta.beta <- stat.table[[8]]
 				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= delta.beta.cutoff),]
+				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= -delta.beta.cutoff),]
 				filter.table <- rbind(temp.methyl.up, temp.methyl.down)
 			}
 		else
@@ -344,4 +373,4 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	}
 	
 	return(filter.table)
-}#end def RNA.deg
+}#end def COHCAP.site
