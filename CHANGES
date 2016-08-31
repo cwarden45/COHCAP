@@ -1,3 +1,5 @@
+v1.14.1
+Minor COHCAP.site() bug fix.  Add code for continuous variable.
 v1.14.0
 Fix COHCAP.avg.by.island() bug.  Allow creation of per-sample .wig files
 v1.13.8

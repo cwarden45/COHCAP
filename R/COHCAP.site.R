@@ -1,7 +1,12 @@
-custom.mean <- function(arr)
+custom.mean = function(arr)
 {
 	return(mean(as.numeric(arr), na.rm = T))
-}#end def ttest2
+}#end def custom.mean
+
+custom.cor = function(arr, var1)
+{
+	return(cor(as.numeric(arr), var1, use="complete.obs"))
+}#end def custom.cor
 
 ttest2 <- function(arr, grp1, grp2)
 {
@@ -48,6 +53,13 @@ annova.pvalue <- function(arr, grp.levels)
 		}
 }#end def annova.pvalue
 
+lm.pvalue = function(arr, var1)
+{
+	fit = lm(as.numeric(arr)~var1)
+	result = summary(fit)
+	pvalue = result$coefficients[2,4]
+	return(pvalue)
+}#end def lm.pvalue
 
 annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 {
@@ -135,17 +147,21 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	#print(sample.names)
 	#print(colnames(beta.values))
 	#print(beta.values[1,])
-	rm(beta.table)
-	
-	groups <- levels(sample.group)
-	print(paste("Group:",groups, sep=" "))
 
+	groups = levels(sample.group)
+	
 	if((length(groups) != num.groups) & (ref != "continuous"))
 		{
+			print(paste("Group:",groups, sep=" "))
+
 			warning(paste("There are ",length(groups)," but user specified algorithm for ",num.groups," groups.",sep=""))
 			warning("Please restart algorithm and specify the correct number of groups")
 			stop()
 		}
+	
+	if (ref == "continuous"){
+		print(paste("Continous Variable : ",paste(sample.table[[2]],collapse=","),sep=""))
+	}
 
 	stat.table <- annotations
 
@@ -165,20 +181,50 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
 			res <- system(cmd, intern=TRUE, wait=TRUE)
 			message(res)
+
+			shortcut.beta.file = file.path(wig.folder, "SiteID.beta.wig")
+			unlink(shortcut.beta.file)
 			
 			shortcut.beta.file = file.path(wig.folder, "Chr.beta.wig")
-			unlist(shortcut.beta.file)
+			unlink(shortcut.beta.file)
 
 			shortcut.beta.file = file.path(wig.folder, "Gene.beta.wig")
-			unlist(shortcut.beta.file)
+			unlink(shortcut.beta.file)
 			
 			shortcut.beta.file = file.path(wig.folder, "Loc.beta.wig")
-			unlist(shortcut.beta.file)
-	}#end if(create.wig)
+			unlink(shortcut.beta.file)
+
+			shortcut.beta.file = file.path(wig.folder, "Island.beta.wig")
+			unlink(shortcut.beta.file)
+		}#end if(create.wig)
+	
+	rm(beta.table)
 	
 	if(ref == "continuous"){
-		print("Need to write code for a continuous variable...")
-		stop("However, I created per-sample .wig files for you, if you asked.")
+			continous.var = sample.table[[2]]
+			lm.pvalue = apply(beta.values, 1, lm.pvalue, continous.var)
+			lm.fdr = p.adjust(lm.pvalue, "fdr")
+			beta.cor = apply(beta.values, 1, custom.cor, var1=continous.var)
+			#upper.beta is max if positive correlation, min if negative correlation
+			#lower.beta is min if positive correlation, max if negative correlation
+			#in both cases, delta.beta is upper.beta - lower.beta
+			beta.min= apply(beta.values, 1, min, na.rm=TRUE)
+			beta.max= apply(beta.values, 1, min, na.rm=TRUE)
+			
+			upper.beta = beta.max
+			upper.beta[beta.cor < 0] = beta.min[beta.cor < 0]
+			lower.beta = beta.min
+			lower.beta[beta.cor < 0] = beta.max[beta.cor < 0]
+			
+			rm(beta.min)
+			rm(beta.max)
+			
+			delta.beta = upper.beta - lower.beta
+
+			#make format compatible with 2-group code
+			stat.table <- data.frame(stat.table, upper.beta = upper.beta, lower.beta = lower.beta,
+									delta.beta = delta.beta, pvalue = lm.pvalue, fdr = lm.fdr,
+									cor.coef = beta.cor)
 	} else if(length(groups) == 1) {
 	col.names <- c(annotation.names)
 	print("Averaging Beta Values for All Samples")
@@ -311,16 +357,20 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 
 	if((create.wig == "avg")|(create.wig == "avg.and.sample")){
 			#create .wig file based upon average methylation values
-			wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
-			dir.create(wig.folder, showWarnings=FALSE)
+			if(ref == "continuous"){
+				print("Not creating average .wig files for continuous variable")
+			} else{
+				wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
+				dir.create(wig.folder, showWarnings=FALSE)
 
-			temp.stat.file <- file.path(wig.folder, "temp.txt")
-			Perl.Path <- file.path(path.package("COHCAP"), "Perl")
-			perl.script <- file.path(Perl.Path , "create_wig_files.pl")
-			write.table(stat.table, temp.stat.file, quote=F, row.names=F, sep="\t")
-			cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
-			res <- system(cmd, intern=TRUE, wait=TRUE)
-			message(res)
+				temp.stat.file <- file.path(wig.folder, "temp.txt")
+				Perl.Path <- file.path(path.package("COHCAP"), "Perl")
+				perl.script <- file.path(Perl.Path , "create_wig_files.pl")
+				write.table(stat.table, temp.stat.file, quote=F, row.names=F, sep="\t")
+				cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
+				res <- system(cmd, intern=TRUE, wait=TRUE)
+				message(res)
+			}
 	}#end if(create.wig)
 	
 	#filter sites
@@ -329,7 +379,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	if(length(groups) == 1) {
 		temp.avg.beta <- stat.table$avg.beta
 		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
-	} else if(length(groups) == 2) {
+	} else if((length(groups) == 2)|(ref == "continuous")) {
 		temp.trt.beta <- stat.table[[6]]
 		temp.ref.beta <- stat.table[[7]]
 		temp.delta.beta <- abs(stat.table[[8]])
