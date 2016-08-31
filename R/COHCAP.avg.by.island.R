@@ -48,6 +48,22 @@ annova.pvalue <- function(arr, grp.levels)
 		}
 }#end def annova.pvalue
 
+lm.pvalue = function(arr, var1)
+{
+	fit = lm(as.numeric(arr)~var1)
+	result = summary(fit)
+	pvalue = result$coefficients[2,4]
+	return(pvalue)
+}#end def lm.pvalue
+
+
+lm.pvalue2 = function(arr, var1, var2)
+{
+	fit = lm(as.numeric(arr)~var1 + as.numeric(as.factor(var2)))
+	result = summary(fit)
+	pvalue = result$coefficients[2,4]
+	return(pvalue)
+}#end def lm.pvalue
 
 annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 {
@@ -137,12 +153,19 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	groups <- levels(sample.group)
 	print(paste("Group:",groups, sep=" "))
 
-	if(length(groups) != num.groups)
+	if((length(groups) != num.groups) & (ref != "continuous"))
 		{
+			print(paste("Group:",groups, sep=" "))
+
 			warning(paste("There are ",length(groups)," but user specified algorithm for ",num.groups," groups.",sep=""))
 			warning("Please restart algorithm and specify the correct number of groups")
 			stop()
 		}
+	
+	if (ref == "continuous"){
+		print("Continous Variable :")
+		print(sample.table[[2]])
+	}
 	
 	print("Checking CpG Site Stats Table")
 	print(dim(site.table))
@@ -196,7 +219,36 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	island.table <- annotations 
 	rm(annotations)
 	
-	if(length(groups) == 1) {
+	if(ref == "continuous"){
+			continous.var = sample.table[[2]]
+			if (paired == TRUE){
+				lm.pvalue = apply(beta.values, 1, lm.pvalue2, continous.var, pairing.group)
+			} else{
+				lm.pvalue = apply(beta.values, 1, lm.pvalue, continous.var)
+			}
+			lm.fdr = p.adjust(lm.pvalue, "fdr")
+			beta.cor = apply(beta.values, 1, custom.cor, var1=continous.var)
+			#upper.beta is max if positive correlation, min if negative correlation
+			#lower.beta is min if positive correlation, max if negative correlation
+			#in both cases, delta.beta is upper.beta - lower.beta
+			beta.min= apply(beta.values, 1, min, na.rm=TRUE)
+			beta.max= apply(beta.values, 1, max, na.rm=TRUE)
+			
+			upper.beta = beta.max
+			upper.beta[beta.cor < 0] = beta.min[beta.cor < 0]
+			lower.beta = beta.min
+			lower.beta[beta.cor < 0] = beta.max[beta.cor < 0]
+			
+			rm(beta.min)
+			rm(beta.max)
+			
+			delta.beta = upper.beta - lower.beta
+
+			#make format compatible with 2-group code
+			island.table = data.frame(island.table, upper.beta = upper.beta, lower.beta = lower.beta,
+									delta.beta = delta.beta, island.pvalue = lm.pvalue, island.fdr = lm.fdr,
+									cor.coef = beta.cor)
+	} else if(length(groups) == 1) {
 	col.names <- c(annotation.names)
 	print("Averaging Beta Values for All Samples")
 
@@ -370,7 +422,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		xlsfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.xlsx",sep=""))
 		WriteXLS("filter.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'txt'){
-		txtfile <- file.path(data.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.txt",sep=""))
+		txtfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.txt",sep=""))
 		write.table(filter.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
@@ -393,36 +445,63 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	
 if((plot.box) & (nrow(island.avg.table) > 0))
 	{
-		print("Plotting Significant Islands....")
-		plot.folder<-file.path(island.folder,paste(project.name,"_Box_Plots",sep=""))
-		dir.create(plot.folder, showWarnings=FALSE)
-		
-		labelColors <- as.character(sample.group)
-		
-		colors <- c("red","blue","green","orange","purple","cyan","pink","maroon","yellow","grey","black",colors())
-		colors <- colors[1:length(groups)]
-		
-		#print(samples)
-		#print(sample.names)
-		
-		for (i in 1:length(sig.islands))
-			{
-				island = as.character(island.avg.table[i,1])
-				gene = as.character(island.avg.table[i,2])
-				
-				gene = gsub(";","_",gene)
-				
-				island = gsub(":","_",island)
-				island = gsub("-","_",island)
-				plot.file = file.path(plot.folder, paste(gene,"_",island,".pdf", sep=""))
-				data = t(island.avg.table[i,3:ncol(island.avg.table)])
-				
-				pdf(file=plot.file)
-				plot(sample.group, data, pch=20, col=colors,
-					main=paste(gene,sep=""), ylab="Methylation")
-				dev.off()
-			}#end for (1 in 1:length(sig.islands))
-	}
+		if (ref == "continuous"){
+			print("Plotting Significant Islands for Continuous Variable..")
+			continous.var = sample.table[[2]]
+			
+			plot.folder<-file.path(island.folder,paste(project.name,"_Line_Plots",sep=""))
+			dir.create(plot.folder, showWarnings=FALSE)
+			
+			for (i in 1:length(sig.islands))
+				{
+					island = as.character(island.avg.table[i,1])
+					gene = as.character(island.avg.table[i,2])
+					
+					gene = gsub(";","_",gene)
+					
+					island = gsub(":","_",island)
+					island = gsub("-","_",island)
+					plot.file = file.path(plot.folder, paste(gene,"_",island,".pdf", sep=""))
+					methyl.level = as.numeric(island.avg.table[i,3:ncol(island.avg.table)])
+					
+					pdf(file=plot.file)
+					plot(continous.var, methyl.level, pch=16, col="black",
+						main=paste(gene,sep=""), ylab="Methylation (Beta)", xlab="")
+					abline(lm(methyl.level~continous.var),lwd=2, col="red")
+					dev.off()
+				}#end for (1 in 1:length(sig.islands))
+		}else{
+			print("Plotting Significant Islands Box-Plots..")
+			plot.folder<-file.path(island.folder,paste(project.name,"_Box_Plots",sep=""))
+			dir.create(plot.folder, showWarnings=FALSE)
+			
+			labelColors <- as.character(sample.group)
+			
+			colors <- c("red","blue","green","orange","purple","cyan","pink","maroon","yellow","grey","black",colors())
+			colors <- colors[1:length(groups)]
+			
+			#print(samples)
+			#print(sample.names)
+			
+			for (i in 1:length(sig.islands))
+				{
+					island = as.character(island.avg.table[i,1])
+					gene = as.character(island.avg.table[i,2])
+					
+					gene = gsub(";","_",gene)
+					
+					island = gsub(":","_",island)
+					island = gsub("-","_",island)
+					plot.file = file.path(plot.folder, paste(gene,"_",island,".pdf", sep=""))
+					data = t(island.avg.table[i,3:ncol(island.avg.table)])
+					
+					pdf(file=plot.file)
+					plot(sample.group, data, pch=20, col=colors,
+						main=paste(gene,sep=""), ylab="Methylation (Beta)")
+					dev.off()
+				}#end for (1 in 1:length(sig.islands))
+		}#end else
+	}#end if((plot.box) & (nrow(island.avg.table) > 0))
 	
 	integrate.tables = list(beta.table=island.avg.table, filtered.island.stats=filter.table)
 	return(integrate.tables)

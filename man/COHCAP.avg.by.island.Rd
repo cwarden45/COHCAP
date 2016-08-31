@@ -69,10 +69,12 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
 }
   \item{ref}{
 	Reference group used to define baseline methylation levels.
-	Only used for 2-group comparison
+	Set to "continuous" for a continuous primary variable.
+	Otherwise, only used for 2-group comparison.
 }
  \item{plot.box}{
 	A logical value: Should box-plots be created to visualize CpG island differential methylation?
+	If using a continuous primary variable, line plots are provided instead of box plots.
 }
  \item{paired}{
 	A logical value: Is there any special pairing between samples in different groups?

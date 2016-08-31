@@ -56,7 +56,8 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
 }
   \item{ref}{
 	Reference group used to define baseline methylation levels.
-	Only used for 2-group comparison
+	Set to "continuous" for a continuous primary variable.
+	Otherwise, only used for 2-group comparison.
 }
  \item{num.groups}{
 	Number of groups described in sample description file.  COHCAP algorithm differs when analysing 1-group, 2-group, or >2-group comparisons.

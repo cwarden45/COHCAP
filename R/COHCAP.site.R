@@ -61,6 +61,15 @@ lm.pvalue = function(arr, var1)
 	return(pvalue)
 }#end def lm.pvalue
 
+
+lm.pvalue2 = function(arr, var1, var2)
+{
+	fit = lm(as.numeric(arr)~var1 + as.numeric(as.factor(var2)))
+	result = summary(fit)
+	pvalue = result$coefficients[2,4]
+	return(pvalue)
+}#end def lm.pvalue
+
 annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 {
 	#print(arr)
@@ -160,7 +169,8 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 	
 	if (ref == "continuous"){
-		print(paste("Continous Variable : ",paste(sample.table[[2]],collapse=","),sep=""))
+		print("Continous Variable :")
+		print(sample.table[[2]])
 	}
 
 	stat.table <- annotations
@@ -202,14 +212,18 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	
 	if(ref == "continuous"){
 			continous.var = sample.table[[2]]
-			lm.pvalue = apply(beta.values, 1, lm.pvalue, continous.var)
+			if (paired == TRUE){
+				lm.pvalue = apply(beta.values, 1, lm.pvalue2, continous.var, pairing.group)
+			} else{
+				lm.pvalue = apply(beta.values, 1, lm.pvalue, continous.var)
+			}
 			lm.fdr = p.adjust(lm.pvalue, "fdr")
 			beta.cor = apply(beta.values, 1, custom.cor, var1=continous.var)
 			#upper.beta is max if positive correlation, min if negative correlation
 			#lower.beta is min if positive correlation, max if negative correlation
 			#in both cases, delta.beta is upper.beta - lower.beta
 			beta.min= apply(beta.values, 1, min, na.rm=TRUE)
-			beta.max= apply(beta.values, 1, min, na.rm=TRUE)
+			beta.max= apply(beta.values, 1, max, na.rm=TRUE)
 			
 			upper.beta = beta.max
 			upper.beta[beta.cor < 0] = beta.min[beta.cor < 0]
@@ -222,7 +236,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			delta.beta = upper.beta - lower.beta
 
 			#make format compatible with 2-group code
-			stat.table <- data.frame(stat.table, upper.beta = upper.beta, lower.beta = lower.beta,
+			stat.table = data.frame(stat.table, upper.beta = upper.beta, lower.beta = lower.beta,
 									delta.beta = delta.beta, pvalue = lm.pvalue, fdr = lm.fdr,
 									cor.coef = beta.cor)
 	} else if(length(groups) == 1) {
@@ -375,31 +389,33 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	
 	#filter sites
 	print(dim(stat.table))
-	filter.table <- stat.table
+	filter.table = stat.table
 	if(length(groups) == 1) {
 		temp.avg.beta <- stat.table$avg.beta
 		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
 	} else if((length(groups) == 2)|(ref == "continuous")) {
-		temp.trt.beta <- stat.table[[6]]
-		temp.ref.beta <- stat.table[[7]]
-		temp.delta.beta <- abs(stat.table[[8]])
-		temp.pvalue <- stat.table[[9]]
-		temp.fdr <- stat.table[[10]]
+		temp.trt.beta = stat.table[[6]]
+		temp.ref.beta = stat.table[[7]]
+		temp.delta.beta = abs(stat.table[[8]])
+		temp.pvalue = stat.table[[9]]
+		temp.fdr = stat.table[[10]]
 		
 		if(unmethyl.cutoff > methyl.cutoff)
 			{
 				print("unmethyl.cutoff > methyl.cutoff ...")
 				print("so, delta-beta decides which group should be subject to which cutoff")
-				temp.delta.beta <- stat.table[[8]]
-				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= -delta.beta.cutoff),]
-				filter.table <- rbind(temp.methyl.up, temp.methyl.down)
+				temp.delta.beta = stat.table[[8]]
+				temp.methyl.up = filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				print(dim(temp.methyl.up))
+				temp.methyl.down = filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= -delta.beta.cutoff),]
+				print(dim(temp.methyl.down))
+				filter.table = rbind(temp.methyl.up, temp.methyl.down)
 			}
 		else
 			{
-				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				filter.table <- rbind(temp.methyl.up, temp.methyl.down)
+				temp.methyl.up = filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.down = filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				filter.table = rbind(temp.methyl.up, temp.methyl.down)
 			}
 	} else if(length(groups) > 2) {
 		temp.pvalue <- stat.table[[ncol(stat.table) -1]]
