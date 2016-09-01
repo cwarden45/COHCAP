@@ -385,7 +385,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	if(length(groups) == 1) {
 		temp.avg.beta <- island.table$avg.beta
 		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
-	} else if(length(groups) == 2) {
+	} else if((length(groups) == 2)|(ref == "continuous")){
 		temp.trt.beta <- island.table[[3]]
 		temp.ref.beta <- island.table[[4]]
 		temp.delta.beta <- abs(island.table[[5]])
