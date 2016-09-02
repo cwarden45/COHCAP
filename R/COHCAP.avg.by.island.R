@@ -382,10 +382,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	#filter CpG islands
 	print(dim(island.table))
 	filter.table = island.table
-	if(length(groups) == 1) {
-		temp.avg.beta <- island.table$avg.beta
-		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
-	} else if((length(groups) == 2)|(ref == "continuous")){
+	if((length(groups) == 2)|(ref == "continuous")){
 		temp.trt.beta <- island.table[[3]]
 		temp.ref.beta <- island.table[[4]]
 		temp.delta.beta <- abs(island.table[[5]])
@@ -406,6 +403,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
 				filter.table <- rbind(temp.methyl.up, temp.methyl.down)
 			}
+	} else if(length(groups) == 1) {
+		temp.avg.beta <- island.table$avg.beta
+		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
 	} else if(length(groups) > 2) {
 		temp.pvalue <- island.table[[ncol(island.table) -1]]
 		temp.fdr <- island.table[[ncol(island.table)]]

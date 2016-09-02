@@ -390,10 +390,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	#filter sites
 	print(dim(stat.table))
 	filter.table = stat.table
-	if(length(groups) == 1) {
-		temp.avg.beta <- stat.table$avg.beta
-		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
-	} else if((length(groups) == 2)|(ref == "continuous")) {
+	if((length(groups) == 2)|(ref == "continuous")) {
 		temp.trt.beta = stat.table[[6]]
 		temp.ref.beta = stat.table[[7]]
 		temp.delta.beta = abs(stat.table[[8]])
@@ -417,6 +414,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				temp.methyl.down = filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
 				filter.table = rbind(temp.methyl.up, temp.methyl.down)
 			}
+	}else if(length(groups) == 1) {
+		temp.avg.beta <- stat.table$avg.beta
+		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
 	} else if(length(groups) > 2) {
 		temp.pvalue <- stat.table[[ncol(stat.table) -1]]
 		temp.fdr <- stat.table[[ncol(stat.table)]]
