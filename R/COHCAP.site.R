@@ -370,21 +370,17 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	}
 
 	if((create.wig == "avg")|(create.wig == "avg.and.sample")){
-			#create .wig file based upon average methylation values
-			if(ref == "continuous"){
-				print("Not creating average .wig files for continuous variable")
-			} else{
-				wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
-				dir.create(wig.folder, showWarnings=FALSE)
+		#create .wig file based upon average methylation values
+		wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
+		dir.create(wig.folder, showWarnings=FALSE)
 
-				temp.stat.file <- file.path(wig.folder, "temp.txt")
-				Perl.Path <- file.path(path.package("COHCAP"), "Perl")
-				perl.script <- file.path(Perl.Path , "create_wig_files.pl")
-				write.table(stat.table, temp.stat.file, quote=F, row.names=F, sep="\t")
-				cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
-				res <- system(cmd, intern=TRUE, wait=TRUE)
-				message(res)
-			}
+		temp.stat.file <- file.path(wig.folder, "temp.txt")
+		Perl.Path <- file.path(path.package("COHCAP"), "Perl")
+		perl.script <- file.path(Perl.Path , "create_wig_files.pl")
+		write.table(stat.table, temp.stat.file, quote=F, row.names=F, sep="\t")
+		cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
+		res <- system(cmd, intern=TRUE, wait=TRUE)
+		message(res)
 	}#end if(create.wig)
 	
 	#filter sites
