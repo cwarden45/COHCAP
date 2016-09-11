@@ -13,5 +13,6 @@ Description: This package provides a pipeline to analyze
         methylation for CpG Islands, integration with gene expression
         data, and visualization of methylation values.
 License: GPL-3
+SystemRequirements: Perl
 LazyLoad: yes
 biocViews: DNAMethylation, Microarray, MethylSeq, Epigenetics, DifferentialMethylation
