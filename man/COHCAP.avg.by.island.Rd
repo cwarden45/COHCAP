@@ -11,10 +11,11 @@ and comparing the average beta values across groups (considering the pairing bet
 List of differentially methylated islands will be created in the "CpG_Island" folder.  Table of statistics for all CpG islands will be created in the "Raw_Data" folder.
 }
 \usage{
-COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
-				project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3,
+COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.folder,
+				methyl.cutoff=0.7, unmethyl.cutoff = 0.3, max.cluster.dist = 50,
 				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
-				num.groups=2, num.sites=4, plot.box=TRUE, paired=FALSE, ref="none",
+				num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE,
+				paired=FALSE, ref="none",
 				output.format = "xls", gene.centric=TRUE)
 }
 \arguments{
@@ -48,9 +49,17 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
 	Default is 0.3 (used for beta values), which would correspond to 30% methylation.
 	Used for either 1-group or 2-group comparison.
 }
+  \item{max.cluster.dist}{
+	Update annotations by running de-novo clustering within each set of provided annotations.
+	This is the maximum distance (in bp) between filtered sites with a consistent delta-beta sign.
+	This can produce more than one cluster per pre-existing annotation.
+	Set to NULL by default, to run standard COHCAP algorithm.
+	If you would like to test this function, you can try setting the value to 50.
+	Only valid for 2-group or continuous comparison.
+}
   \item{delta.beta.cutoff}{
 	The minimum absolute value for delta-beta values (mean treatment beta - mean reference beta) to define a differentially methylated CpG island.
-	Only used for 2-group comparison.
+	Only used for 2-group comparison (and continuous comparison, where delta beta is max - min beta, with sign based upon correlation coefficient).
 }
   \item{pvalue.cutoff}{
 	Maximum p-value allowed to define an island as differentially methylated.
@@ -73,8 +82,11 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
 	Otherwise, only used for 2-group comparison.
 }
  \item{plot.box}{
-	A logical value: Should box-plots be created to visualize CpG island differential methylation?
+	Logical value: Should box-plots be created to visualize CpG island differential methylation?
 	If using a continuous primary variable, line plots are provided instead of box plots.
+}
+ \item{plot.heatmap}{
+	Logical value: Should heatmap be created to visualize CpG island differential methylation?
 }
  \item{paired}{
 	A logical value: Is there any special pairing between samples in different groups?
@@ -83,7 +95,7 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name,
 	Used for p-value calculation, so this only applies to comparisons with at least 2 groups.
 }
   \item{output.format}{
-	Format for output tables: 'xls' for Excel file, 'txt' for tab-delimited text file
+	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file
 }
   \item{gene.centric}{
 	Should CpG islands not mapped to genes be ignored?

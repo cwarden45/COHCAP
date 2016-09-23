@@ -1,3 +1,5 @@
+v1.15.0
+Add de-novo clustering and .csv output for differentially methylated regions options within COHCAP.avg.by.island().
 v1.14.5
 Allow creation of delta-beta (really max-min beta) .wig files for continuous variable
 v1.14.4
