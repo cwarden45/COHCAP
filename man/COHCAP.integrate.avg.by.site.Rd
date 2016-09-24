@@ -47,7 +47,7 @@ COHCAP.integrate.avg.by.site(island.table, project.name, project.folder,
 	Maximum False Discovery Rate (FDR) allowed to define a gene as differentially expressed (from gene expression table)
 }
   \item{output.format}{
-	Format for output tables: 'xls' for Excel file, 'txt' for tab-delimited text file
+	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file
 }
 }
 

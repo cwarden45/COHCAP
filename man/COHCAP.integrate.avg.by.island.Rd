@@ -57,7 +57,7 @@ COHCAP.integrate.avg.by.island(island.list, project.name, project.folder,
 	A logical value: Create scatter plot for genes with a significant negative correlation?
 }
   \item{output.format}{
-	Format for output tables: 'xls' for Excel file, 'txt' for tab-delimited text file
+	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file
 }
 }
 

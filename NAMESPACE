@@ -1,4 +1,12 @@
-import(WriteXLS, COHCAPanno)
+import(WriteXLS, COHCAPanno, RColorBrewer, gplots)
+
+importFrom("grDevices", "colorRampPalette", "colors", "dev.off", "pdf")
+importFrom("graphics", "abline", "legend", "lines", "par", "plot")
+importFrom("stats", "aov", "as.dendrogram", "cor", "cor.test",
+           "dendrapply", "density", "dist", "fisher.test", "hclust",
+           "is.leaf", "lm", "na.omit", "p.adjust", "prcomp",
+           "quantile", "t.test")
+importFrom("utils", "data", "head", "read.table", "write.table")
 
 export(COHCAP.annotate,
 		COHCAP.qc,

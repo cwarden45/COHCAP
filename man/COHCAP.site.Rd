@@ -11,10 +11,10 @@ List of differentially methylated sites and .wig files will be created in the "C
 }
 \usage{
 COHCAP.site(sample.file, beta.table, project.name, project.folder,
-				methyl.cutoff=0.7, unmethyl.cutoff = 0.3,
+				methyl.cutoff=0.7, unmethyl.cutoff = 0.3, paired=FALSE,
 				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05,
 				fdr.cutoff=0.05, ref="none", num.groups=2,
-				create.wig = "avg", paired=FALSE, output.format = "xls")
+				create.wig = "avg",plot.heatmap=TRUE, output.format = "xls")
 }
 \arguments{
   \item{sample.file}{
@@ -72,13 +72,17 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
 	that was the only situation where the analysis method matched the visualization).
 	.wig files are defined with respect to hg19 (for pre-defined annotation files) and can be visualized using IGV, UCSC Genome Browser, etc.
 }
+ \item{plot.heatmap}{
+	Logical value: Should heatmap be created to visualize CpG site differential methylation?
+	For best comparison to island heatmap, please use same parameters at site and island level.
+}
  \item{paired}{
 	A logical value: Is there any special pairing between samples in different groups?
 	If so, the pairing variable must be specified in the 3rd column of the sample description file.
 	Used for p-value calculation, so this only applies to comparisons with at least 2 groups.
 }
   \item{output.format}{
-	Format for output tables: 'xls' for Excel file, 'txt' for tab-delimited text file
+	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file.
 }
 }
 

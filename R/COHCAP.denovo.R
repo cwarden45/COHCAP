@@ -121,6 +121,9 @@
 		if(output.format == 'xls'){
 			xlsfile <- file.path(site.folder, paste(project.name,"_CpG_site_clusters.xlsx",sep=""))
 			WriteXLS("cluster.table", ExcelFileName = xlsfile)
+		} else if(output.format == 'csv'){
+			txtfile <- file.path(site.folder, paste(project.name,"_CpG_site_clusters.csv",sep=""))
+			write.table(cluster.table, file=txtfile, quote=F, row.names=F, sep=",")
 		} else if(output.format == 'txt'){
 			txtfile <- file.path(site.folder, paste(project.name,"_CpG_site_clusters.txt",sep=""))
 			write.table(cluster.table, file=txtfile, quote=F, row.names=F, sep="\t")

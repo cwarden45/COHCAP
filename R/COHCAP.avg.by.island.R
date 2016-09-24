@@ -93,8 +93,10 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 }#end def annova.pvalue
 
-`COHCAP.avg.by.island` <-function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, max.cluster.dist = 50, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE, paired=FALSE, ref="none", output.format = "xls", gene.centric=TRUE)
+`COHCAP.avg.by.island` <-function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, max.cluster.dist = NULL, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE, paired=FALSE, ref="none", output.format = "xls", gene.centric=TRUE)
 {
+	fixed.color.palatte <- c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
+	
 	island.folder<-file.path(project.folder,"CpG_Island")
 	dir.create(island.folder, showWarnings=FALSE)
 	
@@ -497,7 +499,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	warning("Invalid groups specified in sample description file!")
 	}
 	
-	island.table = data.frame(island.table, num.sites = sites.per.island)
+	island.table = data.frame(island.table, num.sites = sites.per.island[match(as.character(island.table$island),names(sites.per.island))])
 	if(output.format == 'xls'){
 		xlsfile <- file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Island.xlsx",sep=""))
 		WriteXLS("island.table", ExcelFileName = xlsfile)
@@ -580,6 +582,50 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
+
+if((plot.heatmap)& (nrow(island.avg.table) > 0)){
+	temp.beta.mat = apply(island.avg.table[,3:ncol(island.avg.table)], 1, as.numeric)
+	if(length(sig.islands) < 25){
+		colnames(temp.beta.mat) = sig.islands
+	} else {
+		colnames(temp.beta.mat) = rep("", length(sig.islands))
+	}
+	rownames(temp.beta.mat) = samples
+	
+	labelColors = rep("black",times=nrow(temp.beta.mat))
+	if(ref == "continuous"){
+		continuous.color.breaks = 10	
+		plot.var = as.numeric(continous.var)
+		plot.var.min = min(plot.var, na.rm=T)
+		plot.var.max = max(plot.var, na.rm=T)
+		
+		plot.var.range = plot.var.max - plot.var.min
+		plot.var.interval = plot.var.range / continuous.color.breaks
+		
+		color.range = colorRampPalette(c("green","black","orange"))(n = continuous.color.breaks)
+		plot.var.breaks = plot.var.min + plot.var.interval*(0:continuous.color.breaks)
+		for (j in 1:continuous.color.breaks){
+			labelColors[(plot.var >= plot.var.breaks[j]) &(plot.var <= plot.var.breaks[j+1])] = color.range[j]
+		}#end for (j in 1:continuous.color.breaks)
+	}else{
+		color.palette = fixed.color.palatte[1:length(groups)]
+		for (j in 1:length(groups)){
+			labelColors[sample.group == as.character(groups[j])] = color.palette[j]
+		}#end for (j in 1:length(groups))
+	}
+
+	heatmap.file = file.path(island.folder, paste(project.name,"_CpG_island_heatmap-Avg_by_Island.pdf",sep=""))
+	pdf(file = heatmap.file)
+	heatmap.2(temp.beta.mat, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+				 RowSideColors=labelColors, trace="none", margins = c(15,15), cexCol=0.8, cexRow=0.8)
+	if(ref == "continuous"){
+		legend("topright",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+				col=rev(color.range), pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
+	}else{
+		legend("topright",legend=groups,col=color.palette,  pch=15)
+	}
+	dev.off()
+}#end if((plot.heatmap)& (nrow(island.avg.table) > 0))
 	
 if((plot.box) & (nrow(island.avg.table) > 0))
 	{
@@ -612,11 +658,8 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 			print("Plotting Significant Islands Box-Plots..")
 			plot.folder<-file.path(island.folder,paste(project.name,"_Box_Plots",sep=""))
 			dir.create(plot.folder, showWarnings=FALSE)
-			
-			labelColors <- as.character(sample.group)
-			
-			colors <- c("red","blue","green","orange","purple","cyan","pink","maroon","yellow","grey","black",colors())
-			colors <- colors[1:length(groups)]
+					
+			labelColors <- fixed.color.palatte[1:length(groups)]
 			
 			#print(samples)
 			#print(sample.names)
@@ -634,7 +677,7 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 					data = t(island.avg.table[i,3:ncol(island.avg.table)])
 					
 					pdf(file=plot.file)
-					plot(sample.group, data, pch=20, col=colors,
+					plot(sample.group, data, pch=20, col=labelColors,
 						main=paste(gene,sep=""), ylab="Methylation (Beta)")
 					dev.off()
 				}#end for (1 in 1:length(sig.islands))
@@ -643,4 +686,4 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 	
 	integrate.tables = list(beta.table=island.avg.table, filtered.island.stats=filter.table)
 	return(integrate.tables)
-}#end def RNA.deg
+}#end def COHCAP.avg.by.island

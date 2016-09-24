@@ -98,8 +98,10 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 }#end def annova.pvalue
 
-`COHCAP.site` <-function (sample.file, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, ref="none", num.groups=2, create.wig = "avg", paired=FALSE, output.format='xls')
+`COHCAP.site` <-function (sample.file, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, paired=FALSE, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, ref="none", num.groups=2, create.wig = "avg", plot.heatmap=TRUE, output.format='xls')
 {
+	fixed.color.palatte <- c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
+	
 	site.folder<-file.path(project.folder,"CpG_Site")
 	dir.create(site.folder, showWarnings=FALSE)
 	
@@ -174,6 +176,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	}
 
 	stat.table <- annotations
+	rm(annotations)
 
 	if((create.wig == "sample")|(create.wig == "avg.and.sample")){
 			#create .wig files for each sample
@@ -362,6 +365,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	if(output.format == 'xls'){
 		xlsfile <- file.path(data.folder, paste(project.name,"_CpG_site_stats.xlsx",sep=""))
 		WriteXLS("stat.table", ExcelFileName = xlsfile)
+	} else if(output.format == 'csv') {
+		txtfile <- file.path(data.folder, paste(project.name,"_CpG_site_stats.csv",sep=""))
+		write.table(stat.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt') {
 		txtfile <- file.path(data.folder, paste(project.name,"_CpG_site_stats.txt",sep=""))
 		write.table(stat.table, file=txtfile, quote=F, row.names=F, sep="\t")
@@ -427,12 +433,59 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	if(output.format == 'xls'){
 		xlsfile <- file.path(site.folder, paste(project.name,"_CpG_site_filter.xlsx",sep=""))
 		WriteXLS("filter.table", ExcelFileName = xlsfile)
+	} else if(output.format == 'csv') {
+		txtfile <- file.path(site.folder, paste(project.name,"_CpG_site_filter.csv",sep=""))
+		write.table(filter.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt') {
 		txtfile <- file.path(site.folder, paste(project.name,"_CpG_site_filter.txt",sep=""))
 		write.table(filter.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
+
+if((plot.heatmap)& (nrow(filter.table) > 0)){
+	temp.beta.mat = apply(beta.values[match(as.character(filter.table$SiteID),as.character(stat.table$SiteID)),], 1, as.numeric)
+	if(nrow(filter.table) < 25){
+		colnames(temp.beta.mat) = filter.table$SiteID
+	} else {
+		colnames(temp.beta.mat) = rep("", nrow(filter.table))
+	}
+	rownames(temp.beta.mat) = samples
+	
+	labelColors = rep("black",times=nrow(temp.beta.mat))
+	if(ref == "continuous"){
+		continuous.color.breaks = 10	
+		plot.var = as.numeric(continous.var)
+		plot.var.min = min(plot.var, na.rm=T)
+		plot.var.max = max(plot.var, na.rm=T)
+		
+		plot.var.range = plot.var.max - plot.var.min
+		plot.var.interval = plot.var.range / continuous.color.breaks
+		
+		color.range = colorRampPalette(c("green","black","orange"))(n = continuous.color.breaks)
+		plot.var.breaks = plot.var.min + plot.var.interval*(0:continuous.color.breaks)
+		for (j in 1:continuous.color.breaks){
+			labelColors[(plot.var >= plot.var.breaks[j]) &(plot.var <= plot.var.breaks[j+1])] = color.range[j]
+		}#end for (j in 1:continuous.color.breaks)
+	}else{
+		color.palette = fixed.color.palatte[1:length(groups)]
+		for (j in 1:length(groups)){
+			labelColors[sample.group == as.character(groups[j])] = color.palette[j]
+		}#end for (j in 1:length(groups))
+	}
+
+	heatmap.file = file.path(site.folder, paste(project.name,"_CpG_site_heatmap.pdf",sep=""))
+	pdf(file = heatmap.file)
+	heatmap.2(temp.beta.mat, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+				 RowSideColors=labelColors, trace="none", margins = c(5,15), cexCol=0.8, cexRow=0.8)
+	if(ref == "continuous"){
+		legend("topright",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+				col=rev(color.range), pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
+	}else{
+		legend("topright",legend=groups,col=color.palette,  pch=15)
+	}
+	dev.off()
+}#end if((plot.heatmap)& (nrow(island.avg.table) > 0))
 	
 	return(filter.table)
 }#end def COHCAP.site

@@ -32,7 +32,7 @@ COHCAP.denovo(site.table, project.name, project.folder,
 	Maximum distance between ordered differentially methylated CpG sites to be considered in a cluster.
 }
   \item{output.format}{
-	Format for output tables: 'xls' for Excel file, 'txt' for tab-delimited text file.
+	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file.
 }}
 
 \value{

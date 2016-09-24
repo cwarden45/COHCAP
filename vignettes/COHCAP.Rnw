@@ -30,10 +30,10 @@ disadvantages to using the standalone versus Biocondcutor COHCAP packages
 \begin{itemize}
 \item The Bioconductor package no longer uses separate functions for Illumina array vs. Targeted BS-Seq data.  This simplifies the number of parameters you need
 to understand in order to run COHCAP and simplifies software maintenance.
-\item Common annotations are pre-installed with the Bioconductor package.  For HM450k array, 27k array, and selected targeted BS-Seq data, you do not need
-to provide an annotation file to COHCAP.
-\item COHCAP output files are now better organized into subfolders for easier interpretation (compared to the standalone v1.2.4).
-\item A filter for delta-beta values has been added in the Bioconductor package (compared to the standalone v1.2.4).
+\item Common annotations are pre-installed with the Bioconductor package.  For HM450k aand 27k array data, you do not need
+to provide an annotation file to COHCAP (but you can always specify custom annotations with the Bioconductor package).
+\item COHCAP output files are now better organized into subfolders for easier interpretation.
+\item A filter for delta-beta values has been added in the Bioconductor package.
 \item The Bioconductor package doesn't require users to install Java
 \item The Bioconductor package doesn't require users to point Perl to their Rscript executable file
 \item The Bioconductor package provides a feature to automatically create a targeted BS-Seq annotation file (and creates necessary Bioconductor input file with Illumina array formatting)
@@ -44,7 +44,7 @@ to provide an annotation file to COHCAP.
 \item The COHCAP Bioconductor package doesn't filter Illumina array data based upon detection p-values.  In most cases, lack of a detection p-value filter will probably not be a problem.  However, very poor quality data will show a high
 proportion of high detection p-values.  However, the version of Illumina normalization in the minfi package will filter probes automatically, so that can be used as input to COHCAP.
 \item The Bioconductor pacakge doesn't contain a GUI.
-\item There are minor formatting differences between the two COHCAP packages, so standalone documentation may not completely apply to the Bioconductor package.
+\item There are formatting differences between the two COHCAP packages, so standalone documentation does not completely apply to the Bioconductor package.
 \end{itemize}
 \end{description}
 
@@ -54,6 +54,10 @@ Large patient cohorts will most likely need to be run on a powerful computer (su
 
 Most of the information on the COHCAP \href{http://sourceforge.net/p/cohcap/wiki/Home/}{FAQ page} will apply to both versions.  Questions
 for both versions should be directed to the \href{http://sourceforge.net/p/cohcap/wiki/Home/}{COHCAP Discussion Group}, with bioconductor users posting questions under "Bioconductor: [Problem Description]".
+
+\textbf{EPIC Array Users}: EPIC array data can be analyzed using the "custom" CpG island mapping in the Bioconductor package.
+Click \href{https://github.com/cwarden45/DNAmethylation_templates/tree/master/EPIC_workflow}{here} for a template using the Average-by-Island workflow.
+Click \href{https://github.com/cwarden45/DNAmethylation_templates/tree/master/EPIC_COHCAP_Demo}{here} for a template using the Average-by-Site workflow.
 
 \begin{description}
 \item[In both cases, users should cite the following article when using COHCAP:] \hfill \\

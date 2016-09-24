@@ -57,7 +57,7 @@ COHCAP.avg.by.site(site.table, project.name, project.folder,
 	Minimum number of differentially methylated sites to define a differentially methylated CpG island.
 }
   \item{output.format}{
-	Format for output tables: 'xls' for Excel file, 'txt' for tab-delimited text file
+	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file.
 }
 }
 

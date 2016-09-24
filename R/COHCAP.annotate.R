@@ -38,6 +38,9 @@
 	if(output.format == 'xls'){
 		xlsfile <- file.path(data.folder, paste(project.name,"_annotated_CpG_sites.xlsx",sep=""))
 		WriteXLS("ann.mat", ExcelFileName = xlsfile)
+	} else if(output.format == 'csv') {
+		txtfile <- file.path(data.folder, paste(project.name,"_annotated_CpG_sites.csv",sep=""))
+		write.table(ann.mat, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt') {
 		txtfile <- file.path(data.folder, paste(project.name,"_annotated_CpG_sites.txt",sep=""))
 		write.table(ann.mat, file=txtfile, quote=F, row.names=F, sep="\t")
@@ -46,4 +49,4 @@
 	}
 	
 	return(ann.mat)
-}#end def RNA.norm
+}#end def COHCAP.annotate

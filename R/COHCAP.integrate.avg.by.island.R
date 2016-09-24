@@ -18,6 +18,8 @@ cor.test.pvalue <- function(x)
 
 `COHCAP.integrate.avg.by.island` <-function (island.list, project.name, project.folder, expr.file, sample.file, cor.pvalue.cutoff=0.05, cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE, output.format = "xls")
 {
+	fixed.color.palatte <- c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
+
 	beta.table = island.list$beta.table
 	print(dim(beta.table))
 	filtered.island.stats = island.list$filtered.island.stats
@@ -64,6 +66,9 @@ cor.test.pvalue <- function(x)
 	if(output.format == 'xls'){
 		xlsfile <- file.path(data.folder, paste(project.name,"_integration_cor_stats.xlsx",sep=""))
 		WriteXLS("cor.table", ExcelFileName = xlsfile)
+	} else if(output.format == 'csv'){
+		txtfile <- file.path(data.folder, paste(project.name,"_integration_cor_stats.csv",sep=""))
+		write.table(cor.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt'){
 		txtfile <- file.path(data.folder, paste(project.name,"_integration_cor_stats.txt",sep=""))
 		write.table(cor.table, file=txtfile, quote=F, row.names=F, sep="\t")
@@ -79,6 +84,9 @@ cor.test.pvalue <- function(x)
 		if(output.format == 'xls'){
 			xlsfile <- file.path(integrate.folder, paste(project.name,"_integration_cor_stats.xlsx",sep=""))
 			WriteXLS("sig.table", ExcelFileName = xlsfile)
+		} else if(output.format == 'csv'){
+			txtfile <- file.path(integrate.folder, paste(project.name,"_integration_cor_stats.csv",sep=""))
+			write.table(sig.table, file=txtfile, quote=F, row.names=F, sep=",")
 		} else if(output.format == 'txt'){
 			txtfile <- file.path(integrate.folder, paste(project.name,"_integration_cor_stats.txt",sep=""))
 			write.table(sig.table, file=txtfile, quote=F, row.names=F, sep="\t")
@@ -127,11 +135,10 @@ cor.test.pvalue <- function(x)
 					labelColors <- as.character(sample.group)
 					groups <- levels(sample.group)
 				
-					colors <- c("red","blue","green","orange","purple","cyan","pink","maroon","yellow","grey","black",colors())
-					colors <- colors[1:length(groups)]
+					color.palatte <- fixed.color.palatte[1:length(groups)]
 					for (i in 1:length(groups))
 						{
-							labelColors[sample.group == groups[i]] = colors[i]
+							labelColors[sample.group == groups[i]] = color.palatte[i]
 						}
 				
 					for (i in 1:length(sig.islands))
@@ -154,7 +161,7 @@ cor.test.pvalue <- function(x)
 									" ,r=",
 									round(cor.test(expr,methyl, na.action=na.rm)$estimate, digits=2),
 									")",sep=""))
-							legend("topright",legend=groups,col=colors,  pch=19)
+							legend("topright",legend=groups,col=color.palatte,  pch=19)
 							dev.off()
 						}#end for (1 in 1:length(sig.islands))
 				}	

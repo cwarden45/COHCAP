@@ -41,7 +41,7 @@ COHCAP.annotate(beta.file, project.name, project.folder,
 	methylation file), chromosome for CpG site, position for CpG site (preferably in hg19 coordinates), nearest gene mapping for CpG site, nearest CpG island mapping for CpG site.
 }
   \item{output.format}{
-	Format for output tables: 'xls' for Excel file, 'txt' for tab-delimited text file
+	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file.
 }
 }
 \value{

@@ -22,6 +22,9 @@
 	if(output.format == 'xls'){
 		xlsfile <- file.path(integrate.folder, paste(project.name,"_Methyl_Up_Expression_Down-Avg_by_Site.xlsx",sep=""))
 		WriteXLS("mU.eD", ExcelFileName = xlsfile)
+	} else if(output.format == 'csv') {
+		txtfile <- file.path(integrate.folder, paste(project.name,"_Methyl_Up_Expression_Down-Avg_by_Site.csv",sep=""))
+		write.table(mU.eD, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt') {
 		txtfile <- file.path(integrate.folder, paste(project.name,"_Methyl_Up_Expression_Down-Avg_by_Site.txt",sep=""))
 		write.table(mU.eD, file=txtfile, quote=F, row.names=F, sep="\t")
@@ -33,6 +36,9 @@
 	if(output.format == 'xls'){
 		xlsfile <- file.path(integrate.folder, paste(project.name,"_Methyl_Down_Expression_Up-Avg_by_Site.xlsx",sep=""))
 		WriteXLS("mD.eU", ExcelFileName = xlsfile)
+	} else if(output.format == 'csv'){
+		txtfile <- file.path(integrate.folder, paste(project.name,"_Methyl_Down_Expression_Up-Avg_by_Site.csv",sep=""))
+		write.table(mD.eU, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt'){
 		txtfile <- file.path(integrate.folder, paste(project.name,"_Methyl_Down_Expression_Up-Avg_by_Site.txt",sep=""))
 		write.table(mD.eU, file=txtfile, quote=F, row.names=F, sep="\t")
