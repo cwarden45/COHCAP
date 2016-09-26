@@ -175,7 +175,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	print(dim(site.table))
 	
 	if(!is.null(max.cluster.dist)){
-		if ((num.groups==2)|(ref="continuous")){
+		if ((num.groups==2)|(ref=="continuous")){
 			print("Looking for clusters within provided CpG Island Annotations")
 			island.clusters = rep(NA,nrow(site.table))
 			
