@@ -54,7 +54,7 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 	This is the maximum distance (in bp) between filtered sites with a consistent delta-beta sign.
 	This can produce more than one cluster per pre-existing annotation.
 	Set to NULL by default, to run standard COHCAP algorithm.
-	If you would like to test this function, you can try setting the value to 50.
+	If you would like to test this function, I would recommend a value between 50 and 500 bp.
 	Only valid for 2-group or continuous comparison.
 }
   \item{delta.beta.cutoff}{
