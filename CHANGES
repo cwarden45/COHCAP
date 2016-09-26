@@ -1,3 +1,5 @@
+v1.15.2
+Fix bug with clusters for continuous variable for COHCAP.avg.by.island()
 v1.15.1
 Add heatmap to COHCAP.avg.by.island() and COHCAP.site().  Add .csv output to all functions.
 v1.15.0
