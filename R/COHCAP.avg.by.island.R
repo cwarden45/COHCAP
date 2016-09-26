@@ -188,7 +188,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 					ann.mat = site.table[match(cpg.sites, as.character(site.table[,1]),nomatch=0),]
 					if(nrow(ann.mat) >= num.sites)
 						{
-							print(island)
+							#print(island)
 							ann.mat = ann.mat[order(ann.mat$Loc),]
 							probe.pos = ann.mat$Loc
 						
@@ -277,7 +277,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 							}#end if (temp.hits > 1)
 						}#end if(nrow(data.mat) >= num.sites)
 				}#end for (i in 1:length(cpg.islands))
-			print(island.clusters)
+			#print(island.clusters)
 			
 			mapping.table = data.frame(SiteID = as.character(site.table$SiteID), Chr =as.character(site.table$Chr),
 											Loc=as.character(site.table$Loc), updated.island=island.clusters)
