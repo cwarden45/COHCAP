@@ -1,3 +1,5 @@
+v1.17.1
+Add filter for probes with too many missing values in continuous comparison
 v1.15.2
 Fix bug with clusters for continuous variable for COHCAP.avg.by.island()
 v1.15.1

@@ -5,7 +5,11 @@ custom.mean = function(arr)
 
 custom.cor = function(arr, var1)
 {
-	return(cor(as.numeric(arr), var1, use="complete.obs"))
+	if(length(arr[!is.na(arr)]) >= 0.5 * length(arr)){
+		return(cor(as.numeric(arr), var1, use="complete.obs"))
+	}else{
+		return(NA)
+	}
 }#end def custom.cor
 
 ttest2 <- function(arr, grp1, grp2)
@@ -55,19 +59,27 @@ annova.pvalue <- function(arr, grp.levels)
 
 lm.pvalue = function(arr, var1)
 {
-	fit = lm(as.numeric(arr)~var1)
-	result = summary(fit)
-	pvalue = result$coefficients[2,4]
-	return(pvalue)
+	if(length(arr[!is.na(arr)]) >= 0.5 * length(arr)){
+		fit = lm(as.numeric(arr)~var1)
+		result = summary(fit)
+		pvalue = result$coefficients[2,4]
+		return(pvalue)
+	}else{
+		return(NA)
+	}
 }#end def lm.pvalue
 
 
 lm.pvalue2 = function(arr, var1, var2)
 {
-	fit = lm(as.numeric(arr)~var1 + as.numeric(as.factor(var2)))
-	result = summary(fit)
-	pvalue = result$coefficients[2,4]
-	return(pvalue)
+	if(length(arr[!is.na(arr)]) >= 0.5 * length(arr)){
+		fit = lm(as.numeric(arr)~var1 + as.numeric(as.factor(var2)))
+		result = summary(fit)
+		pvalue = result$coefficients[2,4]
+		return(pvalue)
+	}else{
+		return(NA)
+	}
 }#end def lm.pvalue
 
 annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
