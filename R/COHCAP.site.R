@@ -110,6 +110,10 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 }#end def annova.pvalue
 
+count.observed = function(arr){
+	return(length(arr[!is.na(arr)]))
+}#end def count.observed
+
 `COHCAP.site` <-function (sample.file, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, paired=FALSE, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, ref="none", num.groups=2, create.wig = "avg", plot.heatmap=TRUE, output.format='xls')
 {
 	fixed.color.palatte <- c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
@@ -241,9 +245,9 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			beta.max= apply(beta.values, 1, max, na.rm=TRUE)
 			
 			upper.beta = beta.max
-			upper.beta[beta.cor < 0] = beta.min[beta.cor < 0]
+			upper.beta[!is.na(beta.cor) & (beta.cor < 0)] = beta.min[!is.na(beta.cor) & (beta.cor < 0)]
 			lower.beta = beta.min
-			lower.beta[beta.cor < 0] = beta.max[beta.cor < 0]
+			lower.beta[!is.na(beta.cor) & (beta.cor < 0)] = beta.max[!is.na(beta.cor) & (beta.cor < 0)]
 			
 			rm(beta.min)
 			rm(beta.max)
@@ -416,16 +420,16 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				print("unmethyl.cutoff > methyl.cutoff ...")
 				print("so, delta-beta decides which group should be subject to which cutoff")
 				temp.delta.beta = stat.table[[8]]
-				temp.methyl.up = filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.up = filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
 				print(dim(temp.methyl.up))
-				temp.methyl.down = filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= -delta.beta.cutoff),]
+				temp.methyl.down = filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= -delta.beta.cutoff),]
 				print(dim(temp.methyl.down))
 				filter.table = rbind(temp.methyl.up, temp.methyl.down)
 			}
 		else
 			{
-				temp.methyl.up = filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				temp.methyl.down = filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.up = filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.down = filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
 				filter.table = rbind(temp.methyl.up, temp.methyl.down)
 			}
 	}else if(length(groups) == 1) {
@@ -457,6 +461,15 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 
 if((plot.heatmap)& (nrow(filter.table) > 0)){
 	temp.beta.mat = apply(beta.values[match(as.character(filter.table$SiteID),as.character(stat.table$SiteID)),], 1, as.numeric)
+	
+	probe.count.obs= apply(temp.beta.mat, 2, count.observed)
+	if(length(probe.count.obs[probe.count.obs < 3]) > 0){
+		print(paste("filtering NA probes from heatmap: ",filter.table$SiteID[probe.count.obs[probe.count.obs < 3]],sep="",collapse=","))
+		temp.beta.mat = temp.beta.mat[,probe.count.obs >= 3]
+		
+		filter.table = filter.table[probe.count.obs >= 3, ]
+	}#end if(length(probe.count.obs[probe.count.obs < 3]) > 0)
+	
 	if(nrow(filter.table) < 25){
 		colnames(temp.beta.mat) = filter.table$SiteID
 	} else {

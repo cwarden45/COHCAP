@@ -1,3 +1,5 @@
+v1.17.2
+Modify upper and lower beta calculations and probe filter for heatmaps
 v1.17.1
 Add filter for probes with too many missing values in continuous comparison
 v1.15.2

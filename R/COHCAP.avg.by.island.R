@@ -110,6 +110,10 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 }#end def annova.pvalue
 
+count.observed = function(arr){
+	return(length(arr[!is.na(arr)]))
+}#end def count.observed
+
 `COHCAP.avg.by.island` <-function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, max.cluster.dist = NULL, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE, paired=FALSE, ref="none", output.format = "xls", gene.centric=TRUE)
 {
 	fixed.color.palatte <- c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
@@ -545,13 +549,13 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 				print("unmethyl.cutoff > methyl.cutoff ...")
 				print("so, delta-beta decides which group should be subject to which cutoff")
 				temp.delta.beta <- island.table[[5]]
-				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= -delta.beta.cutoff),]
+				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= -delta.beta.cutoff),]
 				filter.table <- rbind(temp.methyl.up, temp.methyl.down)	}
 		else
 			{
-				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
 				filter.table <- rbind(temp.methyl.up, temp.methyl.down)
 			}
 	} else if(length(groups) == 1) {
@@ -599,50 +603,6 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
-
-if((plot.heatmap)& (nrow(island.avg.table) > 0)){
-	temp.beta.mat = apply(island.avg.table[,3:ncol(island.avg.table)], 1, as.numeric)
-	if(length(sig.islands) < 25){
-		colnames(temp.beta.mat) = sig.islands
-	} else {
-		colnames(temp.beta.mat) = rep("", length(sig.islands))
-	}
-	rownames(temp.beta.mat) = samples
-	
-	labelColors = rep("black",times=nrow(temp.beta.mat))
-	if(ref == "continuous"){
-		continuous.color.breaks = 10	
-		plot.var = as.numeric(continous.var)
-		plot.var.min = min(plot.var, na.rm=T)
-		plot.var.max = max(plot.var, na.rm=T)
-		
-		plot.var.range = plot.var.max - plot.var.min
-		plot.var.interval = plot.var.range / continuous.color.breaks
-		
-		color.range = colorRampPalette(c("green","black","orange"))(n = continuous.color.breaks)
-		plot.var.breaks = plot.var.min + plot.var.interval*(0:continuous.color.breaks)
-		for (j in 1:continuous.color.breaks){
-			labelColors[(plot.var >= plot.var.breaks[j]) &(plot.var <= plot.var.breaks[j+1])] = color.range[j]
-		}#end for (j in 1:continuous.color.breaks)
-	}else{
-		color.palette = fixed.color.palatte[1:length(groups)]
-		for (j in 1:length(groups)){
-			labelColors[sample.group == as.character(groups[j])] = color.palette[j]
-		}#end for (j in 1:length(groups))
-	}
-
-	heatmap.file = file.path(island.folder, paste(project.name,"_CpG_island_heatmap-Avg_by_Island.pdf",sep=""))
-	pdf(file = heatmap.file)
-	heatmap.2(temp.beta.mat, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
-				 RowSideColors=labelColors, trace="none", margins = c(15,15), cexCol=0.8, cexRow=0.8)
-	if(ref == "continuous"){
-		legend("topright",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
-				col=rev(color.range), pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
-	}else{
-		legend("topright",legend=groups,col=color.palette,  pch=15)
-	}
-	dev.off()
-}#end if((plot.heatmap)& (nrow(island.avg.table) > 0))
 	
 if((plot.box) & (nrow(island.avg.table) > 0))
 	{
@@ -702,5 +662,50 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 	}#end if((plot.box) & (nrow(island.avg.table) > 0))
 	
 	integrate.tables = list(beta.table=island.avg.table, filtered.island.stats=filter.table)
+
+if((plot.heatmap)& (nrow(island.avg.table) > 0)){
+	temp.beta.mat = apply(island.avg.table[,3:ncol(island.avg.table)], 1, as.numeric)
+
+	if(length(sig.islands) < 25){
+		colnames(temp.beta.mat) = sig.islands
+	} else {
+		colnames(temp.beta.mat) = rep("", length(sig.islands))
+	}
+	rownames(temp.beta.mat) = samples
+	
+	labelColors = rep("black",times=nrow(temp.beta.mat))
+	if(ref == "continuous"){
+		continuous.color.breaks = 10	
+		plot.var = as.numeric(continous.var)
+		plot.var.min = min(plot.var, na.rm=T)
+		plot.var.max = max(plot.var, na.rm=T)
+		
+		plot.var.range = plot.var.max - plot.var.min
+		plot.var.interval = plot.var.range / continuous.color.breaks
+		
+		color.range = colorRampPalette(c("green","black","orange"))(n = continuous.color.breaks)
+		plot.var.breaks = plot.var.min + plot.var.interval*(0:continuous.color.breaks)
+		for (j in 1:continuous.color.breaks){
+			labelColors[(plot.var >= plot.var.breaks[j]) &(plot.var <= plot.var.breaks[j+1])] = color.range[j]
+		}#end for (j in 1:continuous.color.breaks)
+	}else{
+		color.palette = fixed.color.palatte[1:length(groups)]
+		for (j in 1:length(groups)){
+			labelColors[sample.group == as.character(groups[j])] = color.palette[j]
+		}#end for (j in 1:length(groups))
+	}
+
+	heatmap.file = file.path(island.folder, paste(project.name,"_CpG_island_heatmap-Avg_by_Island.pdf",sep=""))
+	pdf(file = heatmap.file)
+	heatmap.2(temp.beta.mat, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+				 RowSideColors=labelColors, trace="none", margins = c(15,15), cexCol=0.8, cexRow=0.8)
+	if(ref == "continuous"){
+		legend("topright",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+				col=rev(color.range), pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
+	}else{
+		legend("topright",legend=groups,col=color.palette,  pch=15)
+	}
+	dev.off()
+}#end if((plot.heatmap)& (nrow(island.avg.table) > 0))
 	return(integrate.tables)
 }#end def COHCAP.avg.by.island
