@@ -463,12 +463,13 @@ if((plot.heatmap)& (nrow(filter.table) > 0)){
 	temp.beta.mat = apply(beta.values[match(as.character(filter.table$SiteID),as.character(stat.table$SiteID)),], 1, as.numeric)
 	
 	probe.count.obs= apply(temp.beta.mat, 2, count.observed)
-	if(length(probe.count.obs[probe.count.obs < 3]) > 0){
-		print(paste("filtering NA probes from heatmap: ",filter.table$SiteID[probe.count.obs[probe.count.obs < 3]],sep="",collapse=","))
-		temp.beta.mat = temp.beta.mat[,probe.count.obs >= 3]
-		
-		filter.table = filter.table[probe.count.obs >= 3, ]
-	}#end if(length(probe.count.obs[probe.count.obs < 3]) > 0)
+	if(length(probe.count.obs[probe.count.obs < 0.5 * nrow(temp.beta.mat)]) > 0){
+		print(paste("filtering NA probes from heatmap: ",paste(filter.table$SiteID[probe.count.obs < 0.5 * nrow(temp.beta.mat)],collapse=","),sep=""))
+		print(dim(temp.beta.mat))
+		filter.table = filter.table[probe.count.obs >= 0.5 * nrow(temp.beta.mat), ]
+		temp.beta.mat = temp.beta.mat[,probe.count.obs >= 0.5 * nrow(temp.beta.mat)]
+		print(dim(temp.beta.mat))
+	}#end if(length(probe.count.obs[probe.count.obs < 0.5 * nrow(temp.beta.mat)]) > 0)
 	
 	if(nrow(filter.table) < 25){
 		colnames(temp.beta.mat) = filter.table$SiteID
