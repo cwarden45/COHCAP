@@ -663,7 +663,7 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 	
 	integrate.tables = list(beta.table=island.avg.table, filtered.island.stats=filter.table)
 
-if((plot.heatmap)& (nrow(island.avg.table) > 0)){
+if((plot.heatmap)& (nrow(island.avg.table) > 1)){
 	temp.beta.mat = apply(island.avg.table[,3:ncol(island.avg.table)], 1, as.numeric)
 
 	if(length(sig.islands) < 25){

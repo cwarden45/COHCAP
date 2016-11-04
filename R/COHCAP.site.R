@@ -459,7 +459,7 @@ count.observed = function(arr){
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 
-if((plot.heatmap)& (nrow(filter.table) > 0)){
+if((plot.heatmap)& (nrow(filter.table) > 1)){
 	temp.beta.mat = apply(beta.values[match(as.character(filter.table$SiteID),as.character(stat.table$SiteID)),], 1, as.numeric)
 	
 	probe.count.obs= apply(temp.beta.mat, 2, count.observed)
