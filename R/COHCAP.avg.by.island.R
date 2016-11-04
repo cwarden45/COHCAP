@@ -72,8 +72,11 @@ lm.pvalue = function(arr, var1)
 
 lm.pvalue2 = function(arr, var1, var2)
 {
+	if(typeof(var2) == "character"){
+		var2 = as.factor(var2)
+	} 
 	if(length(arr[!is.na(arr)]) >= 0.5 * length(arr)){
-		fit = lm(as.numeric(arr)~var1 + as.numeric(as.factor(var2)))
+		fit = lm(as.numeric(arr)~var1 + as.numeric(var2))
 		result = summary(fit)
 		pvalue = result$coefficients[2,4]
 		return(pvalue)
@@ -137,11 +140,15 @@ count.observed = function(arr){
 	sample.group <- sample.table[[2]]
 	sample.group <- as.factor(gsub(" ",".",sample.group))
 	pairing.group <- NA
-	if(paired)
-		{
-			pairing.group <- sample.table[[3]]
-			pairing.group <- as.factor(gsub(" ",".",pairing.group))	
-		}
+	if(paired == "continuous"){
+		print("using continuous covariate")
+		pairing.group = sample.table[[3]]
+		pairing.group = as.numeric(paired)
+	}else if(paired){
+		print("using pairing ID")
+		pairing.group = sample.table[[3]]
+		pairing.group = as.factor(gsub(" ",".",pairing.group))
+	}
 	ref <- gsub(" ",".",ref)
 
 	sample.names <- names(beta.table)[6:ncol(beta.table)]
@@ -373,7 +380,7 @@ count.observed = function(arr){
 	
 	if(ref == "continuous"){
 			continous.var = sample.table[[2]]
-			if (paired == TRUE){
+			if ((paired == TRUE) | (paired == "continuous")){
 				lm.pvalue = apply(beta.values, 1, lm.pvalue2, continous.var, pairing.group)
 			} else{
 				lm.pvalue = apply(beta.values, 1, lm.pvalue, continous.var)
@@ -455,15 +462,16 @@ count.observed = function(arr){
 
 	delta.beta <- trt.avg.beta - ref.avg.beta
 
-	if(paired)
-		{
-			print("Factor in Paired Samples")
-			beta.pvalue <- apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group)
-		}#end if(pair.flag == 1)
-	else
-		{
-			beta.pvalue <- apply(beta.values, 1, ttest2, grp1=trt.indices, grp2=ref.indices)
-		}#end else
+	if(paired == "continuous"){
+		print("Analysis of two numeric variables")
+		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
+	}else if(paired){
+		print("Factor in Paired Samples")
+		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
+	}else{
+		beta.pvalue <- apply(beta.values, 1, ttest2, grp1=trt.indices, grp2=ref.indices)
+	}#end else
+
 	beta.fdr <- p.adjust(beta.pvalue, method="fdr")
 
 	#print(dim(island.table))
@@ -503,15 +511,16 @@ count.observed = function(arr){
 		colnames(island.table) <- col.names
 	}#end for (i in 1:length(groups)
 
-	if(paired)
-		{
-			print("Factor in Paired Samples")
-			pvalue <- apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group)
-		}#end if(pair.flag == 1)
-	else
-		{
-			pvalue <- apply(beta.values, 1, annova.pvalue, grp.levels = sample.group)
-		}#end else
+	if(paired == "continuous"){
+		print("Analysis of two numeric variables")
+		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
+	}else if(paired){
+		print("Factor in Paired Samples")
+		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
+	}else{
+		pvalue <- apply(beta.values, 1, annova.pvalue, grp.levels = sample.group)
+	}#end else
+
 	anova.fdr <- p.adjust(pvalue, method="fdr")
 	col.names <- c(col.names, "island.pvalue", "island.fdr")
 	island.table <- data.frame(island.table, anova.pvalue = pvalue, anova.fdr = anova.fdr)
@@ -663,7 +672,7 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 	
 	integrate.tables = list(beta.table=island.avg.table, filtered.island.stats=filter.table)
 
-if((plot.heatmap)& (nrow(island.avg.table) > 1)){
+if((plot.heatmap)& (nrow(island.avg.table) > 1)& (nrow(island.avg.table) < 10000)){
 	temp.beta.mat = apply(island.avg.table[,3:ncol(island.avg.table)], 1, as.numeric)
 
 	if(length(sig.islands) < 25){

@@ -93,6 +93,9 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 	
 	If so, the pairing variable must be specified in the 3rd column of the sample description file.
 	Used for p-value calculation, so this only applies to comparisons with at least 2 groups.
+
+	If you have a secondary continuous variable (like age), you can set paired to “continuous”.
+	COHCAP will then perform linear-regression analysis (converting primary categorical variable into continuous variable, if necessary)
 }
   \item{output.format}{
 	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file
