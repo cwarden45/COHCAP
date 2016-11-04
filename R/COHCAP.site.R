@@ -143,7 +143,7 @@ count.observed = function(arr){
 	if(paired == "continuous"){
 		print("using continuous covariate")
 		pairing.group = sample.table[[3]]
-		pairing.group = as.numeric(paired)
+		pairing.group = as.numeric(pairing.group)
 	}else if(paired){
 		print("using pairing ID")
 		pairing.group = sample.table[[3]]

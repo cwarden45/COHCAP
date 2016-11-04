@@ -1,3 +1,5 @@
+v1.18.1
+Continuous pairing bug fix
 v1.18.0
 Allow use of continuous covariate (switches to linear regression, even if primary variable is categorical)
 v1.17.4
