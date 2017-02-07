@@ -85,19 +85,20 @@ lm.pvalue2 = function(arr, var1, var2)
 	}
 }#end def lm.pvalue
 
-annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
+annova.2way.pvalue = function(arr, grp.levels, pairing.levels)
 {
 	#print(arr)
 	#print(grp.levels)
 	#print(pairing.levels)
 	
-	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
+	grp.no.na = as.factor(as.character(grp.levels[!is.na(arr)]))
 	
-	rep.flag <- 1
-	if((length(levels(grp.no.na)) >= 2) && (rep.flag == 1))
+	min.reps = min(table(grp.no.na))
+	
+	if((length(levels(grp.no.na)) >= 2) && (min.reps >= 2))
 		{
-			test <- aov(arr ~ grp.levels + pairing.levels) 
-			result <- summary(test)[[1]][['Pr(>F)']][1]
+			test = aov(arr ~ grp.levels + pairing.levels) 
+			result = summary(test)[[1]][['Pr(>F)']][1]
 			if(is.null(result))
 				{
 					return(1)
@@ -316,6 +317,8 @@ count.observed = function(arr){
 		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
 	}else if(paired){
 		print("Factor in Paired Samples")
+		#print(sample.group)
+		#print(pairing.group)
 		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
 	}else{
 		beta.pvalue <- apply(beta.values, 1, ttest2, grp1=trt.indices, grp2=ref.indices)
