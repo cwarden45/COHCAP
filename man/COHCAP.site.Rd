@@ -14,7 +14,8 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
 				methyl.cutoff=0.7, unmethyl.cutoff = 0.3, paired=FALSE,
 				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05,
 				fdr.cutoff=0.05, ref="none", num.groups=2,
-				create.wig = "avg",plot.heatmap=TRUE, output.format = "xls")
+				lower.cont.quantile=0, upper.cont.quantile=1,
+				create.wig = "avg", plot.heatmap=TRUE, output.format = "xls")
 }
 \arguments{
   \item{sample.file}{
@@ -75,6 +76,14 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
  \item{plot.heatmap}{
 	Logical value: Should heatmap be created to visualize CpG site differential methylation?
 	For best comparison to island heatmap, please use same parameters at site and island level.
+}
+  \item{lower.cont.quantile}{
+	For continuous analysis, what beta quantile should be the lower threshold for calculating delta-beta values?
+	Default = 0 (minimum)
+}
+  \item{upper.cont.quantile}{
+	For continuous analysis, what beta quantile should be the upper threshold for calculating delta-beta values?
+	Default = 1 (maximum)
 }
  \item{paired}{
 	A logical value: Is there any special pairing between samples in different groups?

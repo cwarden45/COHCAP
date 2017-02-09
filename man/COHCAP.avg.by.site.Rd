@@ -51,7 +51,7 @@ COHCAP.avg.by.site(site.table, project.name, project.folder,
 }
  \item{num.groups}{
 	Number of groups described in sample description file.  COHCAP algorithm differs when analysing 1-group, 2-group, or >2-group comparisons.
-	COHCAP cannot currently analyze continuous phenotypes.
+	COHCAP cannot analyze continuous phenotypes using the Average-by-Site workflow.
 }
  \item{num.sites}{
 	Minimum number of differentially methylated sites to define a differentially methylated CpG island.
