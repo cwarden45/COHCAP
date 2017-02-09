@@ -15,6 +15,7 @@ COHCAP.avg.by.site(site.table, project.name, project.folder,
 				methyl.cutoff=0.7, unmethyl.cutoff = 0.3,
 				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05,
 				fdr.cutoff=0.05, num.groups=2, num.sites=4,
+				max.cluster.dist = NULL,
 				output.format = "xls")
 }
 \arguments{
@@ -55,6 +56,14 @@ COHCAP.avg.by.site(site.table, project.name, project.folder,
 }
  \item{num.sites}{
 	Minimum number of differentially methylated sites to define a differentially methylated CpG island.
+}
+  \item{max.cluster.dist}{
+	Update annotations by running de-novo clustering within each set of provided annotations.
+	This is the maximum distance (in bp) between filtered sites with a consistent delta-beta sign.
+	This can produce more than one cluster per pre-existing annotation.
+	Set to NULL by default, to run standard COHCAP algorithm.
+	If you would like to test this function, I would recommend a value between 50 and 500 bp.
+	Only valid for 2-group or continuous comparison.
 }
   \item{output.format}{
 	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file.

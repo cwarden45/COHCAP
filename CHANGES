@@ -1,3 +1,5 @@
+v1.19.1
+Add clustering option to COHCAP.avg.by.site
 v1.19.0
 Allow beta quantiles for continuous analysis, instead of maximum / minimum values (although that is still the default)
 v1.18.2

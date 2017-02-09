@@ -12,10 +12,11 @@ List of differentially methylated islands will be created in the "CpG_Island" fo
 }
 \usage{
 COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.folder,
-				methyl.cutoff=0.7, unmethyl.cutoff = 0.3, max.cluster.dist = NULL,
-				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
+				methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2,
+				pvalue.cutoff=0.05, fdr.cutoff=0.05,
 				num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE,
 				paired=FALSE, ref="none", lower.cont.quantile=0, upper.cont.quantile=1,
+				max.cluster.dist = NULL,
 				output.format = "xls", gene.centric=TRUE)
 }
 \arguments{

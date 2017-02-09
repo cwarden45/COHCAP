@@ -77,7 +77,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 }#end def annova.pvalue
 
-`COHCAP.avg.by.site` <-function (site.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, output.format = "xls")
+`COHCAP.avg.by.site` <-function (site.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, max.cluster.dist = NULL, output.format = "xls")
 {
 	island.folder<-file.path(project.folder,"CpG_Island")
 	dir.create(island.folder, showWarnings=FALSE)
@@ -85,9 +85,138 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	data.folder<-file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
+	print("Checking CpG Site Stats Table")
 	print(dim(site.table))
 	site.table <- site.table[!is.na(site.table[[5]]), ]
 	print(dim(site.table))
+	
+	if(!is.null(max.cluster.dist)){
+		if ((num.groups==2)|(ref=="continuous")){
+			print("Looking for clusters within provided CpG Island Annotations")
+			island.clusters = rep(NA,nrow(site.table))
+			
+			cpg.islands = levels(as.factor(as.character(site.table[[5]])))
+
+			for (i in 1:length(cpg.islands))
+				{
+					island = cpg.islands[i]
+					cpg.sites = as.character(site.table[site.table[[5]] == island,1])
+					ann.mat = site.table[match(cpg.sites, as.character(site.table[,1]),nomatch=0),]
+					if(nrow(ann.mat) >= num.sites)
+						{
+							#print(island)
+							ann.mat = ann.mat[order(ann.mat$Loc),]
+							probe.pos = ann.mat$Loc
+						
+							temp.cluster.probes = c(as.character(ann.mat$SiteID[1]))
+							temp.region.chr = as.character(ann.mat$Chr[1])
+							temp.region.start = ann.mat$Loc[1]
+							temp.region.stop = ann.mat$Loc[1]
+							temp.delta.beta = ann.mat[1,8]
+							temp.site.count = 1
+
+							for (i in 2:length(probe.pos)){
+								test.pos = probe.pos[i]
+								test.delta.beta = ann.mat[i,8]
+								sign.check = FALSE
+								if((temp.delta.beta > 0) & (test.delta.beta > 0)){
+									sign.check = TRUE
+								}else if((temp.delta.beta < 0) & (test.delta.beta < 0)){
+									sign.check = TRUE
+								}
+								
+								if(sign.check){
+									if(((test.pos - temp.region.stop) <= max.cluster.dist) & (temp.site.count == 1)){
+										#start cluster
+										temp.region.stop = test.pos				
+										temp.site.count = 2
+										temp.cluster.probes = c(temp.cluster.probes, as.character(ann.mat$SiteID[i]))
+									}else if (temp.site.count > 1){
+										if((test.pos - temp.region.stop) <= max.cluster.dist){
+											#expand region
+											temp.region.stop = test.pos	
+											temp.site.count = temp.site.count + 1
+											temp.cluster.probes = c(temp.cluster.probes, as.character(ann.mat$SiteID[i]))
+										} else {
+											#define stop
+											if(temp.site.count >= num.sites){
+												cluster.chr = paste("chr",temp.region.chr,sep="")
+												cluster.start = temp.region.start
+												cluster.stop = temp.region.stop
+												
+												new.island = paste(cluster.chr,":",cluster.start,"-",cluster.stop,sep="")
+												island.clusters[match(temp.cluster.probes,as.character(site.table$SiteID), nomatch=0)]=new.island
+											}#end if(temp.site.count >= num.sites)
+
+											temp.cluster.probes = c(as.character(ann.mat$SiteID[i]))
+											temp.region.chr = as.character(ann.mat$Chr[i])
+											temp.region.start = ann.mat$Loc[i]
+											temp.region.stop = ann.mat$Loc[i]
+											temp.site.count = 1
+										}#end else
+									}else{
+										#reset
+										temp.cluster.probes = c(as.character(ann.mat$SiteID[i]))
+										temp.region.chr = as.character(ann.mat$Chr[i])
+										temp.region.start = ann.mat$Loc[i]
+										temp.region.stop = ann.mat$Loc[i]
+										temp.site.count = 1					
+									}#end else
+								}else{
+									#reset
+									if (temp.site.count >= num.sites){
+										cluster.chr = paste("chr",temp.region.chr,sep="")
+										cluster.start = temp.region.start
+										cluster.stop = temp.region.stop
+														
+										new.island = paste(cluster.chr,":",cluster.start,"-",cluster.stop,sep="")
+										island.clusters[match(temp.cluster.probes,as.character(site.table$SiteID), nomatch=0)]=new.island
+									}#end if (temp.site.count >= num.sites)
+									
+									temp.cluster.probes = c(as.character(ann.mat$SiteID[i]))
+									temp.region.chr = as.character(ann.mat$Chr[i])
+									temp.region.start = ann.mat$Loc[i]
+									temp.region.stop = ann.mat$Loc[i]
+									temp.site.count = 1	
+								}#end else
+								
+								temp.delta.beta = ann.mat[i,8]
+							}#end for (i in 2:length(test.pos))
+
+							if (temp.site.count >= num.sites){
+								cluster.chr = paste("chr",temp.region.chr,sep="")
+								cluster.start = temp.region.start
+								cluster.stop =  temp.region.stop
+												
+								new.island = paste(cluster.chr,":",cluster.start,"-",cluster.stop,sep="")
+								island.clusters[match(temp.cluster.probes,as.character(site.table$SiteID), nomatch=0)]=new.island
+							}#end if (temp.hits > 1)
+						}#end if(nrow(data.mat) >= num.sites)
+				}#end for (i in 1:length(cpg.islands))
+			#print(island.clusters)
+			
+			mapping.table = data.frame(SiteID = as.character(site.table$SiteID), Chr =as.character(site.table$Chr),
+											Loc=as.character(site.table$Loc), updated.island=island.clusters)
+			if(output.format == 'xls'){
+				xlsfile <- file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Site.xlsx",sep=""))
+				WriteXLS("mapping.table", ExcelFileName = xlsfile)
+			} else if(output.format == 'csv'){
+				txtfile <- file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Site.csv",sep=""))
+				write.table(mapping.table, file=txtfile, quote=F, row.names=F, sep=",")
+			} else if(output.format == 'txt'){
+				txtfile <- file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Site.txt",sep=""))
+				write.table(mapping.table, file=txtfile, quote=F, row.names=F, sep="\t")
+			} else {
+				warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
+			}
+			rm(mapping.table)
+			
+			site.table[,5] = island.clusters
+			site.table = site.table[!is.na(site.table[[5]]), ]
+		} else{
+			print("Can only define clusters with 2-group (or continuous) comparison.  Sorry.")
+		}
+	}#revise island annotations
 	
 	#print(site.table[[5]])
 	

@@ -117,7 +117,7 @@ count.observed = function(arr){
 	return(length(arr[!is.na(arr)]))
 }#end def count.observed
 
-`COHCAP.avg.by.island` <-function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, max.cluster.dist = NULL, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE, paired=FALSE, ref="none",lower.cont.quantile=0, upper.cont.quantile=1, output.format = "xls", gene.centric=TRUE)
+`COHCAP.avg.by.island` <-function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE, paired=FALSE, ref="none",lower.cont.quantile=0, upper.cont.quantile=1, max.cluster.dist = NULL,  output.format = "xls", gene.centric=TRUE)
 {
 	fixed.color.palatte <- c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
 	
