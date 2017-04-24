@@ -1,7 +1,7 @@
 Package: COHCAP
 Type: Package
 Title: CpG Island Analysis Pipeline for Illumina Methylation Array and Targeted BS-Seq Data
-Version: 1.20.0
+Version: 1.21.0
 Date: 2017-2-9
 Author: Charles Warden
 Maintainer: Charles Warden <cwarden45@gmail.com>
