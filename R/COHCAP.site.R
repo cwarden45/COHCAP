@@ -204,12 +204,12 @@ count.observed = function(arr){
 
 	if((create.wig == "sample")|(create.wig == "avg.and.sample")){
 			#create .wig files for each sample
-			wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
+			wig.folder=file.path(site.folder,paste(project.name,"wig",sep="_"))
 			dir.create(wig.folder, showWarnings=FALSE)
 
-			temp.stat.file <- file.path(wig.folder, "temp.txt")
-			Perl.Path <- file.path(path.package("COHCAP"), "Perl")
-			perl.script <- file.path(Perl.Path , "create_wig_files.pl")
+			temp.stat.file = file.path(wig.folder, "temp.txt")
+			Perl.Path = file.path(path.package("COHCAP"), "Perl")
+			perl.script = file.path(Perl.Path , "create_wig_files.pl")
 			
 			sample.beta = beta.table
 			sample.beta = sample.beta[order(sample.beta$Chr, sample.beta$Loc), ]
@@ -403,15 +403,15 @@ count.observed = function(arr){
 
 	if((create.wig == "avg")|(create.wig == "avg.and.sample")){
 		#create .wig file based upon average methylation values
-		wig.folder<-file.path(site.folder,paste(project.name,"wig",sep="_"))
+		wig.folder=file.path(site.folder,paste(project.name,"wig",sep="_"))
 		dir.create(wig.folder, showWarnings=FALSE)
 
-		temp.stat.file <- file.path(wig.folder, "temp.txt")
-		Perl.Path <- file.path(path.package("COHCAP"), "Perl")
-		perl.script <- file.path(Perl.Path , "create_wig_files.pl")
+		temp.stat.file = file.path(wig.folder, "temp.txt")
+		Perl.Path = file.path(path.package("COHCAP"), "Perl")
+		perl.script = file.path(Perl.Path , "create_wig_files.pl")
 		write.table(stat.table, temp.stat.file, quote=F, row.names=F, sep="\t")
-		cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
-		res <- system(cmd, intern=TRUE, wait=TRUE)
+		cmd = paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
+		res = system(cmd, intern=TRUE, wait=TRUE)
 		message(res)
 	}#end if(create.wig)
 	
@@ -443,12 +443,12 @@ count.observed = function(arr){
 				filter.table = rbind(temp.methyl.up, temp.methyl.down)
 			}
 	}else if(length(groups) == 1) {
-		temp.avg.beta <- stat.table$avg.beta
-		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
+		temp.avg.beta = stat.table$avg.beta
+		filter.table = filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
 	} else if(length(groups) > 2) {
-		temp.pvalue <- stat.table[[ncol(stat.table) -1]]
-		temp.fdr <- stat.table[[ncol(stat.table)]]
-		filter.table <- filter.table[(temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff),]
+		temp.pvalue = stat.table[[ncol(stat.table) -1]]
+		temp.fdr = stat.table[[ncol(stat.table)]]
+		filter.table = filter.table[(temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff),]
 	} else {
 	print("Invalid groups specified in sample description file!")
 	}

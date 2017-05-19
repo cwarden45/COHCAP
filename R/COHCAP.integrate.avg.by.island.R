@@ -1,38 +1,47 @@
-cor.test.est <- function(x)
+cor.test.est = function(x)
 	{
-		index <- 1:length(x)
-		methyl <- x[(index %% 2) == 1]
-		expr <- x[(index %% 2) == 0]
-		result <- cor.test(methyl, expr, na.action=na.rm)
-		return(result$estimate)
+		index = 1:length(x)
+		methyl = x[(index %% 2) == 1]
+		expr = x[(index %% 2) == 0]
+		result = cor.test(methyl, expr, na.action=na.rm)
+		if(is.na(result$estimate)){
+			return(0)
+		}else{
+			return(result$estimate)
+		}
 	}#end def cor.test.est
 	
-cor.test.pvalue <- function(x)
+cor.test.pvalue = function(x)
 	{
-		index <- 1:length(x)
-		methyl <- x[(index %% 2) == 1]
-		expr <- x[(index %% 2) == 0]
-		result <- cor.test(methyl, expr, na.action=na.rm)
-		return(result$p.value)
+		index = 1:length(x)
+		methyl = x[(index %% 2) == 1]
+		expr = x[(index %% 2) == 0]
+		result = cor.test(methyl, expr, na.action=na.rm)
+		if(is.na(result$p.value)){
+			return(1)
+		}else{
+			return(result$p.value)
+		}
 	}#end def cor.test.est
 
-`COHCAP.integrate.avg.by.island` <-function (island.list, project.name, project.folder, expr.file, sample.file, cor.pvalue.cutoff=0.05, cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE, output.format = "xls")
+`COHCAP.integrate.avg.by.island` = function (island.list, project.name, project.folder, expr.file, sample.file, cor.pvalue.cutoff=0.05, cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE, output.format = "xls")
 {
-	fixed.color.palatte <- c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
+	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
 
 	beta.table = island.list$beta.table
 	print(dim(beta.table))
 	filtered.island.stats = island.list$filtered.island.stats
 	print(dim(filtered.island.stats))
 	
-	integrate.folder<-file.path(project.folder,"Integrate")
+	integrate.folder=file.path(project.folder,"Integrate")
 	dir.create(integrate.folder, showWarnings=FALSE)
 	
-	data.folder<-file.path(project.folder,"Raw_Data")
+	data.folder=file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
-	temp.paired <- file.path(data.folder,"temp_paired.txt")
-	temp.methyl <- file.path(data.folder,"temp_methyl.txt")
+	tempID = sample(100000:999999,1)
+	temp.paired = file.path(data.folder,paste("temp_paired_",tempID,".txt",sep=""))
+	temp.methyl = file.path(data.folder,paste("temp_methyl_",tempID,".txt",sep=""))
 	write.table(beta.table, temp.methyl, quote=F, row.names=F, sep="\t")
 	
 	Perl.Path = file.path(path.package("COHCAP"), "Perl")
@@ -62,7 +71,7 @@ cor.test.pvalue <- function(x)
 	island.direction[delta.beta > 0] = "Increased Methylation"
 	island.direction[delta.beta < 0] = "Decreased Methylation"
 	
-	cor.table <- data.frame(island=islands, island.direction = island.direction, gene=genes, cor=cor.coef.values, p.value=cor.pvalues, fdr=cor.fdr.values)
+	cor.table= data.frame(island=islands, island.direction = island.direction, gene=genes, cor=cor.coef.values, p.value=cor.pvalues, fdr=cor.fdr.values)
 	if(output.format == 'xls'){
 		xlsfile <- file.path(data.folder, paste(project.name,"_integration_cor_stats.xlsx",sep=""))
 		WriteXLS("cor.table", ExcelFileName = xlsfile)
