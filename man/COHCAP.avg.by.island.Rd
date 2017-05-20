@@ -16,7 +16,7 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 				pvalue.cutoff=0.05, fdr.cutoff=0.05,
 				num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE,
 				paired=FALSE, ref="none", lower.cont.quantile=0, upper.cont.quantile=1,
-				max.cluster.dist = NULL,
+				max.cluster.dist = NULL, ttest.sub="none",
 				output.format = "xls", gene.centric=TRUE)
 }
 \arguments{
@@ -105,6 +105,12 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 
 	If you have a secondary continuous variable (like age), you can set paired to "continuous".
 	COHCAP will then perform linear-regression analysis (converting primary categorical variable into continuous variable, if necessary)
+}
+  \item{ttest.sub}{
+	In original workflow, use an alternative test instead of t-test (for
+		1-variable, 2-group comparison).
+	
+	Can be 'none' or 'ANOVA'.  Might be helpful when SD is 0.
 }
   \item{output.format}{
 	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file

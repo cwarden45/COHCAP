@@ -1,27 +1,7 @@
-custom.mean <- function(arr)
+custom.mean = function(arr)
 {
 	return(mean(as.numeric(arr), na.rm = T))
-}#end def ttest2
-
-ttest2 <- function(arr, grp1, grp2)
-{
-	group1 <- as.numeric(arr[grp1])
-	group2 <- as.numeric(arr[grp2])
-	#print(grp1)
-	#print(grp2)
-	#stop()
-	#require at least 2 replicates
-	if((length(group1[!is.na(group1)]) >=3) & (length(group2[!is.na(group2)]) >=3))
-	{
-		result <- 1
-		tryCatch(result <- t.test(group1, group2)$p.value, error = function(e) {})
-		return(result)
-	}
-	else
-	{
-		return(1)
-	}
-}#end def ttest2
+}#end def custom.mean
 
 annova.pvalue <- function(arr, grp.levels)
 {
@@ -77,12 +57,12 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		}
 }#end def annova.pvalue
 
-`COHCAP.avg.by.site` <-function (site.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, max.cluster.dist = NULL, output.format = "xls")
+`COHCAP.avg.by.site` = function (site.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, max.cluster.dist = NULL, output.format = "xls")
 {
-	island.folder<-file.path(project.folder,"CpG_Island")
+	island.folder=file.path(project.folder,"CpG_Island")
 	dir.create(island.folder, showWarnings=FALSE)
 	
-	data.folder<-file.path(project.folder,"Raw_Data")
+	data.folder=file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
 	print("Checking CpG Site Stats Table")

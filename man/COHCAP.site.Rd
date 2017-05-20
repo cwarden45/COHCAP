@@ -15,7 +15,8 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
 				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05,
 				fdr.cutoff=0.05, ref="none", num.groups=2,
 				lower.cont.quantile=0, upper.cont.quantile=1,
-				create.wig = "avg", plot.heatmap=TRUE, output.format = "xls")
+				create.wig = "avg", ttest.sub="none",
+				plot.heatmap=TRUE, output.format = "xls")
 }
 \arguments{
   \item{sample.file}{
@@ -84,6 +85,12 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
   \item{upper.cont.quantile}{
 	For continuous analysis, what beta quantile should be the upper threshold for calculating delta-beta values?
 	Default = 1 (maximum)
+}
+  \item{ttest.sub}{
+	In original workflow, use an alternative test instead of t-test (for
+		1-variable, 2-group comparison).
+	
+	Can be 'none' or 'ANOVA'.  Might be helpful when SD is 0.
 }
  \item{paired}{
 	A logical value: Is there any special pairing between samples in different groups?

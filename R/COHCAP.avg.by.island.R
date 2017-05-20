@@ -1,4 +1,4 @@
-custom.mean <- function(arr)
+custom.mean = function(arr)
 {
 	return(mean(as.numeric(arr), na.rm = T))
 }#end def ttest2
@@ -12,19 +12,22 @@ custom.cor = function(arr, var1)
 	}
 }#end def custom.cor
 
-ttest2 <- function(arr, grp1, grp2)
+ttest2 = function(arr, grp1, grp2)
 {
-	group1 <- as.numeric(arr[grp1])
-	group2 <- as.numeric(arr[grp2])
+	group1 = as.numeric(arr[grp1])
+	group2 = as.numeric(arr[grp2])
 	#print(grp1)
 	#print(grp2)
 	#stop()
 	#require at least 2 replicates
-	if((length(group1[!is.na(group1)]) >=3) & (length(group2[!is.na(group2)]) >=3))
+	if((length(group1[!is.na(group1)]) >=2) & (length(group2[!is.na(group2)]) >=2))
 	{
-		result <- 1
-		tryCatch(result <- t.test(group1, group2)$p.value, error = function(e) {})
-		return(result)
+		result = t.test(group1, group2)
+		if(is.na(result$p.value)){
+			return(1)
+		}else{
+			return(result$p.value)
+		}
 	}
 	else
 	{
@@ -32,7 +35,7 @@ ttest2 <- function(arr, grp1, grp2)
 	}
 }#end def ttest2
 
-annova.pvalue <- function(arr, grp.levels)
+anova.pvalue = function(arr, grp.levels)
 {
 	#print(arr)
 	#print(grp.levels)
@@ -55,7 +58,7 @@ annova.pvalue <- function(arr, grp.levels)
 		{
 			return(1)
 		}
-}#end def annova.pvalue
+}#end def anova.pvalue
 
 lm.pvalue = function(arr, var1)
 {
@@ -85,7 +88,7 @@ lm.pvalue2 = function(arr, var1, var2)
 	}
 }#end def lm.pvalue
 
-annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
+annova.2way.pvalue = function(arr, grp.levels, pairing.levels)
 {
 	#print(arr)
 	#print(grp.levels)
@@ -111,20 +114,20 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 		{
 			return(1)
 		}
-}#end def annova.pvalue
+}#end def anova.pvalue
 
 count.observed = function(arr){
 	return(length(arr[!is.na(arr)]))
 }#end def count.observed
 
-`COHCAP.avg.by.island` <-function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE, paired=FALSE, ref="none",lower.cont.quantile=0, upper.cont.quantile=1, max.cluster.dist = NULL,  output.format = "xls", gene.centric=TRUE)
+`COHCAP.avg.by.island` =function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE, paired=FALSE, ref="none",lower.cont.quantile=0, upper.cont.quantile=1, max.cluster.dist = NULL, ttest.sub="none", output.format = "xls", gene.centric=TRUE)
 {
-	fixed.color.palatte <- c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
+	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
 	
-	island.folder<-file.path(project.folder,"CpG_Island")
+	island.folder=file.path(project.folder,"CpG_Island")
 	dir.create(island.folder, showWarnings=FALSE)
 	
-	data.folder<-file.path(project.folder,"Raw_Data")
+	data.folder=file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
 	print("Reading Sample Description File....")
@@ -469,10 +472,15 @@ count.observed = function(arr){
 		print("Factor in Paired Samples")
 		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
 	}else{
-		beta.pvalue <- apply(beta.values, 1, ttest2, grp1=trt.indices, grp2=ref.indices)
+		if (ttest.sub == "ANOVA"){
+			print("Using ANOVA instead of t-test")
+			beta.pvalue = apply(beta.values, 1, anova.pvalue, grp.levels=sample.group)
+		}else{
+			beta.pvalue = apply(beta.values, 1, ttest2, grp1=trt.indices, grp2=ref.indices)
+		}
 	}#end else
 
-	beta.fdr <- p.adjust(beta.pvalue, method="fdr")
+	beta.fdr = p.adjust(beta.pvalue, method="fdr")
 
 	#print(dim(island.table))
 	#print(length(trt.avg.beta))
@@ -518,7 +526,7 @@ count.observed = function(arr){
 		print("Factor in Paired Samples")
 		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
 	}else{
-		pvalue <- apply(beta.values, 1, annova.pvalue, grp.levels = sample.group)
+		pvalue <- apply(beta.values, 1, anova.pvalue, grp.levels = sample.group)
 	}#end else
 
 	anova.fdr <- p.adjust(pvalue, method="fdr")
