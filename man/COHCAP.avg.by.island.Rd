@@ -17,7 +17,7 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 				num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE,
 				paired=FALSE, ref="none", lower.cont.quantile=0, upper.cont.quantile=1,
 				max.cluster.dist = NULL, ttest.sub="none",
-				output.format = "xls", gene.centric=TRUE)
+				output.format = "xls", gene.centric=TRUE, heatmap.dist.fun="Euclidian")
 }
 \arguments{
   \item{sample.file}{
@@ -111,6 +111,11 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 		1-variable, 2-group comparison).
 	
 	Can be 'none' or 'ANOVA'.  Might be helpful when SD is 0.
+}
+  \item{heatmap.dist.fun}{
+	Distance metric for clustering in heatmap.
+	
+	Can be 'Euclidian' or 'Pearson Dissimilarity'.
 }
   \item{output.format}{
 	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file

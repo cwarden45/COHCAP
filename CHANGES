@@ -1,3 +1,5 @@
+v1.21.4
+Fix bug when clustering RRBS data.  Change box-plots to have fixed minimum and maximum.
 v1.21.3
 Allow ANOVA in place of t-test and fix duplicate bug.
 v1.21.2

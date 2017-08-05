@@ -40,11 +40,11 @@ anova.pvalue = function(arr, grp.levels)
 	#print(arr)
 	#print(grp.levels)
 	
-	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
+	grp.no.na = as.factor(as.character(grp.levels[!is.na(arr)]))
 	if(length(levels(grp.no.na)) >= 2)
 		{
-			test <- aov(arr ~ grp.levels) 
-			result <- summary(test)[[1]][['Pr(>F)']][1]
+			test = aov(arr ~ grp.levels) 
+			result = summary(test)[[1]][['Pr(>F)']][1]
 			if(is.null(result))
 				{
 					return(1)
@@ -94,13 +94,13 @@ annova.2way.pvalue = function(arr, grp.levels, pairing.levels)
 	#print(grp.levels)
 	#print(pairing.levels)
 	
-	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
+	grp.no.na = as.factor(as.character(grp.levels[!is.na(arr)]))
 	
-	rep.flag <- 1
+	rep.flag = 1
 	if((length(levels(grp.no.na)) >= 2) && (rep.flag == 1))
 		{
-			test <- aov(arr ~ grp.levels + pairing.levels) 
-			result <- summary(test)[[1]][['Pr(>F)']][1]
+			test = aov(arr ~ grp.levels + pairing.levels) 
+			result = summary(test)[[1]][['Pr(>F)']][1]
 			if(is.null(result))
 				{
 					return(1)
@@ -120,9 +120,30 @@ count.observed = function(arr){
 	return(length(arr[!is.na(arr)]))
 }#end def count.observed
 
-`COHCAP.avg.by.island` =function (sample.file, site.table, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE, paired=FALSE, ref="none",lower.cont.quantile=0, upper.cont.quantile=1, max.cluster.dist = NULL, ttest.sub="none", output.format = "xls", gene.centric=TRUE)
+cor.dist = function(mat){
+	cor.mat = cor(as.matrix(t(mat)), use="pairwise.complete.obs")
+	dis.mat = 1 - cor.mat
+	dis.mat[is.na(dis.mat)]=2
+	return(as.dist(dis.mat))
+}#end def cor.dist
+
+`COHCAP.avg.by.island` =function (sample.file, site.table, beta.table, project.name,
+									project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3,
+									delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
+									num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE,
+									paired=FALSE, ref="none",lower.cont.quantile=0, upper.cont.quantile=1,
+									max.cluster.dist = NULL, ttest.sub="none", output.format = "xls",
+									gene.centric=TRUE, heatmap.dist.fun="Euclidian")
 {
 	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
+
+	if(heatmap.dist.fun =="Euclidian"){
+		heatmap.dist.fun=dist
+	}else if(heatmap.dist.fun =="Pearson Dissimilarity"){
+		heatmap.dist.fun=cor.dist
+	}else{
+		stop("'heatmap.dist.fun' must be either 'Euclidian' or 'Pearson Dissimilarity'")
+	}
 	
 	island.folder=file.path(project.folder,"CpG_Island")
 	dir.create(island.folder, showWarnings=FALSE)
@@ -131,18 +152,18 @@ count.observed = function(arr){
 	dir.create(data.folder, showWarnings=FALSE)
 	
 	print("Reading Sample Description File....")
-	sample.table <- read.table(sample.file, header=F, sep = "\t")
-	samples <- as.character(sample.table[[1]])
+	sample.table = read.table(sample.file, header=F, sep = "\t")
+	samples = as.character(sample.table[[1]])
 	for (i in 1:length(samples))
 		{
 			if(length(grep("^[0-9]",samples[i])) > 0)
 				{
-					samples[i] <- paste("X",samples[i],sep="")
+					samples[i] = paste("X",samples[i],sep="")
 				}#end if(length(grep("^[0-9]",samples[i])) > 0)
 		}#end def for (i in 1:length(samples))
-	sample.group <- sample.table[[2]]
-	sample.group <- as.factor(gsub(" ",".",sample.group))
-	pairing.group <- NA
+	sample.group = sample.table[[2]]
+	sample.group = as.factor(gsub(" ",".",sample.group))
+	pairing.group = NA
 	if(paired == "continuous"){
 		print("using continuous covariate")
 		pairing.group = sample.table[[3]]
@@ -152,12 +173,12 @@ count.observed = function(arr){
 		pairing.group = sample.table[[3]]
 		pairing.group = as.factor(gsub(" ",".",pairing.group))
 	}
-	ref <- gsub(" ",".",ref)
+	ref = gsub(" ",".",ref)
 
-	sample.names <- names(beta.table)[6:ncol(beta.table)]
-	beta.values <- beta.table[,6:ncol(beta.table)]
-	annotation.names <- names(beta.table)[1:5]
-	annotations <- beta.table[,1:5]
+	sample.names = names(beta.table)[6:ncol(beta.table)]
+	beta.values = beta.table[,6:ncol(beta.table)]
+	annotation.names = names(beta.table)[1:5]
+	annotations = beta.table[,1:5]
 	print(dim(beta.values))
 
 	if(length(samples) != length(sample.names[match(samples, sample.names, nomatch=0)]))
@@ -172,7 +193,7 @@ count.observed = function(arr){
 
 	if(length(samples)>1)
 		{
-			beta.values <- beta.values[,match(samples, sample.names, nomatch=0)]
+			beta.values = beta.values[,match(samples, sample.names, nomatch=0)]
 			colnames(beta.values)=samples
 		}
 		
@@ -183,7 +204,7 @@ count.observed = function(arr){
 	#print(beta.values[1,])
 	rm(beta.table)
 	
-	groups <- levels(sample.group)
+	groups = levels(sample.group)
 	print(paste("Group:",groups, sep=" "))
 
 	if((length(groups) != num.groups) & (ref != "continuous"))
@@ -202,7 +223,7 @@ count.observed = function(arr){
 	
 	print("Checking CpG Site Stats Table")
 	print(dim(site.table))
-	site.table <- site.table[!is.na(site.table[[5]]), ]
+	site.table = site.table[!is.na(site.table[[5]]), ]
 	print(dim(site.table))
 	
 	if(!is.null(max.cluster.dist)){
@@ -313,13 +334,13 @@ count.observed = function(arr){
 			mapping.table = data.frame(SiteID = as.character(site.table$SiteID), Chr =as.character(site.table$Chr),
 											Loc=as.character(site.table$Loc), updated.island=island.clusters)
 			if(output.format == 'xls'){
-				xlsfile <- file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Island.xlsx",sep=""))
+				xlsfile = file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Island.xlsx",sep=""))
 				WriteXLS("mapping.table", ExcelFileName = xlsfile)
 			} else if(output.format == 'csv'){
-				txtfile <- file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Island.csv",sep=""))
+				txtfile = file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Island.csv",sep=""))
 				write.table(mapping.table, file=txtfile, quote=F, row.names=F, sep=",")
 			} else if(output.format == 'txt'){
-				txtfile <- file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Island.txt",sep=""))
+				txtfile = file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Island.txt",sep=""))
 				write.table(mapping.table, file=txtfile, quote=F, row.names=F, sep="\t")
 			} else {
 				warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
@@ -333,43 +354,43 @@ count.observed = function(arr){
 		}
 	}#revise island annotations
 	
-	cpg.islands <- levels(as.factor(as.character(site.table[[5]])))
+	cpg.islands = levels(as.factor(as.character(site.table[[5]])))
 	print(length(cpg.islands))
 	sites.per.island = tapply(as.character(site.table$SiteID),as.character(site.table[[5]]),length)
 
-	genes <- array(dim=length(cpg.islands))
-	island.values<- matrix(nrow=length(cpg.islands), ncol=ncol(beta.values))
-	colnames(island.values) <- samples
+	genes = array(dim=length(cpg.islands))
+	island.values= matrix(nrow=length(cpg.islands), ncol=ncol(beta.values))
+	colnames(island.values) = samples
 
 	#average CpG sites per CpG Island
 	print("Average CpG Sites per CpG Island")
 	for (i in 1:length(cpg.islands))
 		{
-			island <- cpg.islands[i]
+			island = cpg.islands[i]
 			#print(island)
-			cpg.sites <- site.table[site.table[[5]] == island,1]
+			cpg.sites = site.table[site.table[[5]] == island,1]
 			#print(cpg.sites)
-			data.mat <- beta.values[match(cpg.sites, annotations[[1]],nomatch=0),]
+			data.mat = beta.values[match(cpg.sites, annotations[[1]],nomatch=0),]
 			#print(data.mat)
 			if(nrow(data.mat) >= num.sites)
 				{
-					info.mat <- site.table[site.table[5] == island,]
-					genes[i] <- NA
+					info.mat = site.table[site.table[5] == island,]
+					genes[i] = NA
 					if(length(levels(as.factor(as.character(info.mat[[4]])))) == 1)
 						{
-							genes[i] <- as.character(info.mat[1,4])
+							genes[i] = as.character(info.mat[1,4])
 						}
 					island.values[i,]=apply(data.mat,2,mean, na.rm=T)
 				}#end if(nrow(data.mat) >= num.sites)
 		}#end for (i in 1:length(cpg.islands))
-	island.avg.table <- data.frame(island=cpg.islands, gene=genes, island.values)
+	island.avg.table = data.frame(island=cpg.islands, gene=genes, island.values)
 	if(gene.centric)
 		{
-			island.avg.table <- island.avg.table[!is.na(island.avg.table[[2]]), ]
+			island.avg.table = island.avg.table[!is.na(island.avg.table[[2]]), ]
 		}
-	annotations <- island.avg.table[,1:2]
-	annotation.names <- c("island","gene")
-	beta.values <- island.avg.table[,3:ncol(island.avg.table)]
+	annotations = island.avg.table[,1:2]
+	annotation.names = c("island","gene")
+	beta.values = island.avg.table[,3:ncol(island.avg.table)]
 	#print(beta.values)
 	
 	rm(site.table)
@@ -378,7 +399,7 @@ count.observed = function(arr){
 	rm(island.values)
 
 	#CpG Island statistical analysis
-	island.table <- annotations 
+	island.table = annotations 
 	rm(annotations)
 	
 	if(ref == "continuous"){
@@ -411,66 +432,66 @@ count.observed = function(arr){
 									delta.beta = delta.beta, island.pvalue = lm.pvalue, island.fdr = lm.fdr,
 									cor.coef = beta.cor)
 	} else if(length(groups) == 1) {
-	col.names <- c(annotation.names)
+	col.names = c(annotation.names)
 	print("Averaging Beta Values for All Samples")
 
 	if(length(sample.names) > 1)
 		{
-			avg.beta <- apply(beta.values, 1, mean, na.rm = T)
+			avg.beta = apply(beta.values, 1, mean, na.rm = T)
 		}
 	else
 		{
-			avg.beta<- beta.values
+			avg.beta= beta.values
 		}
-	island.table <- data.frame(island.table, avg.beta=avg.beta)
+	island.table = data.frame(island.table, avg.beta=avg.beta)
 	} else if(length(groups) == 2) {
 	print("Differential Methylation Stats for 2 Groups with Reference")
-	trt <- groups[groups != ref]
+	trt = groups[groups != ref]
 	#print(ref)
 	#print(trt)
 	#print(samples)
 	#print(sample.group)
-	trt.samples <- samples[which(sample.group == trt)]
+	trt.samples = samples[which(sample.group == trt)]
 	#print(trt.samples)
-	ref.samples <- samples[which(sample.group == ref)]
+	ref.samples = samples[which(sample.group == ref)]
 	#print(ref.samples)
 
-	all.indices <- 1:length(sample.names)
-	trt.indices <- all.indices[which(sample.group == trt)]
+	all.indices = 1:length(sample.names)
+	trt.indices = all.indices[which(sample.group == trt)]
 	#print(trt.indices)
-	ref.indices <- all.indices[which(sample.group == ref)]
+	ref.indices = all.indices[which(sample.group == ref)]
 	#print(ref.indices)
 
-	trt.beta.values <- beta.values[, trt.indices]
-	ref.beta.values <- beta.values[, ref.indices]
+	trt.beta.values = beta.values[, trt.indices]
+	ref.beta.values = beta.values[, ref.indices]
 
 	if(length(trt.indices) > 1)
 		{
-			trt.avg.beta <- apply(trt.beta.values, 1, mean, na.rm = T)
+			trt.avg.beta = apply(trt.beta.values, 1, mean, na.rm = T)
 		}
 	else
 		{
-			trt.avg.beta <- trt.beta.values
+			trt.avg.beta = trt.beta.values
 		}
 		
 	if(length(ref.indices) > 1)
 		{
-			ref.avg.beta <- apply(ref.beta.values, 1, mean, na.rm = T)
+			ref.avg.beta = apply(ref.beta.values, 1, mean, na.rm = T)
 		}
 	else
 		{
-			ref.avg.beta<- ref.beta.values
+			ref.avg.beta= ref.beta.values
 		}
 
 
-	delta.beta <- trt.avg.beta - ref.avg.beta
+	delta.beta = trt.avg.beta - ref.avg.beta
 
 	if(paired == "continuous"){
 		print("Analysis of two numeric variables")
-		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
+		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
 	}else if(paired){
 		print("Factor in Paired Samples")
-		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
+		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
 	}else{
 		if (ttest.sub == "ANOVA"){
 			print("Using ANOVA instead of t-test")
@@ -489,8 +510,8 @@ count.observed = function(arr){
 	#print(length(beta.pvalue))
 	#print(length(beta.fdr))
 
-	island.table <- data.frame(island.table, trt.beta = trt.avg.beta, ref.beta = ref.avg.beta, delta.beta = delta.beta, pvalue = beta.pvalue, fdr = beta.fdr)
-	colnames(island.table) <- c(annotation.names,
+	island.table = data.frame(island.table, trt.beta = trt.avg.beta, ref.beta = ref.avg.beta, delta.beta = delta.beta, pvalue = beta.pvalue, fdr = beta.fdr)
+	colnames(island.table) = c(annotation.names,
 								paste(trt,"avg.beta",sep="."),
 								paste(ref,"avg.beta",sep="."),
 								paste(trt,"vs",ref,"delta.beta",sep="."),
@@ -498,54 +519,54 @@ count.observed = function(arr){
 								"island.fdr")
 	} else if(length(groups) > 2) {
 	print("Calculating Average Beta and ANOVA p-values")
-	col.names <- c(annotation.names)
+	col.names = c(annotation.names)
 
 	for (i in 1:length(groups))
 	{
-		temp.grp <- groups[i]
-		all.indices <- 1:length(sample.names)
-		grp.indices <- all.indices[which(sample.group == temp.grp)]
-		grp.beta <- beta.values[,which(sample.group == temp.grp)]
+		temp.grp = groups[i]
+		all.indices = 1:length(sample.names)
+		grp.indices = all.indices[which(sample.group == temp.grp)]
+		grp.beta = beta.values[,which(sample.group == temp.grp)]
 		if(length(grp.indices) > 1)
 			{
-				avg.beta <- apply(grp.beta, 1, mean, na.rm = T)
+				avg.beta = apply(grp.beta, 1, mean, na.rm = T)
 			}
 		else
 			{
-				avg.beta<- grp.beta
+				avg.beta= grp.beta
 			}
-		col.names <- c(col.names, paste(temp.grp,"avg.beta",sep="."))
-		island.table <- data.frame(island.table, avg.beta=avg.beta)
-		colnames(island.table) <- col.names
+		col.names = c(col.names, paste(temp.grp,"avg.beta",sep="."))
+		island.table = data.frame(island.table, avg.beta=avg.beta)
+		colnames(island.table) = col.names
 	}#end for (i in 1:length(groups)
 
 	if(paired == "continuous"){
 		print("Analysis of two numeric variables")
-		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
+		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
 	}else if(paired){
 		print("Factor in Paired Samples")
-		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
+		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
 	}else{
-		pvalue <- apply(beta.values, 1, anova.pvalue, grp.levels = sample.group)
+		pvalue = apply(beta.values, 1, anova.pvalue, grp.levels = sample.group)
 	}#end else
 
-	anova.fdr <- p.adjust(pvalue, method="fdr")
-	col.names <- c(col.names, "island.pvalue", "island.fdr")
-	island.table <- data.frame(island.table, anova.pvalue = pvalue, anova.fdr = anova.fdr)
-	colnames(island.table) <- col.names
+	anova.fdr = p.adjust(pvalue, method="fdr")
+	col.names = c(col.names, "island.pvalue", "island.fdr")
+	island.table = data.frame(island.table, anova.pvalue = pvalue, anova.fdr = anova.fdr)
+	colnames(island.table) = col.names
 	} else {
 	warning("Invalid groups specified in sample description file!")
 	}
 	
 	island.table = data.frame(island.table, num.sites = sites.per.island[match(as.character(island.table$island),names(sites.per.island))])
 	if(output.format == 'xls'){
-		xlsfile <- file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Island.xlsx",sep=""))
+		xlsfile = file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Island.xlsx",sep=""))
 		WriteXLS("island.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'csv'){
-		txtfile <- file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Island.csv",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Island.csv",sep=""))
 		write.table(island.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt'){
-		txtfile <- file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Island.txt",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Island.txt",sep=""))
 		write.table(island.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
@@ -555,67 +576,67 @@ count.observed = function(arr){
 	print(dim(island.table))
 	filter.table = island.table
 	if((length(groups) == 2)|(ref == "continuous")){
-		temp.trt.beta <- island.table[[3]]
-		temp.ref.beta <- island.table[[4]]
-		temp.delta.beta <- abs(island.table[[5]])
-		temp.pvalue <- island.table[[6]]
-		temp.fdr <- island.table[[7]]
+		temp.trt.beta = island.table[[3]]
+		temp.ref.beta = island.table[[4]]
+		temp.delta.beta = abs(island.table[[5]])
+		temp.pvalue = island.table[[6]]
+		temp.fdr = island.table[[7]]
 		
 		if(unmethyl.cutoff > methyl.cutoff)
 			{
 				print("unmethyl.cutoff > methyl.cutoff ...")
 				print("so, delta-beta decides which group should be subject to which cutoff")
-				temp.delta.beta <- island.table[[5]]
-				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= -delta.beta.cutoff),]
-				filter.table <- rbind(temp.methyl.up, temp.methyl.down)	}
+				temp.delta.beta = island.table[[5]]
+				temp.methyl.up = filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.down = filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta <= -delta.beta.cutoff),]
+				filter.table = rbind(temp.methyl.up, temp.methyl.down)	}
 		else
 			{
-				temp.methyl.up <- filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				temp.methyl.down <- filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
-				filter.table <- rbind(temp.methyl.up, temp.methyl.down)
+				temp.methyl.up = filter.table[(temp.trt.beta >= methyl.cutoff) & (temp.ref.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				temp.methyl.down = filter.table[(temp.ref.beta >= methyl.cutoff) & (temp.trt.beta<=unmethyl.cutoff) & !is.na(temp.pvalue) & (temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff) & (temp.delta.beta >= delta.beta.cutoff),]
+				filter.table = rbind(temp.methyl.up, temp.methyl.down)
 			}
 	} else if(length(groups) == 1) {
-		temp.avg.beta <- island.table$avg.beta
-		filter.table <- filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
+		temp.avg.beta = island.table$avg.beta
+		filter.table = filter.table[(temp.avg.beta >= methyl.cutoff) | (temp.avg.beta <=unmethyl.cutoff),]
 	} else if(length(groups) > 2) {
-		temp.pvalue <- island.table[[ncol(island.table) -1]]
-		temp.fdr <- island.table[[ncol(island.table)]]
-		filter.table <- filter.table[(temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff),]
+		temp.pvalue = island.table[[ncol(island.table) -1]]
+		temp.fdr = island.table[[ncol(island.table)]]
+		filter.table = filter.table[(temp.pvalue <= pvalue.cutoff) & (temp.fdr <= fdr.cutoff),]
 	} else {
 	warning("Invalid groups specified in sample description file!")
 	}
 	print(dim(filter.table))
 	
-	sig.islands <- filter.table[[1]]
+	sig.islands = filter.table[[1]]
 	print(paste("There are ",length(sig.islands)," differentially methylated islands",sep=""))
 	
 	if(output.format == 'xls'){
-		xlsfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.xlsx",sep=""))
+		xlsfile = file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.xlsx",sep=""))
 		WriteXLS("filter.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'csv'){
-		txtfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.csv",sep=""))
+		txtfile = file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.csv",sep=""))
 		write.table(filter.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt'){
-		txtfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.txt",sep=""))
+		txtfile = file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Island.txt",sep=""))
 		write.table(filter.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
 	print(dim(island.avg.table))
-	island.avg.table <- island.avg.table[match(sig.islands,island.avg.table[[1]],nomatch=0),]
+	island.avg.table = island.avg.table[match(sig.islands,island.avg.table[[1]],nomatch=0),]
 	print(dim(island.avg.table))
 
 
 	if(output.format == 'xls'){
-		xlsfile <- file.path(data.folder, paste(project.name,"_CpG_island_filtered_beta_values-Avg_by_Island.xlsx",sep=""))
+		xlsfile = file.path(data.folder, paste(project.name,"_CpG_island_filtered_beta_values-Avg_by_Island.xlsx",sep=""))
 		WriteXLS("island.avg.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'csv'){
-		txtfile <- file.path(data.folder, paste(project.name,"_CpG_island_filtered_beta_values-Avg_by_Island.csv",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_CpG_island_filtered_beta_values-Avg_by_Island.csv",sep=""))
 		write.table(island.avg.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt'){
-		txtfile <- file.path(data.folder, paste(project.name,"_CpG_island_filtered_beta_values-Avg_by_Island.txt",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_CpG_island_filtered_beta_values-Avg_by_Island.txt",sep=""))
 		write.table(island.avg.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
@@ -623,11 +644,16 @@ count.observed = function(arr){
 	
 if((plot.box) & (nrow(island.avg.table) > 0))
 	{
+		#better to provide values between 0 and 1, but just in case user provided percent methylation values
+		plot.max = 1
+		if(max(methyl.level,na.rm=T) > 10){
+			plot.max = 100
+		}
 		if (ref == "continuous"){
 			print("Plotting Significant Islands for Continuous Variable..")
 			continous.var = sample.table[[2]]
 			
-			plot.folder<-file.path(island.folder,paste(project.name,"_Line_Plots",sep=""))
+			plot.folder=file.path(island.folder,paste(project.name,"_Line_Plots",sep=""))
 			dir.create(plot.folder, showWarnings=FALSE)
 			
 			for (i in 1:length(sig.islands))
@@ -643,17 +669,17 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 					methyl.level = as.numeric(island.avg.table[i,3:ncol(island.avg.table)])
 					
 					pdf(file=plot.file)
-					plot(continous.var, methyl.level, pch=16, col="black",
+					plot(continous.var, methyl.level, pch=16, col="black", ylim=c(0,plot.max),
 						main=paste(gene,sep=""), ylab="Methylation (Beta)", xlab="")
 					abline(lm(methyl.level~continous.var),lwd=2, col="red")
 					dev.off()
 				}#end for (1 in 1:length(sig.islands))
 		}else{
 			print("Plotting Significant Islands Box-Plots..")
-			plot.folder<-file.path(island.folder,paste(project.name,"_Box_Plots",sep=""))
+			plot.folder=file.path(island.folder,paste(project.name,"_Box_Plots",sep=""))
 			dir.create(plot.folder, showWarnings=FALSE)
 					
-			labelColors <- fixed.color.palatte[1:length(groups)]
+			labelColors = fixed.color.palatte[1:length(groups)]
 			
 			#print(samples)
 			#print(sample.names)
@@ -671,7 +697,7 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 					data = t(island.avg.table[i,3:ncol(island.avg.table)])
 					
 					pdf(file=plot.file)
-					plot(sample.group, data, pch=20, col=labelColors,
+					plot(sample.group, data, pch=20, col=labelColors, ylim=c(0,plot.max),
 						main=paste(gene,sep=""), ylab="Methylation (Beta)")
 					dev.off()
 				}#end for (1 in 1:length(sig.islands))
@@ -714,7 +740,8 @@ if((plot.heatmap)& (nrow(island.avg.table) > 1)& (nrow(island.avg.table) < 10000
 
 	heatmap.file = file.path(island.folder, paste(project.name,"_CpG_island_heatmap-Avg_by_Island.pdf",sep=""))
 	pdf(file = heatmap.file)
-	heatmap.2(temp.beta.mat, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+	heatmap.2(temp.beta.mat, col=colorpanel(33, low="blue", mid="black", high="red"),
+				density.info="none", key=TRUE, distfun = heatmap.dist.fun,
 				 RowSideColors=labelColors, trace="none", margins = c(15,15), cexCol=0.8, cexRow=0.8)
 	if(ref == "continuous"){
 		legend("topright",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),

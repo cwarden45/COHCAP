@@ -121,19 +121,39 @@ count.observed = function(arr){
 	return(length(arr[!is.na(arr)]))
 }#end def count.observed
 
-`COHCAP.site` <-function (sample.file, beta.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, paired=FALSE, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, ref="none", num.groups=2,lower.cont.quantile=0, upper.cont.quantile=1, create.wig = "avg", ttest.sub="none", plot.heatmap=TRUE, output.format='xls')
+cor.dist = function(mat){
+	cor.mat = cor(as.matrix(t(mat)), use="pairwise.complete.obs")
+	dis.mat = 1 - cor.mat
+	dis.mat[is.na(dis.mat)]=2
+	return(as.dist(dis.mat))
+}#end def cor.dist
+
+`COHCAP.site` = function (sample.file, beta.table, project.name, project.folder,
+							methyl.cutoff=0.7, unmethyl.cutoff = 0.3, paired=FALSE,
+							delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
+							ref="none", num.groups=2,lower.cont.quantile=0, upper.cont.quantile=1,
+							create.wig = "avg", ttest.sub="none", plot.heatmap=TRUE, output.format='xls',
+							heatmap.dist.fun="Euclidian")
 {
-	fixed.color.palatte <- c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
+	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
 	
-	site.folder<-file.path(project.folder,"CpG_Site")
+	if(heatmap.dist.fun =="Euclidian"){
+		heatmap.dist.fun=dist
+	}else if(heatmap.dist.fun =="Pearson Dissimilarity"){
+		heatmap.dist.fun=cor.dist
+	}else{
+		stop("'heatmap.dist.fun' must be either 'Euclidian' or 'Pearson Dissimilarity'")
+	}
+	
+	site.folder=file.path(project.folder,"CpG_Site")
 	dir.create(site.folder, showWarnings=FALSE)
 	
-	data.folder<-file.path(project.folder,"Raw_Data")
+	data.folder=file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
 	print("Reading Sample Description File....")
-	sample.table <- read.table(sample.file, header=F, sep = "\t")
-	samples <- as.character(sample.table[[1]])
+	sample.table = read.table(sample.file, header=F, sep = "\t")
+	samples = as.character(sample.table[[1]])
 	for (i in 1:length(samples))
 		{
 			if(length(grep("^[0-9]",samples[i])) > 0)
@@ -141,9 +161,9 @@ count.observed = function(arr){
 					samples[i] <- paste("X",samples[i],sep="")
 				}#end if(length(grep("^[0-9]",samples[i])) > 0)
 		}#end def for (i in 1:length(samples))
-	sample.group <- sample.table[[2]]
-	sample.group <- as.factor(gsub(" ",".",sample.group))
-	pairing.group <- NA
+	sample.group = sample.table[[2]]
+	sample.group = as.factor(gsub(" ",".",sample.group))
+	pairing.group = NA
 	if(paired == "continuous"){
 		print("using continuous covariate")
 		pairing.group = sample.table[[3]]
@@ -520,7 +540,8 @@ if((plot.heatmap)& (nrow(filter.table) > 1)& (nrow(filter.table) < 10000)){
 
 	heatmap.file = file.path(site.folder, paste(project.name,"_CpG_site_heatmap.pdf",sep=""))
 	pdf(file = heatmap.file)
-	heatmap.2(temp.beta.mat, col=colorpanel(33, low="blue", mid="black", high="red"), density.info="none", key=TRUE,
+	heatmap.2(temp.beta.mat, col=colorpanel(33, low="blue", mid="black", high="red"),
+				density.info="none", key=TRUE, distfun= heatmap.dist.fun,
 				 RowSideColors=labelColors, trace="none", margins = c(5,15), cexCol=0.8, cexRow=0.8)
 	if(ref == "continuous"){
 		legend("topright",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
