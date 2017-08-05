@@ -52,6 +52,9 @@ while (<INPUTFILE>)
 					{
 						my $sample = $line_info[$i];
 						print OUTPUTFILE "\t$sample.Methyl\t$sample.Expr";
+						if(!defined($exp_hash{$sample})){
+							print "WARNING: $sample not found in expression file, so all values will be set to 'NA'\n";
+						}
 					}#end for (my $i = 2; $i < scalar(@line_info); $i++)
 				print OUTPUTFILE "\n";
 			}#end if($line_count == 1)

@@ -3,12 +3,19 @@ cor.test.est = function(x)
 		index = 1:length(x)
 		methyl = x[(index %% 2) == 1]
 		expr = x[(index %% 2) == 0]
-		result = cor.test(methyl, expr, na.action=na.rm)
-		if(is.na(result$estimate)){
+		
+		paired.table = data.frame(methyl,expr)
+		paired.table = na.omit(paired.table)
+		if(nrow(paired.table) < 3){
 			return(0)
 		}else{
-			return(result$estimate)
-		}
+			result = cor.test(methyl, expr, na.action=na.rm)
+			if(is.na(result$estimate)){
+				return(0)
+			}else{
+				return(result$estimate)
+			}
+		}#end else
 	}#end def cor.test.est
 	
 cor.test.pvalue = function(x)
@@ -16,12 +23,19 @@ cor.test.pvalue = function(x)
 		index = 1:length(x)
 		methyl = x[(index %% 2) == 1]
 		expr = x[(index %% 2) == 0]
-		result = cor.test(methyl, expr, na.action=na.rm)
-		if(is.na(result$p.value)){
-			return(1)
+		
+		paired.table = data.frame(methyl,expr)
+		paired.table = na.omit(paired.table)
+		if(nrow(paired.table) < 3){
+			return(0)
 		}else{
-			return(result$p.value)
-		}
+			result = cor.test(methyl, expr, na.action=na.rm)
+			if(is.na(result$p.value)){
+				return(1)
+			}else{
+				return(result$p.value)
+			}
+		}#end else
 	}#end def cor.test.est
 
 `COHCAP.integrate.avg.by.island` = function (island.list, project.name, project.folder, expr.file, sample.file, cor.pvalue.cutoff=0.05, cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE, output.format = "xls")
