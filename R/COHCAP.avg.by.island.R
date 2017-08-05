@@ -646,7 +646,7 @@ if((plot.box) & (nrow(island.avg.table) > 0))
 	{
 		#better to provide values between 0 and 1, but just in case user provided percent methylation values
 		plot.max = 1
-		if(max(methyl.level,na.rm=T) > 10){
+		if(max(island.avg.table[,3:ncol(island.avg.table)],na.rm=T) > 10){
 			plot.max = 100
 		}
 		if (ref == "continuous"){

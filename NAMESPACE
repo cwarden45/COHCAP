@@ -7,6 +7,7 @@ importFrom("stats", "aov", "as.dendrogram", "cor", "cor.test",
            "is.leaf", "lm", "na.omit", "p.adjust", "prcomp",
            "quantile", "t.test")
 importFrom("utils", "data", "head", "read.table", "write.table")
+importFrom("stats", "as.dist")
 
 export(COHCAP.annotate,
 		COHCAP.qc,

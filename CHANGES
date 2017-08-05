@@ -1,3 +1,5 @@
+v1.21.5
+Average by Island plotting bug fix.
 v1.21.4
 Fix bug when clustering RRBS data.  Change box-plots to have fixed minimum and maximum.
 v1.21.3
