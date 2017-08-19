@@ -1,0 +1,10 @@
+citHeader("Please cite the following article when using COHCAP")
+
+citEntry(entry = "Article",
+         "author" = "Warden CD, Lee H, Tompkins JD, Li X, Wang C, Riggs AD, Yu H, Jove R, Yuan YC.",
+         "title" = "COHCAP: an integrative genomic pipeline for single-nucleotide resolution DNA methylation analysis.",
+         journal = "Nucleic Acids Research",
+         year = "2013",
+         pages = "e117",
+         textVersion = "Warden CD et al., COHCAP: an integrative genomic pipeline for single-nucleotide resolution DNA methylation analysis, Nucleic Acids Res. (2013) 41(11):e117."
+) 

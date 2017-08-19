@@ -1,0 +1,17 @@
+Package: COHCAP
+Type: Package
+Title: CpG Island Analysis Pipeline for Illumina Methylation Array and Targeted BS-Seq Data
+Version: 1.22.0
+Date: 2017-8-19
+Author: Charles Warden
+Maintainer: Charles Warden <cwarden45@gmail.com>
+Depends: WriteXLS, COHCAPanno, RColorBrewer, gplots
+Description: This package provides a pipeline to analyze
+        single-nucleotide resolution methylation data (Illumina 450k/EPIC
+        methylation array, targeted BS-Seq, etc.). It provides differential
+		methylation for CpG Sites, differential methylation for CpG Islands,
+		integration with gene expression data, with visualizaton options.
+License: GPL-3
+SystemRequirements: Perl
+LazyLoad: yes
+biocViews: DNAMethylation, Microarray, MethylSeq, Epigenetics, DifferentialMethylation

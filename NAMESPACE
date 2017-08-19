@@ -1,0 +1,21 @@
+import(WriteXLS, COHCAPanno, RColorBrewer, gplots)
+
+importFrom("grDevices", "colorRampPalette", "colors", "dev.off", "pdf")
+importFrom("graphics", "abline", "legend", "lines", "par", "plot")
+importFrom("stats", "aov", "as.dendrogram", "cor", "cor.test",
+           "dendrapply", "density", "dist", "fisher.test", "hclust",
+           "is.leaf", "lm", "na.omit", "p.adjust", "prcomp",
+           "quantile", "t.test")
+importFrom("utils", "data", "head", "read.table", "write.table")
+importFrom("stats", "as.dist")
+
+export(COHCAP.annotate,
+		COHCAP.qc,
+		COHCAP.site,
+		COHCAP.avg.by.site,
+		COHCAP.avg.by.island,
+		COHCAP.integrate.avg.by.site,
+		COHCAP.integrate.avg.by.island,
+		COHCAP.denovo,
+		COHCAP.reformatFinalReport,
+		COHCAP.BSSeq.preprocess)

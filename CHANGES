@@ -1,0 +1,99 @@
+v1.22.0
+Add COHCAP.reformatFinalReport() function
+v1.21.6
+Integrate Average by Island bug fix.
+v1.21.5
+Average by Island plotting bug fix.
+v1.21.4
+Fix bug when clustering RRBS data.  Change box-plots to have fixed minimum and maximum.
+v1.21.3
+Allow ANOVA in place of t-test and fix duplicate bug.
+v1.21.2
+Fixed some bugs with plotting integration results.
+v1.21.1
+Add random ID to temporary files for COHCAP.integrate.avg.by.island, to avoid potential bug with parallel analysis in same project folder.
+v1.19.1
+Add clustering option to COHCAP.avg.by.site
+v1.19.0
+Allow beta quantiles for continuous analysis, instead of maximum / minimum values (although that is still the default)
+v1.18.2
+Paired 2-group missing value bug fix.
+v1.18.1
+Continuous pairing bug fix
+v1.18.0
+Allow use of continuous covariate (switches to linear regression, even if primary variable is categorical)
+v1.17.4
+Avoid getting heatmap error message
+v1.17.3
+More debugging for missing values
+v1.17.2
+Modify upper and lower beta calculations and probe filter for heatmaps
+v1.17.1
+Add filter for probes with too many missing values in continuous comparison
+v1.15.2
+Fix bug with clusters for continuous variable for COHCAP.avg.by.island()
+v1.15.1
+Add heatmap to COHCAP.avg.by.island() and COHCAP.site().  Add .csv output to all functions.
+v1.15.0
+Add de-novo clustering and .csv output for differentially methylated regions options within COHCAP.avg.by.island().
+v1.14.5
+Allow creation of delta-beta (really max-min beta) .wig files for continuous variable
+v1.14.4
+Modify continuous variable filter
+v1.14.3
+Modify COHCAP.avg.by.island() output for continuous variable
+v1.14.2
+COHCAP.site() bug fix.  Add paired continuous analysis. Add code for continuous variable in COHCAP.avg.by.island().
+v1.14.1
+Minor COHCAP.site() bug fix.  Add code for continuous variable.
+v1.14.0
+Fix COHCAP.avg.by.island() bug.  Allow creation of per-sample .wig files
+v1.13.8
+Allow unmethyl > methyl for COHCAP.avg.by.island() and COHCAP.site()
+v1.13.7
+Fix COHCAP.integrate.avg.by.site() bug
+v1.13.6
+Fix COHCAP.avg.by.site() delta beta bug
+v1.13.5
+Fix possible COHCAP.avg.by.island() bug when outputing boxplots with semi-colons in name
+v1.13.4
+Fix bug when create.wig is set to FALSE in COHCAP.site().  Add extra troubleshooting statistic to COHCAP.annotate()
+Update documentation.  Change COHCAP.integrate.avg.by.island() and COHCAP.avg.by.island()output files.
+v1.13.3
+Added status column to COHCAP.denovo output
+v1.13.2
+Add COHCAP.denovo function
+v1.13.1
+Remove empty rows from COHCAP.site()
+v1.13.0
+Fix COHCAP.annotate() for custom annotation file
+v1.12.0
+Modify COHCAP.site() so that "Average by Site" workflow can work without replicates
+v0.99.4
+Update contact information; fix potential bug in ttest2 function
+v0.99.5
+Switch standard output in warnings() back to print()
+v0.99.6
+Provide warning() for system() feedback
+v0.99.7
+Put Perl file paths in quotes; change warning() to message() for system() result
+v0.99.8
+Remove diagnostics module dependency in Perl scripts.
+v0.99.9
+Presumably fixed bug (didn't record update in CHANGES file)
+v0.99.10
+Changed average-by-island message.
+v0.99.11
+Fixed bug caused when unmethyl.cutoff > methyl.cutoff; changed average-by-island message
+v0.99.12
+Ignore ambiguous gene annotations; add parameter to focus on only CpG islands mapped to genes
+v1.0.0
+Automatic bump up with Bioconductor 2.14
+v1.0.1
+Add "DifferentialMethylation" label in BiocViews
+v1.0.2
+More descriptive title
+v1.1.0
+Bump up version
+v1.5.0
+Bump up version
