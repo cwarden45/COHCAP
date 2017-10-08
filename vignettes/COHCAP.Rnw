@@ -30,7 +30,7 @@ disadvantages to using the standalone versus Biocondcutor COHCAP packages
 \begin{itemize}
 \item The Bioconductor package no longer uses separate functions for Illumina array vs. Targeted BS-Seq data.  This simplifies the number of parameters you need
 to understand in order to run COHCAP and simplifies software maintenance.
-\item For HM450k and 27k array data, you do not need to provide an annotation file to COHCAP (but you can always specify custom annotations with the Bioconductor package, which is useful for EPIC array and BS-Seq data).
+\item For 450k and 27k array data, you do not need to provide an annotation file to COHCAP (but you can always specify custom annotations with the Bioconductor package, which is useful for EPIC array and BS-Seq data).
 \item COHCAP output files are now better organized into subfolders for easier interpretation.
 \item Additional functions (such as filter for delta-beta values, clustering of sites within regions, etc.) has been added in the Bioconductor package.
 \item The Bioconductor package doesn't require users to install Java

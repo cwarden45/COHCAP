@@ -1,5 +1,35 @@
 v1.22.0
-Add COHCAP.reformatFinalReport() function
+Add COHCAP.reformatFinalReport() function.
+v1.21.6
+Integrate Average by Island bug fix.
+v1.21.5
+Average by Island plotting bug fix.
+v1.21.4
+Fix bug when clustering RRBS data.  Change box-plots to have fixed minimum and maximum.
+v1.21.3
+Allow ANOVA in place of t-test and fix duplicate bug.
+v1.21.2
+Fixed some bugs with plotting integration results.
+v1.21.1
+Add random ID to temporary files for COHCAP.integrate.avg.by.island, to avoid potential bug with parallel analysis in same project folder.
+v1.19.1
+Add clustering option to COHCAP.avg.by.site
+v1.19.0
+Allow beta quantiles for continuous analysis, instead of maximum / minimum values (although that is still the default)
+v1.18.2
+Paired 2-group missing value bug fix.
+v1.18.1
+Continuous pairing bug fix
+v1.18.0
+Allow use of continuous covariate (switches to linear regression, even if primary variable is categorical)
+v1.17.4
+Avoid getting heatmap error message
+v1.17.3
+More debugging for missing values
+v1.17.2
+Modify upper and lower beta calculations and probe filter for heatmaps
+v1.17.1
+Add filter for probes with too many missing values in continuous comparison
 v1.21.6
 Integrate Average by Island bug fix.
 v1.21.5
