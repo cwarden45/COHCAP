@@ -6,7 +6,7 @@ https://www.bioconductor.org/packages/release/bioc/html/COHCAP.html
 
 However, if you are trying to use some functions in the development version and are having issues installing the development version of COHCAP, you can try directly installing from this location using [devtools](https://github.com/hadley/devtools):
 
-If you haven't already installed devtools, you can install the package from CRAN (`install.packages("devtools")`).  Once installed, you can run the following commands:
+If you haven't already installed devtools, you can install the package from CRAN using `install.packages("devtools")`.  Once installed, you can run the following commands:
 
  ```R
  library("devtools")
