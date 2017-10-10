@@ -91,13 +91,6 @@ beta.table = COHCAP.annotate(beta.file, project.name, project.folder,
 @
 The output is standard data frame with samples in rows and genes in columns, which is also saved as an Excel file in the "Raw\textunderscore Data" folder.
 
-\section{Quality Control}
-To display QC metrics for DNA methylation data, run the following function 
-<<qc>>=
-COHCAP.qc(sample.file, beta.table, project.name, project.folder)
-@
-The QC plots are created in the "QC" folder.
-
 \section{CpG Site Statistics}
 To display calculate CpG site statistics, filter for differentially methylated sites, and/or create .wig files, run the following function 
 <<site>>=
