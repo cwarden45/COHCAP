@@ -1,4 +1,4 @@
-# COHCAP: Bioconductor package for DNA Methylation Analysis (and Gene Expression Integration) for Illumina Infinium Array and BS-Seq Data
+## COHCAP: Bioconductor package for DNA Methylation Analysis (and Gene Expression Integration) for Illumina Infinium Array and BS-Seq Data
 
 For most users, the easiest way to install COHCAP is to use the Bioconductor Release Branch:
 
