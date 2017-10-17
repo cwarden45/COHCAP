@@ -1,3 +1,5 @@
+v1.22.2
+Fix bug for plotting correlations in COHCAP.integrate.avg.by.island() with continuous primary variable.
 v1.22.1
 Remove QC functions from vignette
 v1.22.0
