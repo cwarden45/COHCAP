@@ -38,7 +38,7 @@ cor.test.pvalue = function(x)
 		}#end else
 	}#end def cor.test.est
 
-`COHCAP.integrate.avg.by.island` = function (island.list, project.name, project.folder, expr.file, sample.file, cor.pvalue.cutoff=0.05, cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE, output.format = "xls")
+`COHCAP.integrate.avg.by.island` = function (island.list, project.name, project.folder, expr.file, sample.file, cor.pvalue.cutoff=0.05, cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE, output.format = "xls", ref="none")
 {
 	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
 
@@ -87,31 +87,31 @@ cor.test.pvalue = function(x)
 	
 	cor.table= data.frame(island=islands, island.direction = island.direction, gene=genes, cor=cor.coef.values, p.value=cor.pvalues, fdr=cor.fdr.values)
 	if(output.format == 'xls'){
-		xlsfile <- file.path(data.folder, paste(project.name,"_integration_cor_stats.xlsx",sep=""))
+		xlsfile = file.path(data.folder, paste(project.name,"_integration_cor_stats.xlsx",sep=""))
 		WriteXLS("cor.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'csv'){
-		txtfile <- file.path(data.folder, paste(project.name,"_integration_cor_stats.csv",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_integration_cor_stats.csv",sep=""))
 		write.table(cor.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt'){
-		txtfile <- file.path(data.folder, paste(project.name,"_integration_cor_stats.txt",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_integration_cor_stats.txt",sep=""))
 		write.table(cor.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	sig.islands <- cor.table$island[(cor.table$cor < cor.cutoff) & (cor.table$p.value < cor.pvalue.cutoff) & (cor.table$fdr < cor.fdr.cutoff)]
+	sig.islands = cor.table$island[(cor.table$cor < cor.cutoff) & (cor.table$p.value < cor.pvalue.cutoff) & (cor.table$fdr < cor.fdr.cutoff)]
 	print(paste(length(sig.islands)," significant correlations",sep=""))
 	
 	if(length(sig.islands) > 0){
 		sig.table = cor.table[(cor.table$cor < cor.cutoff) & (cor.table$p.value < cor.pvalue.cutoff) & (cor.table$fdr < cor.fdr.cutoff),]
 		if(output.format == 'xls'){
-			xlsfile <- file.path(integrate.folder, paste(project.name,"_integration_cor_stats.xlsx",sep=""))
+			xlsfile = file.path(integrate.folder, paste(project.name,"_integration_cor_stats.xlsx",sep=""))
 			WriteXLS("sig.table", ExcelFileName = xlsfile)
 		} else if(output.format == 'csv'){
-			txtfile <- file.path(integrate.folder, paste(project.name,"_integration_cor_stats.csv",sep=""))
+			txtfile = file.path(integrate.folder, paste(project.name,"_integration_cor_stats.csv",sep=""))
 			write.table(sig.table, file=txtfile, quote=F, row.names=F, sep=",")
 		} else if(output.format == 'txt'){
-			txtfile <- file.path(integrate.folder, paste(project.name,"_integration_cor_stats.txt",sep=""))
+			txtfile = file.path(integrate.folder, paste(project.name,"_integration_cor_stats.txt",sep=""))
 			write.table(sig.table, file=txtfile, quote=F, row.names=F, sep="\t")
 		} else {
 			warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
@@ -122,15 +122,15 @@ cor.test.pvalue = function(x)
 		{	
 			if(plot.scatter)
 				{
-					scatter.folder<-file.path(integrate.folder,paste(project.name,"_Cor",sep=""))
+					scatter.folder=file.path(integrate.folder,paste(project.name,"_Cor",sep=""))
 					dir.create(scatter.folder, showWarnings=FALSE)
 					
-					sig.table <- input.table[(cor.table$cor < cor.cutoff) & (cor.table$p.value < cor.pvalue.cutoff) & (cor.table$fdr < cor.fdr.cutoff),]
+					sig.table = input.table[(cor.table$cor < cor.cutoff) & (cor.table$p.value < cor.pvalue.cutoff) & (cor.table$fdr < cor.fdr.cutoff),]
 					if(output.format == 'xls'){
-						xlsfile <- file.path(data.folder, paste(project.name,"_cor_filter.xlsx",sep=""))
+						xlsfile = file.path(data.folder, paste(project.name,"_cor_filter.xlsx",sep=""))
 						WriteXLS("sig.table", ExcelFileName = xlsfile)
 					} else if(output.format == 'txt'){
-						txtfile <- file.path(data.folder, paste(project.name,"_cor_filter.txt",sep=""))
+						txtfile = file.path(data.folder, paste(project.name,"_cor_filter.txt",sep=""))
 						write.table(sig.table, file=txtfile, quote=F, row.names=F, sep="\t")
 					} else {
 						warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
@@ -140,42 +140,57 @@ cor.test.pvalue = function(x)
 					print("Plotting Correlated Genes....")
 					print(dim(sig.table))
 				
-					sample.names <- names(sig.table)[3:ncol(sig.table)]
-					index <- 1:length(sample.names)
-					sample.names <- sample.names[index %% 2 == 1]
-					sample.names <- gsub(".Methyl","",sample.names)
+					sample.names = names(sig.table)[3:ncol(sig.table)]
+					index = 1:length(sample.names)
+					sample.names = sample.names[index %% 2 == 1]
+					sample.names = gsub(".Methyl","",sample.names)
 					#print(sample.names)
 				
-					sample.table <- read.table(sample.file, header=F, sep = "\t")
-					samples <- as.character(sample.table[[1]])
-					samples[grep("^\\d",samples, perl = TRUE)] <- paste("X",samples[grep("^\\d",samples, perl = TRUE)],sep="")
-					samples <- gsub("-",".",samples)
+					sample.table = read.table(sample.file, header=F, sep = "\t")
+					samples = as.character(sample.table[[1]])
+					samples[grep("^\\d",samples, perl = TRUE)] = paste("X",samples[grep("^\\d",samples, perl = TRUE)],sep="")
+					samples = gsub("-",".",samples)
 					#print(samples)
-					sample.group <- sample.table[[2]]
+					sample.group = sample.table[[2]]
 					#print(sample.group)
-					sample.group <- sample.group[match(sample.names,samples,nomatch=0)]
+					sample.group = sample.group[match(sample.names,samples,nomatch=0)]
 					#print(sample.group)
-					labelColors <- as.character(sample.group)
-					groups <- levels(sample.group)
-				
-					color.palatte <- fixed.color.palatte[1:length(groups)]
-					for (i in 1:length(groups))
-						{
-							labelColors[sample.group == groups[i]] = color.palatte[i]
-						}
+					labelColors =  as.character(sample.group)
+					if(ref == "continuous"){
+						continous.var = sample.group
+						continuous.color.breaks = 10	
+						plot.var = as.numeric(continous.var)
+						plot.var.min = min(plot.var, na.rm=T)
+						plot.var.max = max(plot.var, na.rm=T)
+						
+						plot.var.range = plot.var.max - plot.var.min
+						plot.var.interval = plot.var.range / continuous.color.breaks
+						
+						color.range = colorRampPalette(c("green","black","orange"))(n = continuous.color.breaks)
+						plot.var.breaks = plot.var.min + plot.var.interval*(0:continuous.color.breaks)
+						for (j in 1:continuous.color.breaks){
+							labelColors[(plot.var >= plot.var.breaks[j]) &(plot.var <= plot.var.breaks[j+1])] = color.range[j]
+						}#end for (j in 1:continuous.color.breaks)
+					}else{
+						groups = levels(sample.group)
+						color.palette = fixed.color.palatte[1:length(groups)]
+						for (j in 1:length(groups)){
+							labelColors[sample.group == as.character(groups[j])] = color.palette[j]
+						}#end for (j in 1:length(groups))
+					}
 				
 					for (i in 1:length(sig.islands))
 						{
-							island <- as.character(sig.table[i,1])
-							gene <- as.character(sig.table[i,2])
+							island = as.character(sig.table[i,1])
+							gene = as.character(sig.table[i,2])
 						
-							island <- gsub(":","_",island)
-							island <- gsub("-","_",island)
-							plot.file <- file.path(scatter.folder, paste(gene,"_",island,".pdf", sep=""))
-							data <- sig.table[i,3:ncol(sig.table)]
-							index <- 1:length(data)
-							methyl <- t(data[(index %% 2) == 1])
-							expr <- t(data[(index %% 2) == 0])
+							island = gsub(":","_",island)
+							island = gsub("-","_",island)
+							plot.file = file.path(scatter.folder, paste(gene,"_",island,".pdf", sep=""))
+							data = sig.table[i,3:ncol(sig.table)]
+							index = 1:length(data)
+							methyl = t(data[(index %% 2) == 1])
+							expr = t(data[(index %% 2) == 0])
 							pdf(file=plot.file)
 							plot(expr, methyl, pch=20, col=labelColors,
 								main=paste(gene,
@@ -184,7 +199,12 @@ cor.test.pvalue = function(x)
 									" ,r=",
 									round(cor.test(expr,methyl, na.action=na.rm)$estimate, digits=2),
 									")",sep=""))
-							legend("topright",legend=groups,col=color.palatte,  pch=19)
+							if(ref == "continuous"){
+								legend("topright",legend=c(round(plot.var.max,digits=1),rep("",length(color.range)-2),round(plot.var.min,digits=1)),
+										col=rev(color.range), pch=15, y.intersp = 0.4, cex=0.8, pt.cex=1.5)
+							}else{
+								legend("topright",legend=groups,col=color.palette,  pch=15)
+							}
 							dev.off()
 						}#end for (1 in 1:length(sig.islands))
 				}	
