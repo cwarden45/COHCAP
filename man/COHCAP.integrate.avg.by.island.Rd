@@ -16,7 +16,7 @@ All correlation stats are provided in the "Raw_Data" folder.
 COHCAP.integrate.avg.by.island(island.list, project.name, project.folder,
 				expr.file, sample.file, cor.pvalue.cutoff=0.05,
 				cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE,
-				output.format = "xls")
+				output.format = "xls", ref="none")
 }
 \arguments{
  \item{island.list}{
@@ -58,6 +58,11 @@ COHCAP.integrate.avg.by.island(island.list, project.name, project.folder,
 }
   \item{output.format}{
 	Format for output tables: 'xls' for Excel file, 'csv' for comma-separated file, or 'txt' for tab-delimited text file
+}
+  \item{ref}{
+	Describes reference setting for upstream analysis.
+	
+	If creating scatterplots, checks if ref="continuous" (changing plots from discrete to continuous color scale)
 }
 }
 
