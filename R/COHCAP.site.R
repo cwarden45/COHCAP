@@ -537,10 +537,18 @@ if((plot.heatmap)& (nrow(filter.table) > 1)& (nrow(filter.table) < 10000)){
 			labelColors[sample.group == as.character(groups[j])] = color.palette[j]
 		}#end for (j in 1:length(groups))
 	}
-
+	
+	beta.breaks = c(0:40*2.5)
+	if(max(temp.beta.mat, na.rm=T) < 2){
+		beta.breaks = beta.breaks / 100
+	}else{
+		print("Adjusting heatmap scale, assuming percent methylation between 0 and 100")
+	}
+	
 	heatmap.file = file.path(site.folder, paste(project.name,"_CpG_site_heatmap.pdf",sep=""))
 	pdf(file = heatmap.file)
-	heatmap.2(temp.beta.mat, col=colorpanel(33, low="blue", mid="black", high="red"),
+	heatmap.2(temp.beta.mat,
+				col=colorpanel(40, low="blue", mid="black", high="red"), breaks=beta.breaks,
 				density.info="none", key=TRUE, distfun= heatmap.dist.fun,
 				 RowSideColors=labelColors, trace="none", margins = c(5,15), cexCol=0.8, cexRow=0.8)
 	if(ref == "continuous"){
