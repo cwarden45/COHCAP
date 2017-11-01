@@ -6,7 +6,7 @@ Date: 2017-10-31
 Author: Charles Warden
 Maintainer: Charles Warden <cwarden45@gmail.com>
 Depends: WriteXLS, COHCAPanno, RColorBrewer, gplots
-Imports: Rcpp (>= 0.12.13), RcppArmadillo, BH
+Imports: Rcpp, RcppArmadillo, BH
 LinkingTo: Rcpp
 Description: This package provides a pipeline to analyze
         single-nucleotide resolution methylation data (Illumina 450k/EPIC
