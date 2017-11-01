@@ -127,12 +127,75 @@ cor.dist = function(mat){
 	return(as.dist(dis.mat))
 }#end def cor.dist
 
+cpp.ANOVA.1way.wrapper = function(arr, grp.levels, ref){
+	full_beta = arr[!is.na(arr)]
+	betaT = arr[(grp.levels != ref)&!is.na(arr)]
+	betaR = arr[(grp.levels == ref)&!is.na(arr)]
+	result = .Call('_COHCAP_ANOVA_cpp_2group', PACKAGE = 'COHCAP', full_beta, betaT, betaR)
+	return(result)
+}#end def cpp.ANOVA.1way.wrapper
+
+cpp.annova.2way.wrapper = function(arr, var1, var2, ref){
+	full_beta = arr[!is.na(arr)]
+	
+	max.df = length(full_beta)-length(levels(as.factor(as.character(var1[!is.na(arr)]))))*length(levels(as.factor(as.character(var2[!is.na(arr)]))))
+	
+	if(max.df < 1){
+		return(NA)
+	}else{
+		betaT = arr[(var1 != ref)&!is.na(arr)]
+		betaR = arr[(var1 == ref)&!is.na(arr)]
+		
+		interaction.var = paste(var1, var2, sep="-")
+		interaction.var = interaction.var[!is.na(arr)]
+		
+		#Rcpp code uses numeric array
+		interaction.var = as.numeric(as.factor(interaction.var))
+
+		result = .Call('_COHCAP_ANOVA_cpp_2group_2way', PACKAGE = 'COHCAP',full_beta, betaT, betaR, interaction.var)
+		return(result)	
+	}#end else
+}#end def cpp.annova.2way.wrapper
+
+cpp.ttest.wrapper = function(arr, grp.levels, ref){
+	betaT = arr[(grp.levels != ref)&!is.na(arr)]
+	betaR = arr[(grp.levels == ref)&!is.na(arr)]
+	result = .Call('_COHCAP_ttest_cpp', PACKAGE = 'COHCAP', betaT, betaR)
+	return(result)
+}#end def cpp.ttest.wrapper
+
+cpp.paired.ttest.wrapper = function(arr, iTrt, iRef){
+	pairedT = arr[iTrt]
+	pairedR = arr[iRrt]
+	groupT=pairedT[!is.na(pairedT)&!is.na(pairedR)]
+	groupR=pairedR[!is.na(pairedT)&!is.na(pairedR)]
+	paired_diff = groupT - groupR
+	result = .Call('_COHCAP_ttest_cpp_paired', PACKAGE = 'COHCAP', paired_diff)
+	return(result)
+}#end def cpp.paired.ttest.wrapper
+
+fastLm_wrapper = function(arr, var1){
+	var1= var1[!is.na(arr)]
+	arr= arr[!is.na(arr)]
+	fit_stats = fastLmPure(as.matrix(var1), arr)
+	t_stat = fit_stats$coefficients / fit_stats$stderr
+	return(pt(-abs(t_stat), fit_stats$df.residual))
+}#end def fastLm_wrapper
+
+fastLm_wrapper2 = function(arr, independent.mat){
+	independent.mat= independent.mat[!is.na(arr),]
+	arr= arr[!is.na(arr)]
+	fit_stats = fastLmPure(independent.mat, arr)
+	t_stat = fit_stats$coefficients[1] / fit_stats$stderr[1]
+	return(pt(-abs(t_stat), fit_stats$df.residual))
+}#end def fastLm_wrapper2
+
 `COHCAP.avg.by.island` =function (sample.file, site.table, beta.table, project.name,
 									project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3,
 									delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
 									num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE,
 									paired=FALSE, ref="none",lower.cont.quantile=0, upper.cont.quantile=1,
-									max.cluster.dist = NULL, ttest.sub="none", output.format = "xls",
+									max.cluster.dist = NULL, alt.pvalue="none", output.format = "xls",
 									gene.centric=TRUE, heatmap.dist.fun="Euclidian")
 {
 	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
@@ -405,9 +468,20 @@ cor.dist = function(mat){
 	if(ref == "continuous"){
 			continous.var = sample.table[[2]]
 			if ((paired == TRUE) | (paired == "continuous")){
-				lm.pvalue = apply(beta.values, 1, lm.pvalue2, continous.var, pairing.group)
+				if(alt.pvalue == "RcppArmadillo.fastLmPure"){
+					print("Using fastLm and pt() instead of lm(), with 2nd variable")
+					independent.mat = cbind(continous.var, pairing.group)
+					lm.pvalue = apply(beta.values, 1, fastLm_wrapper2, independent.mat)
+				}else{		
+					lm.pvalue = apply(beta.values, 1, lm.pvalue2, continous.var, pairing.group)
+				}
 			} else{
-				lm.pvalue = apply(beta.values, 1, lm.pvalue, continous.var)
+				if(alt.pvalue == "RcppArmadillo.fastLmPure"){
+					print("Using fastLm and pt() instead of lm()")
+					lm.pvalue = apply(beta.values, 1, fastLm_wrapper, continous.var)
+				}else{
+					lm.pvalue = apply(beta.values, 1, lm.pvalue, continous.var)
+				}
 			}
 			lm.fdr = p.adjust(lm.pvalue, "fdr")
 			beta.cor = apply(beta.values, 1, custom.cor, var1=continous.var)
@@ -491,11 +565,49 @@ cor.dist = function(mat){
 		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
 	}else if(paired){
 		print("Factor in Paired Samples")
-		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
-	}else{
-		if (ttest.sub == "ANOVA"){
-			print("Using ANOVA instead of t-test")
+		if (alt.pvalue == "cppPairedTtest"){
+			print("Using Rcpp/Boost Paired t-test instead of 2-way ANOVA")
+			pair.table = table(sample.table[,2], sample.table[,3])
+			
+			pairIDs=colnames(pair.table)[(as.numeric(pair.table[1,]) == 1)&(as.numeric(pair.table[2,]) == 1)]
+			if(length(pairIDs) != length(levels(as.factor(pairing.group)))){
+				print("Only pairings with 2 samples are used:")
+				print("While incomplete pairs will be removed for missing values,")
+				print("please only provide a sample description table with pairs that you would like to compare.")
+				stop()
+			}#end if(length(pair.table) != length(levels(as.factor(pairing.group)))
+
+			pairedT = c()
+			pairedR = c()
+			for(i in 1:length(pairIDs)){
+				pairID = pairIDs[i]
+				pairedT[i] = samples[(pairing.group == pairID)&(sample.group != ref)]
+				pairedR[i] = samples[(pairing.group == pairID)&(sample.group == ref)]
+			}#end for(pairID in names(pair.table))
+			pairTi = match(pairedT, samples)
+			pairRi = match(pairedR, samples)
 			beta.pvalue = apply(beta.values, 1, anova.pvalue, grp.levels=sample.group)
+		}else if(alt.pvalue == "cppANOVA.2way"){
+			print("Using Rcpp/Boost 2-way ANOVA")
+			max.df = length(samples)-length(levels(as.factor(sample.group)))*length(levels(as.factor(pairing.group)))
+			if(max.df < 1){
+				print("Not enough degrees of freedom for this implementation.  Consider using 'alt.pvalue' = 'cppPairedTtest'")
+				stop()
+			}
+			beta.pvalue = unlist(apply(beta.values, 1, cpp.annova.2way.wrapper, sample.group, pairing.group, ref))
+		}else{
+			beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
+		}
+	}else{
+		if (alt.pvalue == "rANOVA.1way"){
+			print("Using R-based ANOVA instead of t-test")
+			beta.pvalue = apply(beta.values, 1, anova.pvalue, grp.levels=sample.group)
+		}else if (alt.pvalue == "cppANOVA.1way"){
+			print("Using Rcpp/Boost ANOVA instead of t-test")
+			beta.pvalue = apply(beta.values, 1, cpp.ANOVA.1way.wrapper, grp.levels=sample.group, ref=ref)
+		}else if (alt.pvalue == "cppWelshTtest"){
+			print("Using Rcpp/Boost Welsh t-test instead of t.test()")
+			beta.pvalue = apply(beta.values, 1, cpp.ttest.wrapper, grp.levels=sample.group, ref=ref)
 		}else{
 			beta.pvalue = apply(beta.values, 1, ttest2, grp1=trt.indices, grp2=ref.indices)
 		}

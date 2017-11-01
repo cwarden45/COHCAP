@@ -16,7 +16,7 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 				pvalue.cutoff=0.05, fdr.cutoff=0.05,
 				num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE,
 				paired=FALSE, ref="none", lower.cont.quantile=0, upper.cont.quantile=1,
-				max.cluster.dist = NULL, ttest.sub="none",
+				max.cluster.dist = NULL, alt.pvalue="none",
 				output.format = "xls", gene.centric=TRUE, heatmap.dist.fun="Euclidian")
 }
 \arguments{
@@ -106,11 +106,41 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 	If you have a secondary continuous variable (like age), you can set paired to "continuous".
 	COHCAP will then perform linear-regression analysis (converting primary categorical variable into continuous variable, if necessary)
 }
-  \item{ttest.sub}{
-	In original workflow, use an alternative test instead of t-test (for
-		1-variable, 2-group comparison).
+  \item{alt.pvalue}{
+	Use alternative strategies for p-value calculations.
 	
-	Can be 'none' or 'ANOVA'.  Might be helpful when SD is 0.
+	Be careful that the workflow matches the p-value calculation.
+	
+	For 'rANOVA.1way', use ANOVA (R function) instead of t-test (for
+	1-variable, 2-group comparison).  Might be helpful when SD is 0.
+
+	For 'cppANOVA.1way', use ANOVA (C++ code) instead of t-test (for
+	1-variable, 2-group comparison).  Helps decrease run-time relative to R-code.
+
+	For 'cppANOVA.2way', use C++ code instead of R function for t-test (for
+	2-variable, 2-group comparison).  Helps decrease run-time relative to R-code,
+	but p-value may be different.  For this implementation, degrees of freedom prevent
+	comparison without replicates within each pairing (such as having replicate treatments
+	with multiple backgrounds, cell lines, etc.).  If each sample has exactly one pair (
+	as may be the case with tumor-normal pairs), and you need to decrease the COHCAP
+	run-time, you may consider using 'cppPairedTtest'.
+	
+	For 'cppWelshTtest', use C++ code instead of R function for t-test (for
+	1-variable, 2-group comparison).  Helps decrease run-time relative to R-code,
+	but p-value will be different than t.test() function (C++ code assumes unequal variance
+	between groups).
+
+	For 'cppPairedTtest', use C++ code instead of R function for t-test (for
+	2-variable, 2-group comparison).  Helps decrease run-time relative to R-code.
+	T-test not usually paired in COHCAP, so p-value will be different than for 1-variable test.
+	May be useful if you need to speed up code and all measurements are paired.
+
+	For 'RcppArmadillo.fastLmPure', use 'fastLmPure' function within RcppArmadillo for
+	linear regression, with R pt() t-distribution for p-value calculation.  This can help 
+	decrease the run-time, relative to the lm() function that is used by default.
+	
+	Can be 'none','rANOVA.1way','RcppArmadillo.fastLmPure', 'cppANOVA.1way',
+	'cppANOVA.2way','cppWelshTtest', or 'cppPairedTtest'.
 }
   \item{heatmap.dist.fun}{
 	Distance metric for clustering in heatmap.

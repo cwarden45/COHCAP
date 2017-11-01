@@ -3,16 +3,16 @@ custom.mean = function(arr)
 	return(mean(as.numeric(arr), na.rm = T))
 }#end def custom.mean
 
-annova.pvalue <- function(arr, grp.levels)
+annova.pvalue = function(arr, grp.levels)
 {
 	#print(arr)
 	#print(grp.levels)
 	
-	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
+	grp.no.na = as.factor(as.character(grp.levels[!is.na(arr)]))
 	if(length(levels(grp.no.na)) >= 2)
 		{
-			test <- aov(arr ~ grp.levels) 
-			result <- summary(test)[[1]][['Pr(>F)']][1]
+			test = aov(arr ~ grp.levels) 
+			result = summary(test)[[1]][['Pr(>F)']][1]
 			if(is.null(result))
 				{
 					return(1)
@@ -29,19 +29,19 @@ annova.pvalue <- function(arr, grp.levels)
 }#end def annova.pvalue
 
 
-annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
+annova.2way.pvalue = function(arr, grp.levels, pairing.levels)
 {
 	#print(arr)
 	#print(grp.levels)
 	#print(pairing.levels)
 	
-	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
+	grp.no.na = as.factor(as.character(grp.levels[!is.na(arr)]))
 	
-	rep.flag <- 1
+	rep.flag = 1
 	if((length(levels(grp.no.na)) >= 2) && (rep.flag == 1))
 		{
-			test <- aov(arr ~ grp.levels + pairing.levels) 
-			result <- summary(test)[[1]][['Pr(>F)']][1]
+			test = aov(arr ~ grp.levels + pairing.levels) 
+			result = summary(test)[[1]][['Pr(>F)']][1]
 			if(is.null(result))
 				{
 					return(1)
@@ -67,7 +67,7 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	
 	print("Checking CpG Site Stats Table")
 	print(dim(site.table))
-	site.table <- site.table[!is.na(site.table[[5]]), ]
+	site.table = site.table[!is.na(site.table[[5]]), ]
 	print(dim(site.table))
 	
 	if(!is.null(max.cluster.dist)){
@@ -178,13 +178,13 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			mapping.table = data.frame(SiteID = as.character(site.table$SiteID), Chr =as.character(site.table$Chr),
 											Loc=as.character(site.table$Loc), updated.island=island.clusters)
 			if(output.format == 'xls'){
-				xlsfile <- file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Site.xlsx",sep=""))
+				xlsfile = file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Site.xlsx",sep=""))
 				WriteXLS("mapping.table", ExcelFileName = xlsfile)
 			} else if(output.format == 'csv'){
-				txtfile <- file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Site.csv",sep=""))
+				txtfile = file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Site.csv",sep=""))
 				write.table(mapping.table, file=txtfile, quote=F, row.names=F, sep=",")
 			} else if(output.format == 'txt'){
-				txtfile <- file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Site.txt",sep=""))
+				txtfile = file.path(data.folder, paste(project.name,"_DeNovo_Site_to_Island_Mapping-Avg_by_Site.txt",sep=""))
 				write.table(mapping.table, file=txtfile, quote=F, row.names=F, sep="\t")
 			} else {
 				warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
@@ -200,62 +200,62 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	
 	#print(site.table[[5]])
 	
-	cpg.islands <- levels(as.factor(as.character(site.table[[5]])))
+	cpg.islands = levels(as.factor(as.character(site.table[[5]])))
 	print(paste("Analyzing",length(cpg.islands),"CpG Islands...",sep=" "))
-	genes <- array(dim=length(cpg.islands))
-	num.methyl <- array(dim=length(cpg.islands))
-	num.unmethyl <- array(dim=length(cpg.islands))
-	delta.beta <- array(dim=length(cpg.islands))
-	cpg.island.pvalue <- array(dim=length(cpg.islands))
-	cpg.status <- array(dim=length(cpg.islands))
+	genes = array(dim=length(cpg.islands))
+	num.methyl = array(dim=length(cpg.islands))
+	num.unmethyl = array(dim=length(cpg.islands))
+	delta.beta = array(dim=length(cpg.islands))
+	cpg.island.pvalue = array(dim=length(cpg.islands))
+	cpg.status = array(dim=length(cpg.islands))
 
 	if(num.groups == 1) {
-	avg.beta <- site.table[[ncol(site.table)]]
-	bg.up <- length(avg.beta[avg.beta > methyl.cutoff])
-	bg.down <- length(avg.beta[avg.beta < unmethyl.cutoff])
+	avg.beta = site.table[[ncol(site.table)]]
+	bg.up = length(avg.beta[avg.beta > methyl.cutoff])
+	bg.down = length(avg.beta[avg.beta < unmethyl.cutoff])
 	#print(bg.up)
 	#print(bg.down)
 	for (i in 1:length(cpg.islands))
 		{
-			island <- cpg.islands[i]
-			data.mat <- site.table[site.table[5] == island,]
-			genes[i] <- as.character(data.mat[1,4])
+			island = cpg.islands[i]
+			data.mat = site.table[site.table[5] == island,]
+			genes[i] = as.character(data.mat[1,4])
 			#print(data.mat)
 			#print(genes[i])
 			
-			island.beta <- data.mat[[ncol(data.mat)]]
-			num.methyl[i] <- length(island.beta[island.beta > methyl.cutoff])
-			num.unmethyl[i] <- length(island.beta[island.beta < unmethyl.cutoff])
+			island.beta = data.mat[[ncol(data.mat)]]
+			num.methyl[i] = length(island.beta[island.beta > methyl.cutoff])
+			num.unmethyl[i] = length(island.beta[island.beta < unmethyl.cutoff])
 			#print(num.methyl[i])
 			#print(num.unmethyl[i])
 			if(num.methyl[i] > num.unmethyl[i])
 				{
-					cpg.status[i] <- "Methylated"
+					cpg.status[i] = "Methylated"
 				}#end if(mean(trt.beta) > mean(ref.beta))
 			if(num.unmethyl[i] > num.methyl[i])
 				{
-					cpg.status[i] <- "Unmethylated"
+					cpg.status[i] = "Unmethylated"
 				}#end if(mean(trt.beta) > mean(ref.beta))
 			#print(cpg.status[i])
 			#stop()
 			#print(summary(test))
 			if((num.methyl[i] + num.unmethyl[i]) > 2)
 				{
-					methyl.mat <- matrix(c(num.methyl[i] , num.unmethyl[i], bg.up, bg.down), nrow=2, ncol=2,
+					methyl.mat = matrix(c(num.methyl[i] , num.unmethyl[i], bg.up, bg.down), nrow=2, ncol=2,
 							 dimnames = list(c("Methyl","Unmethyl"),c("Sample","Background")))
-					cpg.island.pvalue[i] <- fisher.test(methyl.mat)$p.value
+					cpg.island.pvalue[i] = fisher.test(methyl.mat)$p.value
 				}
 			else
 				{
-					cpg.island.pvalue[i] <-1
+					cpg.island.pvalue[i] =1
 				}
 			#print(length(summary(test)[[1]][['Pr(>F)']][1]))
 
 			#print(cpg.island.pvalue)
 			#stop()
 		}#end for (i in 1:length(cpg.islands))
-	cpg.island.fdr <- p.adjust(cpg.island.pvalue, method="fdr")
-	island.table <- data.frame( cpg.island = cpg.islands,
+	cpg.island.fdr = p.adjust(cpg.island.pvalue, method="fdr")
+	island.table = data.frame( cpg.island = cpg.islands,
 								genes = genes,
 								num.methyl = num.methyl,
 								num.unmethyl = num.unmethyl,
@@ -265,15 +265,15 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	} else if (num.groups == 2) {
 	for (i in 1:length(cpg.islands))
 		{
-			island <- cpg.islands[i]
+			island = cpg.islands[i]
 			#print(island)
-			data.mat <- site.table[site.table[5] == island,]
-			genes[i] <- as.character(data.mat[1,4])
+			data.mat = site.table[site.table[5] == island,]
+			genes[i] = as.character(data.mat[1,4])
 			#print(data.mat)
 			#print(genes[i])
 			
-			trt.beta <- data.mat[[6]]
-			ref.beta <- data.mat[[7]]
+			trt.beta = data.mat[[6]]
+			ref.beta = data.mat[[7]]
 			mean.trt.beta = mean(trt.beta)
 			mean.ref.beta = mean(ref.beta)
 			num.methyl[i] = length(trt.beta[mean.trt.beta > mean.ref.beta])
@@ -281,45 +281,45 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 			delta.beta[i] = mean.trt.beta - mean.ref.beta
 			if(mean.trt.beta > mean.ref.beta)
 				{
-					cpg.status[i] <- "Increased Methylation"
+					cpg.status[i] = "Increased Methylation"
 				}#end if(mean(trt.beta) > mean(ref.beta))
 			if(mean.trt.beta < mean.ref.beta)
 				{
-					cpg.status[i] <- "Decreased Methylation"
+					cpg.status[i] = "Decreased Methylation"
 				}#end if(mean(trt.beta) > mean(ref.beta))
 			#print(num.methyl[i])
 			#print(num.unmethyl[i])
-			comb.beta <- c(trt.beta, ref.beta)
-			comb.group <- c(rep(1, length=nrow(data.mat)), rep(2, length=nrow(data.mat)))
-			comb.site <- c(1:nrow(data.mat),1:nrow(data.mat))
+			comb.beta = c(trt.beta, ref.beta)
+			comb.group = c(rep(1, length=nrow(data.mat)), rep(2, length=nrow(data.mat)))
+			comb.site = c(1:nrow(data.mat),1:nrow(data.mat))
 			#print(comb.group)
 			#print(comb.site)
-			test <- aov(comb.beta ~ comb.group + comb.site ) 
+			test = aov(comb.beta ~ comb.group + comb.site ) 
 			#print(summary(test))
 			#stop()
 			if(length(comb.site) > 2)
 				{
-					result <- summary(test)[[1]][['Pr(>F)']][1]
+					result = summary(test)[[1]][['Pr(>F)']][1]
 					if(is.null(result))
 						{
-							cpg.island.pvalue[i] <-1
+							cpg.island.pvalue[i] =1
 						}
 					else
 						{
-							cpg.island.pvalue[i] <- result 
+							cpg.island.pvalue[i] = result 
 						}
 				}
 			else
 				{
-					cpg.island.pvalue[i] <-1
+					cpg.island.pvalue[i] =1
 				}
 			#print(length(summary(test)[[1]][['Pr(>F)']][1]))
 
 			#print(cpg.island.pvalue)
 			#stop()
 		}#end for (i in 1:length(cpg.islands))
-	cpg.island.fdr <- p.adjust(cpg.island.pvalue, method="fdr")
-	island.table <- data.frame( cpg.island = cpg.islands,
+	cpg.island.fdr = p.adjust(cpg.island.pvalue, method="fdr")
+	island.table = data.frame( cpg.island = cpg.islands,
 								genes = genes,
 								num.methyl = num.methyl,
 								num.unmethyl = num.unmethyl,
@@ -330,53 +330,53 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	} else {
 	for (i in 1:length(cpg.islands))
 		{
-			island <- cpg.islands[i]
-			data.mat <- site.table[site.table[5] == island,]
-			genes[i] <- as.character(data.mat[1,4])
+			island = cpg.islands[i]
+			data.mat = site.table[site.table[5] == island,]
+			genes[i] = as.character(data.mat[1,4])
 			#print(data.mat)
 			#print(genes[i])
 
 			#print(ncol(data.mat))
-			data.beta <- data.mat[,6:(ncol(data.mat)-2)]
+			data.beta = data.mat[,6:(ncol(data.mat)-2)]
 			#print(dim(data.beta))
-			comb.beta <- as.vector(as.matrix(data.beta))
+			comb.beta = as.vector(as.matrix(data.beta))
 			#print(length(comb.beta))
-			comb.group <- array()
+			comb.group = array()
 			for (j in 1:ncol(data.beta))
 				{
-					comb.group <- c(comb.group,rep(j, length=nrow(data.mat)))
+					comb.group = c(comb.group,rep(j, length=nrow(data.mat)))
 				}
-			comb.group <- comb.group[-1]
+			comb.group = comb.group[-1]
 			#print(length(comb.group))
 			#print(comb.group)
-			comb.site <- rep(1:nrow(data.mat),ncol(data.beta))
+			comb.site = rep(1:nrow(data.mat),ncol(data.beta))
 			#print(length(comb.site))
-			num.methyl[i] <- nrow(data.mat)
-			test <- aov(comb.beta ~ comb.group + comb.site ) 
+			num.methyl[i] = nrow(data.mat)
+			test = aov(comb.beta ~ comb.group + comb.site ) 
 			#print(summary(test))
 			if(length(comb.site) > 2)
 				{
-					result <- summary(test)[[1]][['Pr(>F)']][1]
+					result = summary(test)[[1]][['Pr(>F)']][1]
 					if(is.null(result))
 						{
-							cpg.island.pvalue[i] <-1
+							cpg.island.pvalue[i] =1
 						}
 					else
 						{
-							cpg.island.pvalue[i] <- result 
+							cpg.island.pvalue[i] = result 
 						}
 				}
 			else
 				{
-					cpg.island.pvalue[i] <-1
+					cpg.island.pvalue[i] =1
 				}
 			#print(length(summary(test)[[1]][['Pr(>F)']][1]))
 
 			#print(cpg.island.pvalue)
 			#stop()
 		}#end for (i in 1:length(cpg.islands))
-	cpg.island.fdr <- p.adjust(cpg.island.pvalue, method="fdr")
-	island.table <- data.frame( cpg.island = cpg.islands,
+	cpg.island.fdr = p.adjust(cpg.island.pvalue, method="fdr")
+	island.table = data.frame( cpg.island = cpg.islands,
 								genes = genes,
 								num.sites = num.methyl,
 								island.pvalue = cpg.island.pvalue,
@@ -384,37 +384,37 @@ annova.2way.pvalue <- function(arr, grp.levels, pairing.levels)
 	}
 
 	if(output.format == 'xls'){
-		xlsfile <- file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Site.xlsx",sep=""))
+		xlsfile = file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Site.xlsx",sep=""))
 		WriteXLS("island.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'csv'){
-		txtfile <- file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Site.csv",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Site.csv",sep=""))
 		write.table(island.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt'){
-		txtfile <- file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Site.txt",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_CpG_island_stats-Avg_by_Site.txt",sep=""))
 		write.table(island.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	island.table <- island.table[island.table$island.pvalue <= pvalue.cutoff,]
-	island.table <- island.table[island.table$island.fdr <= fdr.cutoff,]
+	island.table = island.table[island.table$island.pvalue <= pvalue.cutoff,]
+	island.table = island.table[island.table$island.fdr <= fdr.cutoff,]
 	if(num.groups ==1){
-		island.table <- island.table[(island.table$num.methyl + island.table$num.unmethyl)>= num.sites,]
+		island.table = island.table[(island.table$num.methyl + island.table$num.unmethyl)>= num.sites,]
 	}else if(num.groups == 2) {
-		island.table <- island.table[(island.table$num.methyl + island.table$num.unmethyl)>= num.sites,]
-		island.table <- island.table[abs(island.table$island.delta.beta) >= delta.beta.cutoff,]
+		island.table = island.table[(island.table$num.methyl + island.table$num.unmethyl)>= num.sites,]
+		island.table = island.table[abs(island.table$island.delta.beta) >= delta.beta.cutoff,]
 	} else{
-		island.table <- island.table[island.table$num.sites >= num.sites,]
+		island.table = island.table[island.table$num.sites >= num.sites,]
 	}
 	
 	if(output.format == 'xls'){
-		xlsfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Site.xlsx",sep=""))
+		xlsfile = file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Site.xlsx",sep=""))
 		WriteXLS("island.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'csv'){
-		txtfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Site.csv",sep=""))
+		txtfile = file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Site.csv",sep=""))
 		write.table(island.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt'){
-		txtfile <- file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Site.txt",sep=""))
+		txtfile = file.path(island.folder, paste(project.name,"_CpG_island_filtered-Avg_by_Site.txt",sep=""))
 		write.table(island.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
