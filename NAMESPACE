@@ -1,4 +1,4 @@
-useDynLib(COHCAP, .registration=TRUE)
+useDynLib(COHCAP)
 
 import(WriteXLS, COHCAPanno, RColorBrewer, gplots, Rcpp, BH, RcppArmadillo)
 
@@ -7,7 +7,7 @@ importFrom("graphics", "abline", "legend", "lines", "par", "plot")
 importFrom("stats", "aov", "as.dendrogram", "cor", "cor.test",
            "dendrapply", "density", "dist", "fisher.test", "hclust",
            "is.leaf", "lm", "na.omit", "p.adjust", "prcomp",
-           "quantile", "t.test")
+           "quantile", "t.test","pt")
 importFrom("utils", "data", "head", "read.table", "write.table")
 importFrom("stats", "as.dist")
 

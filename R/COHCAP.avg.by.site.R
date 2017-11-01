@@ -71,7 +71,8 @@ annova.2way.pvalue = function(arr, grp.levels, pairing.levels)
 	print(dim(site.table))
 	
 	if(!is.null(max.cluster.dist)){
-		if ((num.groups==2)|(ref=="continuous")){
+		if (num.groups==2){
+			#can work with continuous site results, but leave num.groups at default of 2
 			print("Looking for clusters within provided CpG Island Annotations")
 			island.clusters = rep(NA,nrow(site.table))
 			
@@ -231,11 +232,11 @@ annova.2way.pvalue = function(arr, grp.levels, pairing.levels)
 			if(num.methyl[i] > num.unmethyl[i])
 				{
 					cpg.status[i] = "Methylated"
-				}#end if(mean(trt.beta) > mean(ref.beta))
+				}#end if(num.methyl[i] > num.unmethyl[i]
 			if(num.unmethyl[i] > num.methyl[i])
 				{
 					cpg.status[i] = "Unmethylated"
-				}#end if(mean(trt.beta) > mean(ref.beta))
+				}#end if(num.unmethyl[i] > num.methyl[i])
 			#print(cpg.status[i])
 			#stop()
 			#print(summary(test))

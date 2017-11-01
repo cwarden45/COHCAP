@@ -166,7 +166,7 @@ cpp.ttest.wrapper = function(arr, grp.levels, ref){
 
 cpp.paired.ttest.wrapper = function(arr, iTrt, iRef){
 	pairedT = arr[iTrt]
-	pairedR = arr[iRrt]
+	pairedR = arr[iRef]
 	groupT=pairedT[!is.na(pairedT)&!is.na(pairedR)]
 	groupR=pairedR[!is.na(pairedT)&!is.na(pairedR)]
 	paired_diff = groupT - groupR
