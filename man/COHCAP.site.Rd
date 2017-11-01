@@ -99,11 +99,11 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
 
 	For 'cppANOVA.2way', use C++ code instead of R function for t-test (for
 	2-variable, 2-group comparison).  Helps decrease run-time relative to R-code,
-	but p-value may be different.  For this implementation, degrees of freedom prevent
-	comparison without replicates within each pairing (such as having replicate treatments
-	with multiple backgrounds, cell lines, etc.).  If each sample has exactly one pair (
-	as may be the case with tumor-normal pairs), and you need to decrease the COHCAP
-	run-time, you may consider using 'cppPairedTtest'.
+	but p-value may be different.  For this implementation, I require having at replicates
+	for each interaction term (such as having replicate treatmentswith multiple backgrounds,
+	cell lines, etc.).  If each sample has exactly one pair (	as may be the case with 
+	tumor-normal pairs), and you need to decrease the COHCAP run-time, you may consider
+	using 'cppPairedTtest'.
 	
 	For 'cppWelshTtest', use C++ code instead of R function for t-test (for
 	1-variable, 2-group comparison).  Helps decrease run-time relative to R-code,

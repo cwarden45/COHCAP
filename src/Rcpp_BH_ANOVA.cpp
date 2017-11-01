@@ -16,6 +16,10 @@ long double ANOVA_cpp_2group(NumericVector full_beta, NumericVector betaT, Numer
 		if((n1 ==0) ||(n2 == 0)){
 			return(1);
 		}
+
+		if(sd(full_beta) == 0){
+			return(1);
+		}
 		
 		double overall_mean = mean(full_beta);
 		double m1 = mean(betaT);
@@ -52,6 +56,10 @@ long double ANOVA_cpp_2group_2way(NumericVector full_beta,
 		if((n1 ==0) ||(n2 == 0)){
 			return(1);
 		}
+
+		if(sd(full_beta) == 0){
+			return(1);
+		}
 		
 		double overall_mean = mean(full_beta);
 		double m1 = mean(betaT);
@@ -79,6 +87,10 @@ long double ANOVA_cpp_2group_2way(NumericVector full_beta,
 			}//end for(int j = 0; j < interact_var.size(); j++)
 		}//end for (int i = 1; i <= max(interact_var); i++)
 		double MSE = SSE / (N-max(interact_var));
+		
+		if(MSE == 0){
+			MSE = 0.00001;
+		}//F-statistic can't be infinity, so provide a small value
 		
 		double f_stat = MST / MSE;
 		

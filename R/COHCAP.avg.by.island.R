@@ -151,9 +151,12 @@ cpp.annova.2way.wrapper = function(arr, var1, var2, ref){
 		
 		#Rcpp code uses numeric array
 		interaction.var = as.numeric(as.factor(interaction.var))
-
-		result = .Call('_COHCAP_ANOVA_cpp_2group_2way', PACKAGE = 'COHCAP',full_beta, betaT, betaR, interaction.var)
-		return(result)	
+		if(min(table(interaction.var)) < 2){
+			return(NA)
+		}else{
+			result = .Call('_COHCAP_ANOVA_cpp_2group_2way', PACKAGE = 'COHCAP',full_beta, betaT, betaR, interaction.var)
+			return(result)		
+		}	
 	}#end else
 }#end def cpp.annova.2way.wrapper
 
