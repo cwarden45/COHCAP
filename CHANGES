@@ -1,3 +1,5 @@
+v1.23.0
+Add experimental c++ code for p-value calculations.
 v1.22.3
 Set breaks for heatmaps (for either beta values between 0 and 1, or percent methylation between 0 and 100)
 v1.22.2

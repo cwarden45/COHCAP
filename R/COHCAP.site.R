@@ -40,11 +40,11 @@ anova.pvalue = function(arr, grp.levels)
 	#print(arr)
 	#print(grp.levels)
 	
-	grp.no.na <- as.factor(as.character(grp.levels[!is.na(arr)]))
+	grp.no.na = as.factor(as.character(grp.levels[!is.na(arr)]))
 	if(length(levels(grp.no.na)) >= 2)
 		{
-			test <- aov(arr ~ grp.levels) 
-			result <- summary(test)[[1]][['Pr(>F)']][1]
+			test = aov(arr ~ grp.levels) 
+			result = summary(test)[[1]][['Pr(>F)']][1]
 			if(is.null(result))
 				{
 					return(1)
@@ -128,11 +128,74 @@ cor.dist = function(mat){
 	return(as.dist(dis.mat))
 }#end def cor.dist
 
+cpp.ANOVA.1way.wrapper = function(arr, grp.levels, ref){
+	full_beta = arr[!is.na(arr)]
+	betaT = arr[(grp.levels != ref)&!is.na(arr)]
+	betaR = arr[(grp.levels == ref)&!is.na(arr)]
+	result = .Call('_COHCAP_ANOVA_cpp_2group', PACKAGE = 'COHCAP', full_beta, betaT, betaR)
+	return(result)
+}#end def cpp.ANOVA.1way.wrapper
+
+cpp.annova.2way.wrapper = function(arr, var1, var2, ref){
+	full_beta = arr[!is.na(arr)]
+	
+	max.df = length(full_beta)-length(levels(as.factor(as.character(var1[!is.na(arr)]))))*length(levels(as.factor(as.character(var2[!is.na(arr)]))))
+	
+	if(max.df < 1){
+		return(NA)
+	}else{
+		betaT = arr[(var1 != ref)&!is.na(arr)]
+		betaR = arr[(var1 == ref)&!is.na(arr)]
+		
+		interaction.var = paste(var1, var2, sep="-")
+		interaction.var = interaction.var[!is.na(arr)]
+		
+		#Rcpp code uses numeric array
+		interaction.var = as.numeric(as.factor(interaction.var))
+
+		result = .Call('_COHCAP_ANOVA_cpp_2group_2way', PACKAGE = 'COHCAP',full_beta, betaT, betaR, interaction.var)
+		return(result)	
+	}#end else
+}#end def cpp.annova.2way.wrapper
+
+cpp.ttest.wrapper = function(arr, grp.levels, ref){
+	betaT = arr[(grp.levels != ref)&!is.na(arr)]
+	betaR = arr[(grp.levels == ref)&!is.na(arr)]
+	result = .Call('_COHCAP_ttest_cpp', PACKAGE = 'COHCAP', betaT, betaR)
+	return(result)
+}#end def cpp.ttest.wrapper
+
+cpp.paired.ttest.wrapper = function(arr, iTrt, iRef){
+	pairedT = arr[iTrt]
+	pairedR = arr[iRrt]
+	groupT=pairedT[!is.na(pairedT)&!is.na(pairedR)]
+	groupR=pairedR[!is.na(pairedT)&!is.na(pairedR)]
+	paired_diff = groupT - groupR
+	result = .Call('_COHCAP_ttest_cpp_paired', PACKAGE = 'COHCAP', paired_diff)
+	return(result)
+}#end def cpp.paired.ttest.wrapper
+
+fastLm_wrapper = function(arr, var1){
+	var1= var1[!is.na(arr)]
+	arr= arr[!is.na(arr)]
+	fit_stats = fastLmPure(as.matrix(var1), arr)
+	t_stat = fit_stats$coefficients / fit_stats$stderr
+	return(pt(-abs(t_stat), fit_stats$df.residual))
+}#end def fastLm_wrapper
+
+fastLm_wrapper2 = function(arr, independent.mat){
+	independent.mat= independent.mat[!is.na(arr),]
+	arr= arr[!is.na(arr)]
+	fit_stats = fastLmPure(independent.mat, arr)
+	t_stat = fit_stats$coefficients[1] / fit_stats$stderr[1]
+	return(pt(-abs(t_stat), fit_stats$df.residual))
+}#end def fastLm_wrapper2
+
 `COHCAP.site` = function (sample.file, beta.table, project.name, project.folder,
 							methyl.cutoff=0.7, unmethyl.cutoff = 0.3, paired=FALSE,
 							delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
 							ref="none", num.groups=2,lower.cont.quantile=0, upper.cont.quantile=1,
-							create.wig = "avg", ttest.sub="none", plot.heatmap=TRUE, output.format='xls',
+							create.wig = "avg", alt.pvalue="none", plot.heatmap=TRUE, output.format='xls',
 							heatmap.dist.fun="Euclidian")
 {
 	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
@@ -158,7 +221,7 @@ cor.dist = function(mat){
 		{
 			if(length(grep("^[0-9]",samples[i])) > 0)
 				{
-					samples[i] <- paste("X",samples[i],sep="")
+					samples[i] = paste("X",samples[i],sep="")
 				}#end if(length(grep("^[0-9]",samples[i])) > 0)
 		}#end def for (i in 1:length(samples))
 	sample.group = sample.table[[2]]
@@ -173,12 +236,12 @@ cor.dist = function(mat){
 		pairing.group = sample.table[[3]]
 		pairing.group = as.factor(gsub(" ",".",pairing.group))
 	}
-	ref <- gsub(" ",".",ref)
+	ref = gsub(" ",".",ref)
 
-	sample.names <- names(beta.table)[6:ncol(beta.table)]
-	beta.values <- beta.table[,6:ncol(beta.table)]
-	annotation.names <- names(beta.table)[1:5]
-	annotations <- beta.table[,1:5]
+	sample.names = names(beta.table)[6:ncol(beta.table)]
+	beta.values = beta.table[,6:ncol(beta.table)]
+	annotation.names = names(beta.table)[1:5]
+	annotations = beta.table[,1:5]
 	print(dim(beta.values))
 
 	#print(samples)
@@ -196,7 +259,7 @@ cor.dist = function(mat){
 
 	if(length(samples)>1)
 		{
-			beta.values <- beta.values[,match(samples, sample.names, nomatch=0)]
+			beta.values = beta.values[,match(samples, sample.names, nomatch=0)]
 			colnames(beta.values)=samples
 		}
 		
@@ -222,7 +285,7 @@ cor.dist = function(mat){
 		print(sample.table[[2]])
 	}
 
-	stat.table <- annotations
+	stat.table = annotations
 	rm(annotations)
 
 	if((create.wig == "sample")|(create.wig == "avg.and.sample")){
@@ -238,8 +301,8 @@ cor.dist = function(mat){
 			sample.beta = sample.beta[order(sample.beta$Chr, sample.beta$Loc), ]
 			colnames(sample.beta) = paste(colnames(beta.table),"beta",sep=".")
 			write.table(sample.beta, temp.stat.file, quote=F, row.names=F, sep="\t")
-			cmd <- paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
-			res <- system(cmd, intern=TRUE, wait=TRUE)
+			cmd = paste("perl \"",perl.script,"\" \"", temp.stat.file,"\" \"", wig.folder,"\"", sep="")
+			res = system(cmd, intern=TRUE, wait=TRUE)
 			message(res)
 
 			shortcut.beta.file = file.path(wig.folder, "SiteID.beta.wig")
@@ -263,9 +326,20 @@ cor.dist = function(mat){
 	if(ref == "continuous"){
 			continous.var = sample.table[[2]]
 			if ((paired == TRUE) | (paired == "continuous")){
-				lm.pvalue = apply(beta.values, 1, lm.pvalue2, continous.var, pairing.group)
+				if(alt.pvalue == "RcppArmadillo.fastLmPure"){
+					print("Using fastLm and pt() instead of lm(), with 2nd variable")
+					independent.mat = cbind(continous.var, pairing.group)
+					lm.pvalue = apply(beta.values, 1, fastLm_wrapper2, independent.mat)
+				}else{		
+					lm.pvalue = apply(beta.values, 1, lm.pvalue2, continous.var, pairing.group)
+				}
 			} else{
-				lm.pvalue = apply(beta.values, 1, lm.pvalue, continous.var)
+				if(alt.pvalue == "RcppArmadillo.fastLmPure"){
+					print("Using fastLm and pt() instead of lm()")
+					lm.pvalue = apply(beta.values, 1, fastLm_wrapper, continous.var)
+				}else{
+					lm.pvalue = apply(beta.values, 1, lm.pvalue, continous.var)
+				}
 			}
 			lm.fdr = p.adjust(lm.pvalue, "fdr")
 			beta.cor = apply(beta.values, 1, custom.cor, var1=continous.var)
@@ -290,63 +364,101 @@ cor.dist = function(mat){
 									delta.beta = delta.beta, pvalue = lm.pvalue, fdr = lm.fdr,
 									cor.coef = beta.cor)
 	} else if(length(groups) == 1) {
-	col.names <- c(annotation.names)
+	col.names = c(annotation.names)
 	print("Averaging Beta Values for All Samples")
 
 	#print(beta.values[1:3,])
 	if(length(samples) > 1)
 		{
-			avg.beta <- apply(beta.values, 1, custom.mean)
+			avg.beta = apply(beta.values, 1, custom.mean)
 		}
 	else
 		{
-			avg.beta<- beta.values
+			avg.beta= beta.values
 		}
 	#print(avg.beta)
 
-	stat.table <- data.frame(stat.table, avg.beta=avg.beta)
+	stat.table = data.frame(stat.table, avg.beta=avg.beta)
 	} else if(length(groups) == 2) {
 	print("Differential Methylation Stats for 2 Groups with Reference")
-	trt <- groups[groups != ref]
+	trt = groups[groups != ref]
 	#print(trt)
 	#print(ref)
-	trt.samples <- samples[which(sample.group == trt)]
+	trt.samples = samples[which(sample.group == trt)]
 	#print(trt.samples)
-	ref.samples <- samples[which(sample.group == ref)]
+	ref.samples = samples[which(sample.group == ref)]
 	#print(ref.samples)
 
-	all.indices <- 1:length(samples)
-	trt.indices <- all.indices[which(sample.group == trt)]
-	ref.indices <- all.indices[which(sample.group == ref)]
+	all.indices = 1:length(samples)
+	trt.indices = all.indices[which(sample.group == trt)]
+	ref.indices = all.indices[which(sample.group == ref)]
 
 	if (length(trt.indices) == 1){
 		trt.avg.beta = beta.values[, trt.indices]
 	} else {
-		trt.beta.values <- beta.values[, trt.indices]	
-		trt.avg.beta <- apply(trt.beta.values, 1, custom.mean)
+		trt.beta.values = beta.values[, trt.indices]	
+		trt.avg.beta = apply(trt.beta.values, 1, custom.mean)
 	}
 	
 	if (length(ref.indices) == 1){
 		ref.avg.beta = beta.values[, ref.indices]
 	} else {
-		ref.beta.values <- beta.values[, ref.indices]
-		ref.avg.beta <- apply(ref.beta.values, 1, custom.mean)
+		ref.beta.values = beta.values[, ref.indices]
+		ref.avg.beta = apply(ref.beta.values, 1, custom.mean)
 	}
 
-	delta.beta <- trt.avg.beta - ref.avg.beta
+	delta.beta = trt.avg.beta - ref.avg.beta
 
 	if(paired == "continuous"){
 		print("Analysis of two numeric variables")
-		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
+		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
 	}else if(paired){
 		print("Factor in Paired Samples")
 		#print(sample.group)
 		#print(pairing.group)
-		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
-	}else{
-		if (ttest.sub == "ANOVA"){
-			print("Using ANOVA instead of t-test")
+		if (alt.pvalue == "cppPairedTtest"){
+			print("Using Rcpp/Boost Paired t-test instead of 2-way ANOVA")
+			pair.table = table(sample.table[,2], sample.table[,3])
+			
+			pairIDs=colnames(pair.table)[(as.numeric(pair.table[1,]) == 1)&(as.numeric(pair.table[2,]) == 1)]
+			if(length(pairIDs) != length(levels(as.factor(pairing.group)))){
+				print("Only pairings with 2 samples are used:")
+				print("While incomplete pairs will be removed for missing values,")
+				print("please only provide a sample description table with pairs that you would like to compare.")
+				stop()
+			}#end if(length(pair.table) != length(levels(as.factor(pairing.group)))
+
+			pairedT = c()
+			pairedR = c()
+			for(i in 1:length(pairIDs)){
+				pairID = pairIDs[i]
+				pairedT[i] = samples[(pairing.group == pairID)&(sample.group != ref)]
+				pairedR[i] = samples[(pairing.group == pairID)&(sample.group == ref)]
+			}#end for(pairID in names(pair.table))
+			pairTi = match(pairedT, samples)
+			pairRi = match(pairedR, samples)
 			beta.pvalue = apply(beta.values, 1, anova.pvalue, grp.levels=sample.group)
+		}else if(alt.pvalue == "cppANOVA.2way"){
+			print("Using Rcpp/Boost 2-way ANOVA")
+			max.df = length(samples)-length(levels(as.factor(sample.group)))*length(levels(as.factor(pairing.group)))
+			if(max.df < 1){
+				print("Not enough degrees of freedom for this implementation.  Consider using 'alt.pvalue' = 'cppPairedTtest'")
+				stop()
+			}
+			beta.pvalue = unlist(apply(beta.values, 1, cpp.annova.2way.wrapper, sample.group, pairing.group, ref))
+		}else{
+			beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
+		}
+	}else{
+		if (alt.pvalue == "rANOVA.1way"){
+			print("Using R-based ANOVA instead of t-test")
+			beta.pvalue = apply(beta.values, 1, anova.pvalue, grp.levels=sample.group)
+		}else if (alt.pvalue == "cppANOVA.1way"){
+			print("Using Rcpp/Boost ANOVA instead of t-test")
+			beta.pvalue = apply(beta.values, 1, cpp.ANOVA.1way.wrapper, grp.levels=sample.group, ref=ref)
+		}else if (alt.pvalue == "cppWelshTtest"){
+			print("Using Rcpp/Boost Welsh t-test instead of t.test()")
+			beta.pvalue = apply(beta.values, 1, cpp.ttest.wrapper, grp.levels=sample.group, ref=ref)
 		}else{
 			beta.pvalue = apply(beta.values, 1, ttest2, grp1=trt.indices, grp2=ref.indices)
 		}
@@ -365,10 +477,10 @@ cor.dist = function(mat){
 	#print(length(beta.pvalue))
 	#print(length(beta.fdr))
 
-	stat.table <- data.frame(stat.table, trt.beta = trt.avg.beta, ref.beta = ref.avg.beta, delta.beta = delta.beta, pvalue = beta.pvalue, fdr = beta.fdr)
+	stat.table = data.frame(stat.table, trt.beta = trt.avg.beta, ref.beta = ref.avg.beta, delta.beta = delta.beta, pvalue = beta.pvalue, fdr = beta.fdr)
 	print(dim(stat.table))
 	#print(names(stat.table))
-	#test <- c(annotation.names,
+	#test = c(annotation.names,
 	#							paste(trt,"avg.beta",sep="."),
 	#							paste(ref,"avg.beta",sep="."),
 	#							paste(trt,"vs",ref,"delta.beta",sep="."),
@@ -376,7 +488,7 @@ cor.dist = function(mat){
 	#							paste(trt,"vs",ref,"fdr",sep="."))
 	#print(test)
 	#print(names(stat.table))
-	colnames(stat.table) <- c(annotation.names,
+	colnames(stat.table) = c(annotation.names,
 								paste(trt,"avg.beta",sep="."),
 								paste(ref,"avg.beta",sep="."),
 								paste(trt,"vs",ref,"delta.beta",sep="."),
@@ -385,45 +497,45 @@ cor.dist = function(mat){
 	#print(names(stat.table))
 	} else if(length(groups) > 2) {
 	print("Calculating Average Beta and ANOVA p-values")
-	col.names <- c(annotation.names)
+	col.names = c(annotation.names)
 
 	for (i in 1:length(groups))
 	{
-		temp.grp <- groups[i]
-		grp.beta <- beta.values[,which(sample.group == temp.grp)]
-		avg.beta <- apply(grp.beta, 1, custom.mean)
-		col.names <- col.names <- c(col.names, paste(temp.grp,"avg.beta",sep="."))
-		stat.table <- data.frame(stat.table, avg.beta=avg.beta)
-		colnames(stat.table) <- col.names
+		temp.grp = groups[i]
+		grp.beta = beta.values[,which(sample.group == temp.grp)]
+		avg.beta = apply(grp.beta, 1, custom.mean)
+		col.names = col.names = c(col.names, paste(temp.grp,"avg.beta",sep="."))
+		stat.table = data.frame(stat.table, avg.beta=avg.beta)
+		colnames(stat.table) = col.names
 	}#end for (i in 1:length(groups)
 
 	if(paired == "continuous"){
 		print("Analysis of two numeric variables")
-		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
+		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=as.numeric(sample.group), pairing.levels=pairing.group))
 	}else if(paired){
 		print("Factor in Paired Samples")
-		beta.pvalue <- unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
+		beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
 	}else{
-		pvalue <- apply(beta.values, 1, anova.pvalue, grp.levels = sample.group)
+		pvalue = apply(beta.values, 1, anova.pvalue, grp.levels = sample.group)
 	}#end else
 
-	anova.fdr <- p.adjust(pvalue, method="fdr")
-	col.names <- c(col.names, "anova.pvalue", "annova.fdr")
-	stat.table <- data.frame(stat.table, anova.pvalue = pvalue, anova.fdr = anova.fdr)
-	colnames(stat.table) <- col.names
+	anova.fdr = p.adjust(pvalue, method="fdr")
+	col.names = c(col.names, "anova.pvalue", "annova.fdr")
+	stat.table = data.frame(stat.table, anova.pvalue = pvalue, anova.fdr = anova.fdr)
+	colnames(stat.table) = col.names
 	} else {
 	print("Invalid groups specified in sample description file!")
 	}
 
-	stat.table <- stat.table[order(stat.table$Chr, stat.table$Loc), ]
+	stat.table = stat.table[order(stat.table$Chr, stat.table$Loc), ]
 	if(output.format == 'xls'){
-		xlsfile <- file.path(data.folder, paste(project.name,"_CpG_site_stats.xlsx",sep=""))
+		xlsfile = file.path(data.folder, paste(project.name,"_CpG_site_stats.xlsx",sep=""))
 		WriteXLS("stat.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'csv') {
-		txtfile <- file.path(data.folder, paste(project.name,"_CpG_site_stats.csv",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_CpG_site_stats.csv",sep=""))
 		write.table(stat.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt') {
-		txtfile <- file.path(data.folder, paste(project.name,"_CpG_site_stats.txt",sep=""))
+		txtfile = file.path(data.folder, paste(project.name,"_CpG_site_stats.txt",sep=""))
 		write.table(stat.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		print(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
@@ -485,13 +597,13 @@ cor.dist = function(mat){
 	print(dim(filter.table))
 
 	if(output.format == 'xls'){
-		xlsfile <- file.path(site.folder, paste(project.name,"_CpG_site_filter.xlsx",sep=""))
+		xlsfile = file.path(site.folder, paste(project.name,"_CpG_site_filter.xlsx",sep=""))
 		WriteXLS("filter.table", ExcelFileName = xlsfile)
 	} else if(output.format == 'csv') {
-		txtfile <- file.path(site.folder, paste(project.name,"_CpG_site_filter.csv",sep=""))
+		txtfile = file.path(site.folder, paste(project.name,"_CpG_site_filter.csv",sep=""))
 		write.table(filter.table, file=txtfile, quote=F, row.names=F, sep=",")
 	} else if(output.format == 'txt') {
-		txtfile <- file.path(site.folder, paste(project.name,"_CpG_site_filter.txt",sep=""))
+		txtfile = file.path(site.folder, paste(project.name,"_CpG_site_filter.txt",sep=""))
 		write.table(filter.table, file=txtfile, quote=F, row.names=F, sep="\t")
 	} else {
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))

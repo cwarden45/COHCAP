@@ -1,4 +1,6 @@
-import(WriteXLS, COHCAPanno, RColorBrewer, gplots)
+useDynLib(COHCAP, .registration=TRUE)
+
+import(WriteXLS, COHCAPanno, RColorBrewer, gplots, Rcpp, BH, RcppArmadillo)
 
 importFrom("grDevices", "colorRampPalette", "colors", "dev.off", "pdf")
 importFrom("graphics", "abline", "legend", "lines", "par", "plot")
