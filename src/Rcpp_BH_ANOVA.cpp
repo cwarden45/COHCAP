@@ -39,6 +39,10 @@ long double ANOVA_cpp_2group(NumericVector full_beta, NumericVector betaT, Numer
 			SS2 += (betaR[i] - m2)*(betaR[i] - m2);
 		}
 		double MSE = (SS1 + SS2) / (N-k);
+
+		if(MSE == 0){
+			MSE = 0.00001;
+		}//F-statistic can't be infinity, so provide a small value
 		
 		double f_stat = MST / MSE;
 		
