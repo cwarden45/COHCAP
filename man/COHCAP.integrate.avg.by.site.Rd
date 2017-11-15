@@ -9,7 +9,7 @@ Provides lists of genes with an inverse CpG island methylation trend (Methylatio
 
 Lists of genes with negative expression trends will be created in the "Integrate" folder.
 
-The "Average by Site" workflow requires that genes already have fold-change, p-value, and FDR values calculated.  There many tools available for this type of analysis (limma, sRAP, DEseq, edgeR, etc.)
+The "Average by Site" workflow requires that genes already have fold-change, p-value, and FDR values calculated.  There many tools available for this type of analysis (limma, DEseq2, edgeR, etc.)
 
 This function will only work for 2-group comparisons.
 }
@@ -73,6 +73,4 @@ COHCAP.integrate.avg.by.site(filtered.islands, project.name, project.folder,
 
 \seealso{
 COHCAP Discussion Group: http://sourceforge.net/p/cohcap/discussion/general/
-
-sRAP: http://www.bioconductor.org/packages/release/bioc/html/sRAP.html
 }
