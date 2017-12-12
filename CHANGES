@@ -1,3 +1,5 @@
+V1.25.4
+Add code in COHCAP.site() to expedite pipeline when p-value is set to 1 (to skip 2-group p-value calculation, if using the Average-by-Site workflow)
 V1.25.3
 Minor documentation update
 v1.25.2

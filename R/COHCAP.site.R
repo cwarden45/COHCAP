@@ -453,7 +453,10 @@ fastLm_wrapper2 = function(arr, independent.mat){
 			beta.pvalue = unlist(apply(beta.values, 1, annova.2way.pvalue, grp.levels=sample.group, pairing.levels=pairing.group))
 		}
 	}else{
-		if (alt.pvalue == "rANOVA.1way"){
+		if(pvalue.cutoff == 1){
+			print("Skip p-value calculation to save time.  May help with Average-by-Site workflow, but generally not recommended.")
+			beta.pvalue = rep(1, nrow(beta.values))
+		}else if (alt.pvalue == "rANOVA.1way"){
 			print("Using R-based ANOVA instead of t-test")
 			beta.pvalue = apply(beta.values, 1, anova.pvalue, grp.levels=sample.group)
 		}else if (alt.pvalue == "cppANOVA.1way"){
