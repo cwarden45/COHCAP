@@ -1,5 +1,5 @@
 v1.25.5
-Bioconductor-recommended addition of all() function to if-statement in COHCAP.reformatFinalReport()
+Bioconductor-recommended addition of any() function to if-statement in COHCAP.reformatFinalReport()
 v1.25.4
 Add code in COHCAP.site() to expedite pipeline when p-value is set to 1 (to skip 2-group p-value calculation, if using the Average-by-Site workflow)
 v1.25.3

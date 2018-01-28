@@ -20,7 +20,7 @@
 	#pval.names = pval.names[grep("Detection.Pval",pval.names)]
 	pval.names = gsub(".Detection.Pval","",pval.names)
 	
-	if((length(beta.names)!= length(pval.names))&all(beta.names != pval.names)){
+	if((length(beta.names)!= length(pval.names))&any(beta.names != pval.names)){
 		print("Discordance between Beta matrix and Detection P-value matrix!")
 		print(paste("Beta names: ",beta.names,sep=""))
 		print(paste("P-value names: ",pval.names,sep=""))
@@ -53,7 +53,6 @@
 			}else{
 				colnames(filtered.beta.mat)=new.labels
 			}
-			print("Add code to re-name samples")
 		}
 		
 		filtered.beta.mat = data.frame(SiteID = probeID, filtered.beta.mat)
