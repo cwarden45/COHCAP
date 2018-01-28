@@ -1,6 +1,8 @@
-V1.25.4
+v1.25.5
+Bioconductor-recommended addition of all() function to if-statement in COHCAP.reformatFinalReport()
+v1.25.4
 Add code in COHCAP.site() to expedite pipeline when p-value is set to 1 (to skip 2-group p-value calculation, if using the Average-by-Site workflow)
-V1.25.3
+v1.25.3
 Minor documentation update
 v1.25.2
 C++ 1-way ANOVA bug fix
