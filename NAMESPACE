@@ -20,4 +20,5 @@ export(COHCAP.annotate,
 		COHCAP.integrate.avg.by.island,
 		COHCAP.denovo,
 		COHCAP.reformatFinalReport,
-		COHCAP.BSSeq.preprocess)
+		COHCAP.BSSeq.preprocess,
+		COHCAP.BSSeq_V2.methyl.table)

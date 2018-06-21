@@ -1,5 +1,3 @@
-#Code written by Charles Warden (cwarden@coh.org, x60233)
-
 use warnings;
 use strict;
 use Cwd 'abs_path'; 

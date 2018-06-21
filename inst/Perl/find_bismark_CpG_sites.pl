@@ -1,4 +1,4 @@
-#Code written by Charles Warden (cwarden@coh.org, x60233)
+#NOTE: this script may not work with more recently processed samples
 
 use warnings;
 use strict;

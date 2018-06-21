@@ -1,3 +1,7 @@
+v1.27.1
+Bioconductor version increase to 1.27.0
+Then, provide partial update to COHCAP.BSSeq.preprocess() with supplmental annotation script.
+Other minor updates.
 v1.25.5
 Bioconductor-recommended addition of any() function to if-statement in COHCAP.reformatFinalReport()
 v1.25.4

@@ -5,6 +5,9 @@
 Preprocessing for Targeted BS-Seq data
 }
 \description{
+WARNING: This function was designed to work with genome_methylation_bismark2bedGraph_v3.pl .bed files (from an earlier version of Bismark)
+(so, it likely doesn't work with other file formats, such as the coverage files - please see COHCAP.BSSeq_V2.methyl.table() documentation)
+
 Creates custom annotation file as well as COHCAP input file (for COHCAP.annotate).
 
 This function is not necessary for Illumina methylation array analysis.
