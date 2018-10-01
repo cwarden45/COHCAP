@@ -1,3 +1,5 @@
+v1.27.2
+Add acknowledgements in manual and add authors.
 v1.27.1
 Bioconductor version increase to 1.27.0
 Then, provide partial update to COHCAP.BSSeq.preprocess() with supplmental annotation script.
