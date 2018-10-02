@@ -13,7 +13,6 @@ Description: This package provides a pipeline to analyze
         methylation array, targeted BS-Seq, etc.). It provides differential
 		methylation for CpG Sites, differential methylation for CpG Islands,
 		integration with gene expression data, with visualizaton options.
-		
 		Discussion Group: https://sourceforge.net/p/cohcap/discussion/bioconductor/
 License: GPL-3
 SystemRequirements: Perl
