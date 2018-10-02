@@ -49,12 +49,9 @@ So, if you are comfortable with writing code in R, then you may prefer using the
 If you are not confortable with any programming (and you have a relatively small sample), you may prefer using the standalone version of COHCAP.
 Large patient cohorts will most likely need to be run on a powerful computer (such as a Linux cluster).
 
-Most of the information on the COHCAP \href{http://sourceforge.net/p/cohcap/wiki/Home/}{FAQ page} will apply to both versions.  Questions
-for both versions should be directed to the \href{http://sourceforge.net/p/cohcap/wiki/Home/}{COHCAP Discussion Group}, with bioconductor users posting questions under "Bioconductor: [Problem Description]".
+There is a separate discussion group for Bioconductor issues at \href{https://sourceforge.net/p/cohcap/discussion/bioconductor/}{on the SourceForge page}.
 
-\textbf{EPIC Array Users}: EPIC array data can be analyzed using the "custom" CpG island mapping in the Bioconductor package.
-Click \href{https://github.com/cwarden45/DNAmethylation_templates/tree/master/EPIC_workflow}{here} for a template using the Average-by-Island workflow.
-Click \href{https://github.com/cwarden45/DNAmethylation_templates/tree/master/EPIC_COHCAP_Demo}{here} for a template using the Average-by-Site workflow.
+\textbf{EPIC Array}: EPIC array data can be analyzed using the "custom" CpG island mapping in the Bioconductor package.
 
 \begin{description}
 \item[In both cases, users should cite the following article when using COHCAP:] \hfill \\
@@ -129,28 +126,10 @@ Integration can be performed using the "Average by Island" workflow with any num
 If desired, scatter plots will also be produced for genes with significant negative correlations between methylation and gene expression data.
 The gene expression file for the "Average by Island" workflow is a table of normalized intensity / expression values (can be from either microarray or RNA-Seq data).
 
-\section{Targeted BS-Seq Analysis}
-
-The method of reading BS-Seq data is notably different than the standalone version of COHCAP.
-
-In the standalone version, users directly read .bed files created from the \href{http://www.bioinformatics.babraham.ac.uk/projects/bismark/Bismark_User_Guide.pdf}{extended Bismark pipeline}.  Because the input file is standardized
-in the Bioconductor version of COHCAP, users must first produce a file meeting this new standard requirement.
-
-Accordingly, a function unique to targeted BS-Seq analysis (COHCAP.BSSeq.preprocess) has been added to the Bioconductor package to faciliate this step.
-
-Additionally, this function also creates a custom annotation file that is uniquely optimized for the user's own targeted sequencing data.
-
-The old UCSC CpG Island file is still available on sourceforge (click \href{http://sourceforge.net/projects/cohcap/files/COHCAP_BSSEQ_anno.zip/download}{here} to download).  This should technically work with any BS-Seq dataset.  However,
-we strongly encourage users to use the file created from COHCAP.BSSeq.preprocess, especially since this step will likely be required to create the COHCAP input file.
-
-Users should be warned that this step will likely take several hours to run.  However, it luckily only has to be run once.
-
-Detailed usage instructions can be found in the help description, called via help(COHCAP.BSSeq.preprocess).
-
 \section{Acknowledgements}
 
 We would like to note that the COHCAP project was initiated in the City of Hope Bioinformatics Core (directed by Yate-Ching Yuan) for the standalone version, but the Bioconductor version was developed / updated / maintained by Charles Warden (from ~2012-2014, and 2016-2018) after being transferred to the Integrative Genomics Core (directed by Xiwei Wu).”
 
-For Post-2016 function additions / updates, we would like to acknowledge Yuan Yuan MD/PhD for having a project used for initial EPIC testing in the standalone version (which also caused me to debug the “custom” annotation function in COHCAP), Susan Neuhausen / Ding Yuan Chun for projects that led to the addition of continuous variable linear regression analysis, Yapeng Su (Caltech) for having a project to test application of COHCAP to RRBS data (from the Health Lab), D. Joe Jerry (UMass-Amherst) for a project helpful for general debugging, and Feng Miao for having a project where I wrote partially similar code to the COHCAP de novo region boundaries for a 3C-Seq dataset (from the Natarajan Lab).
+For Post-2016 function additions / updates, we would like to acknowledge Yuan Yuan MD/PhD for having a project used for initial EPIC testing in the standalone version (which also caused me to debug the “custom” annotation function in COHCAP), Susan Neuhausen / Ding Yuan Chun for projects that led to the addition of continuous variable linear regression analysis, Yapeng Su (Caltech) for having a project to test application of COHCAP to RRBS data (from the Health Lab), D. Joe Jerry (UMass-Amherst) for a project helpful for general debugging, and Feng Miao for having a project where I wrote partially similar code to the COHCAP \textit{de novo} region boundaries for a 3C-Seq dataset (from the Natarajan Lab).
 
 \end{document}

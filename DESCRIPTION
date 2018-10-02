@@ -2,7 +2,7 @@ Package: COHCAP
 Type: Package
 Title: CpG Island Analysis Pipeline for Illumina Methylation Array and Targeted BS-Seq Data
 Version: 1.27.2
-Date: 2018-10-01
+Date: 2018-10-02
 Author: Charles Warden <cwarden@coh.org>, Yate-Ching Yuan <yyuan@coh.org>, Xiwei Wu <xwu@coh.org>
 Maintainer: Charles Warden <cwarden45@gmail.com>
 Depends: WriteXLS, COHCAPanno, RColorBrewer, gplots
@@ -13,6 +13,8 @@ Description: This package provides a pipeline to analyze
         methylation array, targeted BS-Seq, etc.). It provides differential
 		methylation for CpG Sites, differential methylation for CpG Islands,
 		integration with gene expression data, with visualizaton options.
+		
+		Discussion Group: https://sourceforge.net/p/cohcap/discussion/bioconductor/
 License: GPL-3
 SystemRequirements: Perl
 LazyLoad: yes
