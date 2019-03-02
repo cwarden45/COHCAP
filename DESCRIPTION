@@ -1,14 +1,14 @@
 Package: COHCAP
 Type: Package
 Title: CpG Island Analysis Pipeline for Illumina Methylation Array and Targeted BS-Seq Data
-Version: 1.29.2
-Date: 2019-01-02
+Version: 1.29.3
+Date: 2019-03-02
 Author: Charles Warden <cwarden@coh.org>, Yate-Ching Yuan <yyuan@coh.org>, Xiwei Wu <xwu@coh.org>
-Maintainer: Charles Warden <cwarden45@gmail.com>
+Maintainer: Charles Warden <cwarden@coh.org>
 Depends: WriteXLS, COHCAPanno, RColorBrewer, gplots
 Imports: Rcpp, RcppArmadillo, BH
 LinkingTo: Rcpp, BH
-Description: This package provides a pipeline to analyze
+Description: COHCAP (pronounced "co-cap") provides a pipeline to analyze
         single-nucleotide resolution methylation data (Illumina 450k/EPIC
         methylation array, targeted BS-Seq, etc.). It provides differential
 		methylation for CpG Sites, differential methylation for CpG Islands,
