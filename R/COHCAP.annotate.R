@@ -3,7 +3,7 @@
 	data.folder<-file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)
 	
-	beta.table <- read.table(beta.file, header=T, sep="\t")
+	beta.table <- read.table(beta.file, header=T, sep="\t", stringsAsFactors=TRUE)
 	print(dim(beta.table))
 	data.mat <- beta.table[,2:ncol(beta.table)]
 	
@@ -18,7 +18,7 @@
 		annotation.table <- COHCAP.27k
 	} else if((platform == "custom") & (length(annotation.file) == 1)) {
 		print(paste("Using custom island/gene annotations from : ",annotation.file, sep=""))
-		annotation.table <- read.table(annotation.file, sep="\t", header=T)
+		annotation.table <- read.table(annotation.file, sep="\t", header=T, stringsAsFactors=TRUE)
 		print(dim(annotation.table))
 	} else{
 		stop("You need to provide a valid annotation platform and/or custom annotation file!")

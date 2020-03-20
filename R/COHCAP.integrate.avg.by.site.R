@@ -18,7 +18,7 @@
 	res <- system(cmd, intern=TRUE, wait=TRUE)
 	message(res)
 	
-	mU.eD <- read.table(temp.mU.eD, header=T, sep="\t")
+	mU.eD <- read.table(temp.mU.eD, header=T, sep="\t", stringsAsFactors=TRUE)
 	if(output.format == 'xls'){
 		xlsfile <- file.path(integrate.folder, paste(project.name,"_Methyl_Up_Expression_Down-Avg_by_Site.xlsx",sep=""))
 		WriteXLS("mU.eD", ExcelFileName = xlsfile)
@@ -32,7 +32,7 @@
 		warning(paste(output.format," is not a valid output format!  Please use 'txt' or 'xls'.",sep=""))
 	}
 	
-	mD.eU <- read.table(temp.mD.eU, header=T, sep="\t")
+	mD.eU <- read.table(temp.mD.eU, header=T, sep="\t", stringsAsFactors=TRUE)
 	if(output.format == 'xls'){
 		xlsfile <- file.path(integrate.folder, paste(project.name,"_Methyl_Down_Expression_Up-Avg_by_Site.xlsx",sep=""))
 		WriteXLS("mD.eU", ExcelFileName = xlsfile)

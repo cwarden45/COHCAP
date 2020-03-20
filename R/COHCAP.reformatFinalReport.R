@@ -1,6 +1,6 @@
 `COHCAP.reformatFinalReport` = function(FinalReport, beta.file, renaming.file=NULL, detection.pvalue.cutoff=0.01)
 {
-	input.table = read.table(FinalReport, header=T, sep="\t", skip=8)
+	input.table = read.table(FinalReport, header=T, sep="\t", skip=8, stringsAsFactors=TRUE)
 	probeID = input.table[,1]
 	#if(delete.last.column){
 	#	input.table = input.table[,-ncol(input.table)]
@@ -34,7 +34,7 @@
 		rm(pvalue.mat)
 		
 		if(!is.null(renaming.file)){
-			label.table = read.table(renaming.file,header=T, sep="\t")
+			label.table = read.table(renaming.file,header=T, sep="\t", stringsAsFactors=TRUE)
 			chipID = as.character(label.table[,1])
 			if(length(grep("^\\d",chipID)) > 0){
 				print("Adding X to beginning of samples:")

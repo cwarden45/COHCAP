@@ -64,7 +64,7 @@ cor.test.pvalue = function(x)
 	res = system(cmd, intern=TRUE, wait=TRUE)
 	message(res)
 
-	input.table = read.table(temp.paired, header=T, sep = "\t")
+	input.table = read.table(temp.paired, header=T, sep = "\t", stringsAsFactors=TRUE)
 	#print(head(input.table))
 	islands = as.character(input.table[[1]])
 	print(length(islands))
@@ -146,7 +146,7 @@ cor.test.pvalue = function(x)
 					sample.names = gsub(".Methyl","",sample.names)
 					#print(sample.names)
 				
-					sample.table = read.table(sample.file, header=F, sep = "\t")
+					sample.table = read.table(sample.file, header=F, sep = "\t", stringsAsFactors=TRUE)
 					samples = as.character(sample.table[[1]])
 					samples[grep("^\\d",samples, perl = TRUE)] = paste("X",samples[grep("^\\d",samples, perl = TRUE)],sep="")
 					samples = gsub("-",".",samples)
@@ -173,6 +173,7 @@ cor.test.pvalue = function(x)
 						}#end for (j in 1:continuous.color.breaks)
 					}else{
 						groups = levels(sample.group)
+						print(groups)
 						color.palette = fixed.color.palatte[1:length(groups)]
 						for (j in 1:length(groups)){
 							labelColors[sample.group == as.character(groups[j])] = color.palette[j]

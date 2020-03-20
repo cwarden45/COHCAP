@@ -24,10 +24,10 @@ COHCAP.BSSeq_V2.methyl.table = function(cov.files, sampleIDs, percent.table.outp
 		#This can work without the extra gzfile() function, but seems good to have
 		if(read.gz){
 			print("Reading compressed coverage file...")
-			cov.table = read.table(gzfile(cov.files[i]), header=F, sep="\t")
+			cov.table = read.table(gzfile(cov.files[i]), header=F, sep="\t", stringsAsFactors=TRUE)
 		}else{
 			print("Reading uncompressed coverage file...")
-			cov.table = read.table(cov.files[i], header=F, sep="\t")
+			cov.table = read.table(cov.files[i], header=F, sep="\t", stringsAsFactors=TRUE)
 		}#end else
 		
 		temp.total.cov = cov.table[,methylated.count.index] + cov.table[,unmethylated.count.index]

@@ -16,7 +16,7 @@ colLab <- function(n, labelColors, clusMember) {
 qc.folder<-file.path(project.folder,"QC")
 dir.create(qc.folder, showWarnings=FALSE)
 
-sample.table <- read.table(sample.file, header=F, sep = "\t")
+sample.table <- read.table(sample.file, header=F, sep = "\t", stringsAsFactors=TRUE)
 samples <- as.character(sample.table[[1]])
 for (i in 1:length(samples))
 	{
