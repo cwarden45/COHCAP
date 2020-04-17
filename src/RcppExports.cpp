@@ -56,11 +56,25 @@ BEGIN_RCPP
 END_RCPP
 }
 
+// lmResidual_cpp_1var
+long double lmResidual_cpp_1var(NumericVector full_beta, NumericVector full_continuous);
+RcppExport SEXP _COHCAP_lmResidual_cpp_1var(SEXP full_betaSEXP, SEXP full_continuousSEXP) {
+BEGIN_RCPP
+    Rcpp::RObject rcpp_result_gen;
+    Rcpp::RNGScope rcpp_rngScope_gen;
+    Rcpp::traits::input_parameter< NumericVector >::type full_beta(full_betaSEXP);
+    Rcpp::traits::input_parameter< NumericVector >::type full_continuous(full_continuousSEXP);
+    rcpp_result_gen = Rcpp::wrap(lmResidual_cpp_1var(full_beta, full_continuous));
+    return rcpp_result_gen;
+END_RCPP
+}
+
 static const R_CallMethodDef CallEntries[] = {
     {"_COHCAP_ANOVA_cpp_2group", (DL_FUNC) &_COHCAP_ANOVA_cpp_2group, 3},
     {"_COHCAP_ANOVA_cpp_2group_2way", (DL_FUNC) &_COHCAP_ANOVA_cpp_2group_2way, 4},
     {"_COHCAP_ttest_cpp", (DL_FUNC) &_COHCAP_ttest_cpp, 2},
     {"_COHCAP_ttest_cpp_paired", (DL_FUNC) &_COHCAP_ttest_cpp_paired, 1},
+	{"_COHCAP_lmResidual_cpp_1var", (DL_FUNC) &_COHCAP_lmResidual_cpp_1var, 2},
     {NULL, NULL, 0}
 };
 

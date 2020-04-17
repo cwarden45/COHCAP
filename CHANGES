@@ -1,3 +1,5 @@
+v1.33.2
+Add manual 1-variable Rcpp linear regression p-value calculation
 v1.33.1
 Bump up version and make changes for R-4.0.0 compatibility
 v1.29.3

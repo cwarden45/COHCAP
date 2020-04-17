@@ -177,6 +177,13 @@ cpp.paired.ttest.wrapper = function(arr, iTrt, iRef){
 	return(result)
 }#end def cpp.paired.ttest.wrapper
 
+cpp.lm.1var.wrapper = function(arr, var1){
+	full_continuous= var1[!is.na(arr)]
+	full_beta= arr[!is.na(arr)]
+	result = .Call('_COHCAP_lmResidual_cpp_1var', PACKAGE = 'COHCAP', full_beta, full_continuous)
+	return(result)
+}#end def cpp.lm.1var.wrapper
+
 fastLm_wrapper = function(arr, var1){
 	var1= var1[!is.na(arr)]
 	arr= arr[!is.na(arr)]
@@ -479,7 +486,10 @@ fastLm_wrapper2 = function(arr, independent.mat){
 					lm.pvalue = apply(beta.values, 1, lm.pvalue2, continous.var, pairing.group)
 				}
 			} else{
-				if(alt.pvalue == "RcppArmadillo.fastLmPure"){
+				if(alt.pvalue == "cppLmResidual.1var"){
+					print("Using Rcpp residual t-test instead of lm()")
+					lm.pvalue = apply(beta.values, 1, cpp.lm.1var.wrapper, continous.var)
+				}else if(alt.pvalue == "RcppArmadillo.fastLmPure"){
 					print("Using fastLm and pt() instead of lm()")
 					lm.pvalue = apply(beta.values, 1, fastLm_wrapper, continous.var)
 				}else{

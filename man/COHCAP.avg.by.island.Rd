@@ -135,6 +135,10 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 	T-test not usually paired in COHCAP, so p-value will be different than for 1-variable test.
 	May be useful if you need to speed up code and all measurements are paired.
 
+	For 'cppLmResidual.1var', use C++ code instead of R function for linear regression (t-test for residuals).
+	Only valid for continuous analysis with 1 variable.
+	WARNING: This code may need some troubleshooting, since it seems less sensitive than normal lm() or ANOVA
+
 	For 'RcppArmadillo.fastLmPure', use 'fastLmPure' function within RcppArmadillo for
 	linear regression, with R pt() t-distribution for p-value calculation.  This can help 
 	decrease the run-time, relative to the lm() function that is used by default.
