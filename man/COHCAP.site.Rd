@@ -16,7 +16,7 @@ COHCAP.site(sample.file, beta.table, project.name, project.folder,
 				fdr.cutoff=0.05, ref="none", num.groups=2,
 				lower.cont.quantile=0, upper.cont.quantile=1,
 				create.wig = "avg", alt.pvalue="none",
-				plot.heatmap=TRUE, output.format = "xls", heatmap.dist.fun="Euclidian")
+				plot.heatmap=TRUE, output.format = "txt", heatmap.dist.fun="Euclidian")
 }
 \arguments{
   \item{sample.file}{

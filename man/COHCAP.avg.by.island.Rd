@@ -17,7 +17,7 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 				num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE,
 				paired=FALSE, ref="none", lower.cont.quantile=0, upper.cont.quantile=1,
 				max.cluster.dist = NULL, alt.pvalue="none",
-				output.format = "xls", gene.centric=TRUE, heatmap.dist.fun="Euclidian")
+				output.format = "txt", gene.centric=TRUE, heatmap.dist.fun="Euclidian")
 }
 \arguments{
   \item{sample.file}{

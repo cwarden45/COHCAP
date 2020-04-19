@@ -1,3 +1,5 @@
+v1.33.3
+Fix typo in comment; change default output to .txt (instead of .xls)
 v1.33.2
 Add manual 1-variable Rcpp linear regression p-value calculation
 v1.33.1

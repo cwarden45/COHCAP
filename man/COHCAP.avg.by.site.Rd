@@ -16,7 +16,7 @@ COHCAP.avg.by.site(site.table, project.name, project.folder,
 				delta.beta.cutoff = 0.2, pvalue.cutoff=0.05,
 				fdr.cutoff=0.05, num.groups=2, num.sites=4,
 				max.cluster.dist = NULL,
-				output.format = "xls")
+				output.format = "txt")
 }
 \arguments{
  \item{site.table}{

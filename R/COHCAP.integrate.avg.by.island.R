@@ -38,7 +38,7 @@ cor.test.pvalue = function(x)
 		}#end else
 	}#end def cor.test.est
 
-`COHCAP.integrate.avg.by.island` = function (island.list, project.name, project.folder, expr.file, sample.file, cor.pvalue.cutoff=0.05, cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE, output.format = "xls", ref="none")
+`COHCAP.integrate.avg.by.island` = function (island.list, project.name, project.folder, expr.file, sample.file, cor.pvalue.cutoff=0.05, cor.fdr.cutoff = 0.05, cor.cutoff = -0.2, plot.scatter=TRUE, output.format = "txt", ref="none")
 {
 	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
 

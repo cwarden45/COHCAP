@@ -205,7 +205,7 @@ fastLm_wrapper2 = function(arr, independent.mat){
 							methyl.cutoff=0.7, unmethyl.cutoff = 0.3, paired=FALSE,
 							delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
 							ref="none", num.groups=2,lower.cont.quantile=0, upper.cont.quantile=1,
-							create.wig = "avg", alt.pvalue="none", plot.heatmap=TRUE, output.format='xls',
+							create.wig = "avg", alt.pvalue="none", plot.heatmap=TRUE, output.format='txt',
 							heatmap.dist.fun="Euclidian")
 {
 	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())

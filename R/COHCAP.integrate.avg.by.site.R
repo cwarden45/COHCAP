@@ -1,4 +1,4 @@
-`COHCAP.integrate.avg.by.site` <-function (island.table, project.name, project.folder, expr.file, expr.pvalue=0.05, expr.fdr = 0.05, expr.fc = 1.5, output.format = "xls")
+`COHCAP.integrate.avg.by.site` <-function (island.table, project.name, project.folder, expr.file, expr.pvalue=0.05, expr.fdr = 0.05, expr.fc = 1.5, output.format = "txt")
 {
 	integrate.folder<-file.path(project.folder,"Integrate")
 	dir.create(integrate.folder, showWarnings=FALSE)

@@ -16,7 +16,7 @@ This function will only work for 2-group comparisons.
 \usage{
 COHCAP.integrate.avg.by.site(island.table, project.name, project.folder,
 				expr.file, expr.pvalue=0.05, expr.fdr = 0.05, expr.fc = 1.5,
-				output.format = "xls")
+				output.format = "txt")
 }
 \arguments{
  \item{island.table}{

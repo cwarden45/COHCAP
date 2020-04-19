@@ -11,7 +11,7 @@ Only works with 2-group comparison result.  Does not map regions to genes or int
 }
 \usage{
 COHCAP.denovo(site.table, project.name, project.folder,
-				min.sites = 4, max.dist = 500, output.format = "xls")
+				min.sites = 4, max.dist = 500, output.format = "txt")
 }
 \arguments{
  \item{site.table}{

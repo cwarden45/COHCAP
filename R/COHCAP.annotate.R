@@ -1,4 +1,4 @@
-`COHCAP.annotate` <-function (beta.file, project.name, project.folder, platform, annotation.file = NULL, output.format = "xls")
+`COHCAP.annotate` <-function (beta.file, project.name, project.folder, platform, annotation.file = NULL, output.format = "txt")
 {
 	data.folder<-file.path(project.folder,"Raw_Data")
 	dir.create(data.folder, showWarnings=FALSE)

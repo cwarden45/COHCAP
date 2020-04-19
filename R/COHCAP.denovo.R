@@ -1,4 +1,4 @@
-`COHCAP.denovo` =function(site.table, project.name, project.folder, min.sites = 4, max.dist = 500, output.format = "xls")
+`COHCAP.denovo` =function(site.table, project.name, project.folder, min.sites = 4, max.dist = 500, output.format = "txt")
 {
 	site.folder<-file.path(project.folder,"CpG_Site")
 	

@@ -23,7 +23,7 @@ long double lmResidual_cpp_1var(NumericVector full_beta, NumericVector full_cont
 			return(1);
 		}
 				
-		//beta or methylation = y, continuous variable = x (whiich would matter if this was multi-variate)
+		//beta or methylation = y, continuous variable = x (which would matter if this was multi-variate)
 		
 		double meanY = mean(full_beta);
 		double meanX = mean(full_continuous);

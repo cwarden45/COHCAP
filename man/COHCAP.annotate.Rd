@@ -14,7 +14,7 @@ Output files will be created in the "Raw_Data" subfolder.
 \usage{
 COHCAP.annotate(beta.file, project.name, project.folder,
 				platform, annotation.file = NULL,
-				output.format = "xls")
+				output.format = "txt")
 }
 \arguments{
   \item{beta.file}{

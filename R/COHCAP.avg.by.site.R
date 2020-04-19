@@ -57,7 +57,7 @@ annova.2way.pvalue = function(arr, grp.levels, pairing.levels)
 		}
 }#end def annova.pvalue
 
-`COHCAP.avg.by.site` = function (site.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, max.cluster.dist = NULL, output.format = "xls")
+`COHCAP.avg.by.site` = function (site.table, project.name, project.folder, methyl.cutoff=0.7, unmethyl.cutoff = 0.3, delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05, num.groups=2, num.sites=4, max.cluster.dist = NULL, output.format = "txt")
 {
 	island.folder=file.path(project.folder,"CpG_Island")
 	dir.create(island.folder, showWarnings=FALSE)

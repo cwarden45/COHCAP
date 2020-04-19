@@ -205,7 +205,7 @@ fastLm_wrapper2 = function(arr, independent.mat){
 									delta.beta.cutoff = 0.2, pvalue.cutoff=0.05, fdr.cutoff=0.05,
 									num.groups=2, num.sites=4, plot.box=TRUE, plot.heatmap=TRUE,
 									paired=FALSE, ref="none",lower.cont.quantile=0, upper.cont.quantile=1,
-									max.cluster.dist = NULL, alt.pvalue="none", output.format = "xls",
+									max.cluster.dist = NULL, alt.pvalue="none", output.format = "txt",
 									gene.centric=TRUE, heatmap.dist.fun="Euclidian")
 {
 	fixed.color.palatte = c("green","orange","purple","cyan","pink","maroon","yellow","grey","red","blue","black",colors())
