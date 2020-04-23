@@ -73,7 +73,7 @@ dir = system.file("extdata", package="COHCAP")
 beta.file = file.path(dir,"GSE42308_truncated.txt")
 sample.file = file.path(dir,"sample_GSE42308.txt")
 expression.file = file.path(dir,"expression-Average_by_Island_truncated.txt")
-project.folder = getwd()
+project.folder = tempdir()
 project.name = "450k_avg_by_island_test"
 @ 
 The code for this example assumes all files should be created in the current working directory.
