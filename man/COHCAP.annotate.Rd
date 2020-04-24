@@ -60,7 +60,7 @@ library("COHCAP")
 
 dir = system.file("extdata", package="COHCAP")
 beta.file = file.path(dir,"GSE42308_truncated.txt")
-project.folder = tempdir()
+project.folder = tempdir()#you may want to use getwd() or specify another folder
 project.name = "450k_test"
 
 beta.table = COHCAP.annotate(beta.file, project.name, project.folder,

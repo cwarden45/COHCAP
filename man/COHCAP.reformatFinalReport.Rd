@@ -52,7 +52,7 @@ sample.relabel.file = file.path(dir,"EPIC_DEMO_samples.txt")
 
 COHCAP.reformatFinalReport(FinalReport, beta.file, renaming.file=sample.relabel.file)
 
-project.folder = tempdir()
+project.folder = tempdir()#you may want to use getwd() or specify another folder
 project.name = "EPIC_FinalReport_test"
 annotation.file = file.path(dir,"EPIC_DEMO_mapping.txt")
 beta.table = COHCAP.annotate(beta.file, project.name, project.folder,

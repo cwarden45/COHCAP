@@ -62,7 +62,7 @@ bed.folder = file.path(dir,"BSSeq")
 gene.table = file.path(dir,"GENCODE_Genes_truncated.bed")
 targeted.regions = file.path(dir,"UCSC_CpG_Islands_truncated.bed")
 
-output.folder = tempdir()
+output.folder = tempdir()#you may want to use getwd() or specify another folder
 annotation.file = file.path(output.folder,"COHCAP.targeted.BSSeq.anno.txt")
 cohcap.inputfile = file.path(output.folder,"BS_Seq_combined.txt")
 
