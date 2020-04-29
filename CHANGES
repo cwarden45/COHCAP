@@ -1,3 +1,7 @@
+v1.35.1
+Remove code causing error message on some Windows systems; revert v1.33.6 change; minor manual changes
+v1.35.0
+Bump up version with Bioconductor release
 v1.33.6
 Try avoid specifying full path to temporary file.
 v1.33.5

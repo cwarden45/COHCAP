@@ -12,14 +12,14 @@ if (($os eq "MacOS")||($os eq "darwin")||($os eq "linux"))
 		#Mac
 		$os_name = "MAC";
 	}#end if ($os eq "MacOS")
-elsif ($os eq "MSWin32")
+elsif (($os eq "MSWin32")||($os eq "msys"))
 	{
 		#PC
 		$os_name = "PC";
 	}#end if ($os eq "MacOS")
 else
 	{
-		print "Need to specify folder structure for $os!\n";
+		print "Perl ERROR: Need to specify folder structure for '$os' operating system!\n";
 		exit;
 	}#end else
 	

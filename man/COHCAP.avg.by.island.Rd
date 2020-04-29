@@ -137,7 +137,7 @@ COHCAP.avg.by.island(sample.file, site.table, beta.table, project.name, project.
 
 	For 'cppLmResidual.1var', use C++ code instead of R function for linear regression (t-test for residuals).
 	Only valid for continuous analysis with 1 variable.
-	WARNING: This code may need some troubleshooting, since it seems less sensitive than normal lm() or ANOVA
+	WARNING: This code may less sensitive than normal lm() or ANOVA with smaller sample sizes (such as n=6).
 
 	For 'RcppArmadillo.fastLmPure', use 'fastLmPure' function within RcppArmadillo for
 	linear regression, with R pt() t-distribution for p-value calculation.  This can help 

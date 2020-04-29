@@ -3,24 +3,6 @@ use strict;
 use Cwd 'abs_path'; 
 
 $| =1;
-
-my $os = $^O;
-my $os_name;
-if (($os eq "MacOS")||($os eq "darwin")||($os eq "linux"))
-	{
-		#Mac
-		$os_name = "MAC";
-	}#end if ($os eq "MacOS")
-elsif ($os eq "MSWin32")
-	{
-		#PC
-		$os_name = "PC";
-	}#end if ($os eq "MacOS")
-else
-	{
-		print "Need to specify folder structure for $os!\n";
-		exit;
-	}#end else
 	
 my $expr_file = $ARGV[0];
 my $inputfile = $ARGV[1];

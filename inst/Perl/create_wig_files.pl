@@ -11,7 +11,7 @@ if (($os eq "MacOS")||($os eq "darwin")||($os eq "linux"))
 		#Mac
 		$os_name = "MAC";
 	}#end if ($os eq "MacOS")
-elsif ($os eq "MSWin32")
+elsif (($os eq "MSWin32")||($os eq "msys"))
 	{
 		#PC
 		$os_name = "PC";

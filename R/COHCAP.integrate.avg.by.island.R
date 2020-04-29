@@ -54,8 +54,8 @@ cor.test.pvalue = function(x)
 	dir.create(data.folder, showWarnings=FALSE)
 	
 	tempID = sample(100000:999999,1)
-	temp.paired = paste("temp_paired_",tempID,".txt",sep="")
-	temp.methyl = paste("temp_methyl_",tempID,".txt",sep="")
+	temp.paired = file.path(data.folder,paste("temp_paired_",tempID,".txt",sep=""))
+	temp.methyl = file.path(data.folder,paste("temp_methyl_",tempID,".txt",sep=""))
 	write.table(beta.table, temp.methyl, quote=F, row.names=F, sep="\t")
 	
 	Perl.Path = file.path(path.package("COHCAP"), "Perl")
