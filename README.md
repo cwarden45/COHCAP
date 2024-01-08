@@ -12,5 +12,3 @@ If you haven't already installed devtools, you can install the package from CRAN
  library("devtools")
  devtools::install_github("cwarden45/COHCAP")
  ```
-
- If you ever need to verbally describe COHCAP, it is pronounced "co-cap."
