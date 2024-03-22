@@ -1,10 +1,10 @@
-## COHCAP: Bioconductor package for DNA Methylation Analysis (and Gene Expression Integration) for Illumina Infinium Array and BS-Seq Data
+## COHCAP: R package for DNA Methylation Analysis (and Gene Expression Integration) for Illumina Infinium Array and BS-Seq Data
 
-For most users, the easiest way to install COHCAP is to use the Bioconductor Release Branch:
+```diff
++ The COHCAP package was first developed within the Bioinformatics Core, under the direction of Yate-Ching Yuan.  Charles Warden also provided assistance with updates and maintance that include a Bioconductor version of the package while working in the Integrative Genomics Core (with Xiwei Wu as the director) as well as when he was/is not employeed by City of Hope.
+```
 
-https://www.bioconductor.org/packages/release/bioc/html/COHCAP.html
-
-However, if you are trying to use some functions in the development version and are having issues installing the development version of COHCAP, you can try directly installing from this location using [devtools](https://github.com/hadley/devtools):
+You can directly install from this location using [devtools](https://github.com/hadley/devtools):
 
 If you haven't already installed devtools, you can install the package from CRAN using `install.packages("devtools")`.  Once installed, you can run the following commands:
 
@@ -12,3 +12,7 @@ If you haven't already installed devtools, you can install the package from CRAN
  library("devtools")
  devtools::install_github("cwarden45/COHCAP")
  ```
+
+ ```
+Add acknowledgement based upon Bioconductor user manual acknowledgement.
+```
