@@ -18,3 +18,7 @@ If you haven't already installed devtools, you can install the package from CRAN
  ```
 Add acknowledgement based upon Bioconductor user manual acknowledgement.
 ```
+### Publications
+
+[Warden et al. 2013](https://academic.oup.com/nar/article/41/11/e117/2411160) - original publication; not to be confused with [citation for corrigendum in 2019](https://academic.oup.com/nar/article/47/15/8335/5538015).
+[Warden 2014](https://www.researchsquare.com/article/nprot-2965/v1) - Bioconductor version (most closely related to this code).
