@@ -5,7 +5,7 @@
 + Charles Warden also provided assistance with updates and maintance that include a Bioconductor version of the package
 + while working in the Integrative Genomics Core (with Xiwei Wu as the director) as well as when he was/is not working at City of Hope.
 +
-+ Accordingly, Yate-Ching Yuan and Xiwei Wu were listed as authors (when a Bioconductor version was available). 
++ Accordingly, Charles Warden, Yate-Ching Yuan, and Xiwei Wu were listed as authors (when a Bioconductor version was available). 
 ```
 
 You can directly install from this location using [devtools](https://github.com/hadley/devtools):
