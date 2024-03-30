@@ -23,7 +23,7 @@ If you haven't already installed devtools, you can install the package from CRAN
 
 [Warden 2014](https://www.researchsquare.com/article/nprot-2965/v1) - Bioconductor version (most closely related to this code).
 
-### Additional Tutorials
+### Additional Tutorials (including Post-2016 Updates)
 
 [COHCAP Demo for Illumina EPIC Array](https://github.com/cwarden45/DNAmethylation_templates/tree/master/EPIC_COHCAP_Demo)
 
