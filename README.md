@@ -27,7 +27,7 @@ If you haven't already installed devtools, you can install the package from CRAN
 
 [COHCAP Demo for Illumina EPIC Array](https://github.com/cwarden45/DNAmethylation_templates/tree/master/EPIC_COHCAP_Demo)
 
-### Additional Acknowledgement
+### Additional Acknowledgements
 
  ```
 For Post-2016 function additions / updates, we would like to acknowledge:
