@@ -30,5 +30,5 @@ If you haven't already installed devtools, you can install the package from CRAN
 ### Additional Acknowledgement
 
  ```
-Add acknowledgement based upon Bioconductor user manual acknowledgement.
+For Post-2016 function additions / updates, we would like to acknowledge....
 ```
