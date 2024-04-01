@@ -31,6 +31,9 @@ If you haven't already installed devtools, you can install the package from CRAN
 
  ```
 For Post-2016 function additions / updates, we would like to acknowledge:
- - Yuan Yuan MD/PhD for having a project used for initial EPIC testing in the standalone version (which also caused me to debug the custom annotation function in COHCAP)
-....
+ - Yuan Yuan MD/PhD for having a project used for initial EPIC testing in the standalone version (which also caused me to debug the custom annotation function in COHCAP).
+ - Susan Neuhausen / Ding Yuan Chun for projects that led to the addition of continuous variable linear regression analysis.
+...
+ - D. Joe Jerry (UMass-Amherst) for a project helpful for general debugging.
+...
 ```
