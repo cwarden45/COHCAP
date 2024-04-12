@@ -36,5 +36,5 @@ For Post-2016 function additions / updates, we would like to acknowledge:
  - Yapeng Su (Caltech, at time of support) for having a project to test application of COHCAP to RRBS data
  - D. Joe Jerry (UMass-Amherst) for a project that was helpful for general debugging.
  - Feng Miao for having a project where I wrote partially similar code to the COHCAP de novo region boundaries for a 3C-Seq dataset (from the Natarajan Lab)
-...
+ - Shiuan Chen (application to EPIC dataset, collaboration with Susan Neuhausen)
 ```
